@@ -1,0 +1,46 @@
+/* Will be compiled down to a single stylesheet with your sass files */
+
+html,body,.strip-lines {
+    /* Defaults css for cssmin process */
+    width: 100%;
+    height: 100%;
+}
+
+.strip-lines {
+	background-image: url("../images/jarviz_background.png");
+}
+
+.strip-lines div{
+	width: 10px;
+	height: 70%;
+	float: left;
+	margin: 5px;
+	background-color:#4b9532;
+	animation:up_and_down 3s infinite;
+	-webkit-animation:up_and_down 3s infinite;
+}
+
+@keyframes up_and_down {
+	0%{width: 10px; height: 25%;}
+	30%{width: 10px; height: 50%;}
+	70%{width: 10px; height: 65%;}
+	100%{width: 10px; height: 70%;}
+}
+
+@-webkit-keyframes up_and_down {
+	0%{width: 10px; height: 25%;}
+	30%{width: 10px; height: 50%;}
+	70%{width: 10px; height: 65%;}
+	100%{width: 10px; height: 70%;}
+}
+
+
+#sign_up_view
+{
+	display: none;
+}
+
+#add_friends_view,#type_chat_message
+{
+	display: none;	
+}

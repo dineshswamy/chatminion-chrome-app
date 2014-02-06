@@ -1,0 +1,10 @@
+{
+  "appName": {
+    "message": "Jarviz CalltheTeam 2",
+    "description": "The name of the application"
+  },
+  "appDescription": {
+    "message": "Call your team with jarviz's help",
+    "description": "The description of the application"
+  }
+}
