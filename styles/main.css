@@ -10,6 +10,7 @@ html,body,.strip-lines {
 	background-image: url("../images/jarviz_background.png");
 }
 
+
 .strip-lines div{
 	width: 10px;
 	height: 70%;
@@ -35,12 +36,3 @@ html,body,.strip-lines {
 }
 
 
-#sign_up_view
-{
-	display: none;
-}
-
-#add_friends_view,#type_chat_message
-{
-	display: none;	
-}

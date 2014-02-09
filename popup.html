@@ -6,101 +6,16 @@
     </head>
     <body>
         
-        <div id="sign_up_view">
-            <form action="#">
-            	<table>
-            		<tr>
-            			<td>Email</td>
-            			<td> <input type="email" id="user_email" /></td>
-            		</tr>
-            		<tr><td></td>
-            			<td><button id="submit_email">I m in !</button></td>
-            		</tr>
-            	</table>
-            </form>
-        </div>
-
-    <div id="add_friends_view">
-            <form action="#">
-                <table>
-                    <tr>
-                        <td>Your friends email-id</td>
-                        <td> <input type="email" id="friends_email" /></td>
-                    </tr>
-                    <tr><td></td>
-                        <td><button id="friends_view_submit_email">I m in !</button></td>
-                    </tr>
-                </table>
-            </form>
-    </div>        
-
-
-    <div id="add_friends_view">
-            <form action="#">
-                <table>
-                    <tr>
-                        <td>Your friends email-id</td>
-                        <td> <input type="email" id="friends_email" /></td>
-                    </tr>
-                    <tr><td></td>
-                        <td><button id="friends_view_submit_email">I m in !</button></td>
-                    </tr>
-                </table>
-            </form>
-
-
-       
-            <ul id="available_friends_view">
-
-            </ul>
-    </div> 
-
-
-    <div id="type_chat_message">
-        <textarea rows="5" cols="20" id="chat_message_to_send">
-
-        </textarea>
-    </div>
-
-
-
-    <!-- <div class="strip-lines">
-            <div id="strip-line_1">
-            </div>        
-            
-            <div id="strip-line_2">
-            </div>
-            
-            <div id="strip-line_3">
-            </div>
-            
-            <div id="strip-line_4">
-            </div>
-            
-            <div id="strip-line_5">
-            </div>
-            
-            <div id="strip-line_6">
-            </div>
-            
-            <div id="strip-line_7">
-            </div>
-            
-            <div id="strip-lines_8">
-            </div>
-            
-            <div id="strip-line_9">
-            </div>
-    </div> -->
-
 
     </body>
         
         <!-- build:js scripts/popup.js -->
-        <script type="text/javascript" src="scripts/jquery-2.1.0.min.js"></script>
-        <script type="text/javascript" src="scripts/backbone-min.js"></script>
-        <script type="text/javascript" src="scripts/popup.js"></script>
-        
 
+        <script type="text/javascript" src="libs/jquery-2.1.0.min.js"></script>
+        <script type="text/javascript" src="libs/underscore-min.js"></script>
+        <script type="text/javascript" src="libs/backbone-min.js"></script>
+        <script type="text/javascript" src="build/templates.js"></script>
+        <script type="text/javascript" src="build/views/signup_view.js"></script>
+        <script type="text/javascript" src="libs/popup.js"></script>
         <!-- endbuild -->
 </html>
