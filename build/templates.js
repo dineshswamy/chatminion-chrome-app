@@ -7,7 +7,7 @@
     return (function() {
       var $o;
       $o = [];
-      $o.push("<div id='email_sending_template'>\n  <input type='email' name='sign_up_email' placeholder='Your email ..'>\n    <button id='submit_email'>Sign up</button>\n</div>");
+      $o.push("<div class='status'></div>\n<div id='email_sending_template'>\n  <input id='user_email_id' placeholder='Your email ...'>\n    <button id='google_sign_in'>Google sign in</button>\n</div>");
       return $o.join("\n").replace(/\s(?:id|class)=(['"])(\1)/mg, "");
     }).call(context);
   };

@@ -4,19 +4,16 @@
     "manifest_version": 2,
     "description": "call your team members with the help of Minion",
     "icons": {
-        "16": "images/icon-16.png",
-        "128": "images/icon-128.png"
+        "16": "images/jarviz_background-16.png",
+        "48": "images/jarviz_background-48.png",
+        "128": "images/jarviz_background-120.png"
     },
     "default_locale": "en",
     "background": {
-        "scripts": [
-        ]
+      "page":"background.html"
     },
-  "page_action": {
-    "default_icon": {
-      "19": "images/icon-19.png",
-      "38": "images/icon-38.png"
-    },
+  "browser_action": {
+    "default_icon": "images/icon.png",
     "default_title": "Jarviz CalltheTeam 2",
     "default_popup": "popup.html"
   },
@@ -39,7 +36,9 @@
     "storage",
     "pushMessaging",
     "tts",
-    "http://*/*",
-    "https://*/*"
+    "https://www.google.com/accounts/OAuthGetRequestToken",
+    "https://www.google.com/accounts/OAuthAuthorizeToken",
+    "https://www.google.com/accounts/OAuthGetAccessToken",
+    "https://www.googleapis.com/auth/userinfo#email"
   ]
 }
