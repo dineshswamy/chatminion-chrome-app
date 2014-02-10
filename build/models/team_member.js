@@ -11,8 +11,17 @@
       return User.__super__.constructor.apply(this, arguments);
     }
 
-    User.prototype.initialize = function() {
-      return this.url = chrome.extension.getBackgroundPage().base_url + "/calltheteam/register";
+    User.prototype.initialize = function(attributes) {
+      this.url = chrome.extension.getBackgroundPage().base_url + "/calltheteam/register";
+      if (attributes.email_id) {
+        this.email_id = attributes.email_id;
+      }
+      if (attributes.channel_id) {
+        this.channel_id = attributes.channel_id;
+      }
+      if (attributes.name) {
+        return this.name = attributes.name;
+      }
     };
 
     User.prototype.defaults = {

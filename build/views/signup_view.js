@@ -26,24 +26,42 @@
 
     SignupView.prototype.register = function(event) {
       event.preventDefault();
-      console.log("Im clicked");
-      this.email_id_value = this.$("#user_email_id").val();
       return chrome.pushMessaging.getChannelId(false, complete_registration);
     };
 
     complete_registration = function(google_chrome_channel_id) {
-      var new_user;
-      new_user = User["new"]({
-        email_id: this.email_id_value,
-        channel_id: google_chrome_channel_id
+      var email_id_value, new_user;
+      email_id_value = $("#user_email_id").val();
+      new_user = new User({
+        email_id: email_id_value,
+        channel_id: google_chrome_channel_id.channelId,
+        name: 'sample_username'
       });
       return new_user.save({}, {
         success: function(model) {
+          var friend_collection, friend_collection_view;
+          console.log(model);
           if (model.get("status") === "success") {
-            return $(".status").html("Success");
+            new_user.set({
+              "id": model.get("user_id")
+            });
+            $(".status").html("Registered successfully");
+            friend_collection = new FriendCollection({
+              "user_id": new_user.get("user_id")
+            });
+            friend_collection.fetch();
+            friend_collection_view = new FriendsCollectionView({
+              "collection": friend_collection
+            });
+            return $("body").html(friend_collection_view.render().el);
+          } else if (model.get("status") === "failure") {
+            return $(".status").html("For some reasons registration failed.Please try again later");
           } else {
-            return $(".status").html("Failure");
+            return $(".status").html(model.get("status"));
           }
+        },
+        error: function() {
+          return $(".status").html("For some reasons registration failed.Please try again later");
         }
       });
     };

@@ -36,6 +36,7 @@
     "storage",
     "pushMessaging",
     "tts",
+    "http://localhost:3000/*",
     "https://www.google.com/accounts/OAuthGetRequestToken",
     "https://www.google.com/accounts/OAuthAuthorizeToken",
     "https://www.google.com/accounts/OAuthGetAccessToken",
