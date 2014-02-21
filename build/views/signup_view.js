@@ -39,25 +39,22 @@
       });
       return new_user.save({}, {
         success: function(model) {
-          var friend_collection, friend_collection_view;
           console.log(model);
           if (model.get("status") === "success") {
             new_user.set({
               "id": model.get("user_id")
             });
             $(".status").html("Registered successfully");
-            friend_collection = new FriendCollection({
-              "user_id": new_user.get("user_id")
-            });
-            friend_collection.fetch();
-            friend_collection_view = new FriendsCollectionView({
-              "collection": friend_collection
-            });
-            return $("body").html(friend_collection_view.render().el);
+            localStorage["registered"] = true;
+            return localStorage["registered_user_id"] = model.get("user_id");
           } else if (model.get("status") === "failure") {
-            return $(".status").html("For some reasons registration failed.Please try again later");
+            $(".status").html("For some reasons registration failed.Please try again later");
+            localStorage["registered"] = false;
+            return localStorage["registered_user_id"] = null;
           } else {
-            return $(".status").html(model.get("status"));
+            $(".status").html(model.get("status"));
+            localStorage["registered"] = false;
+            return localStorage["registered_user_id"] = null;
           }
         },
         error: function() {

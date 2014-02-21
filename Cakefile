@@ -49,4 +49,4 @@ task 'build' ,"Building the app" , ->
 
 task 'watch',"Watching your Coffee script files",->
 	if_coffee ->
-		runCmd("coffee",["--output",JAVASCRIPTS_PATH,"watch",COFFEESCRIPTS_PATH])
+		runCmd("coffee",["--output",JAVASCRIPTS_PATH,"--watch",COFFEESCRIPTS_PATH])

@@ -25,14 +25,16 @@ class @SignupView extends Backbone.View
 				if model.get("status")=="success"
 					new_user.set({"id":model.get("user_id")})
 					$(".status").html("Registered successfully")
-					friend_collection=new FriendCollection({"user_id":new_user.get("user_id")})
-					friend_collection.fetch()
-					friend_collection_view = new FriendsCollectionView({"collection":friend_collection})
-					$("body").html friend_collection_view.render().el
+					localStorage["registered"]=true
+					localStorage["registered_user_id"]=model.get("user_id")					
 				else if model.get("status")=="failure"
 					$(".status").html("For some reasons registration failed.Please try again later")
+					localStorage["registered"]=false
+					localStorage["registered_user_id"]=null
 				else
 					$(".status").html(model.get("status"))
+					localStorage["registered"]=false
+					localStorage["registered_user_id"]=null
 			error : ->
 					$(".status").html("For some reasons registration failed.Please try again later")
 
