@@ -11,11 +11,11 @@
     "default_locale": "en",
     "background": {
       "page":"background.html"
+
     },
   "browser_action": {
     "default_icon": "images/icon.png",
-    "default_title": "Jarviz CalltheTeam 2",
-    "default_popup": "popup.html"
+    "default_title": "Jarviz CalltheTeam 2"
   },
   "options_page": "options.html",
   "content_scripts": [

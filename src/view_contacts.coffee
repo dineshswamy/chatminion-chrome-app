@@ -58,12 +58,13 @@ class @MessageView extends Backbone.View
 	}
 
 	
-
 	initialize :(attributes)->
 
 	render : ->
 		@$el.html HAML["message"](message:@message_model)
 		@
+	send_message :(event)->
+		
 
 class @MessageCollectionView extends Backbone.View
 	tagName:'ul'

@@ -2,11 +2,19 @@
 
 document.addEventListener("DOMContentLoaded",function()
 {
+
+			window.addEventListener("keyup",keyUpListener,false);
 			var sign_up_view = new SignupView;
 			console.log(sign_up_view.render());
 			$("body").html(sign_up_view.render().el);
 
 });
+
+function keyUpListener(event)
+{
+	if(e.keyCode == 27)
+		
+}
 
 // function addFriends(event)
 // {

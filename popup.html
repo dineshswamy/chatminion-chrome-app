@@ -1,27 +1,57 @@
 <!doctype html>
 <html>
     <head>
-        <link href="styles/main.css" rel="stylesheet">
-
+        <link href="css/bootstrap.css" rel="stylesheet" />
+        <title>Chat Minion</title>
     </head>
     <body>
-        
+        <div class="container">
+            <div class="row">
+                    <div class="col-md-4 col-xs-4">
+                        <div class="panel panel-default">
+                            <div class="panel-body">
+                                Contacts
+                            </div>
 
+                        </div>
+                    </div>
+
+                    <div class=" col-xs-8 col-md-8">
+                        <div class="panel panel-default">
+                            <div class="panel-body">
+                                Messages
+                            </div>
+
+                        </div>
+                    </div>
+
+            </div>
+            
+            <div class="row">
+                <div class="col-md-4 col-xs-4" id="contacts_container">
+                    <ul>
+                        <li class="btn btn-primary">Dinesh swamy</li>
+                        <li class="btn btn-primary">Friend indeed</li>
+                        <li class="btn btn-primary">Cold never bothered me anyway</li>
+                        <li class="btn btn-primary">Who is my client</li>
+                        <li class="btn btn-primary">Let it go</li>
+                    </ul>
+                </div>
+
+                <div class="col-md-8 col-xs-8" id="messages_container">
+                    <ul>
+                    <li class="btn btn-primary">Messages that are cold</li>
+                    <li class="btn btn-primary">She talks messages for me</li>
+                    <li class="btn btn-primary">Minion can deliver messages</li>
+                    <li class="btn btn-primary">I need to talk with you little a day</li>
+                <li class="btn btn-primary">How many people are there in your team</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
     </body>
         
-        <!-- build:js scripts/popup.js -->
         <script type="text/javascript" src="libs/jquery-2.1.0.min.js"></script>
-        <script type="text/javascript" src="libs/underscore-min.js"></script>
-        <script type="text/javascript" src="libs/backbone-min.js"></script>
-        <script type="text/javascript" src="build/templates.js"></script>
-<!--         // 
-        // <script type="text/javascript" src="build/models/friend.js"></script>
-        // <script type="text/javascript" src="build/collections/friends_collection.js"></script>
-        // <script type="text/javascript" src="build/views/friend.js"></script>
-        // <script type="text/javascript" src="build/views/friends.js"></script> -->
-        <script type="text/javascript" src="build/models/user_model.js"></script>
-        <script type="text/javascript" src="build/view_contacts.js"></script>
-        <script type="text/javascript" src="build/views/signup_view.js"></script>
-        <script type="text/javascript" src="build/application.js"></script>
-        <!-- endbuild -->
+        <script type="text/javascript" src="libs/bootstrap.min.js"></script>
+
 </html>
