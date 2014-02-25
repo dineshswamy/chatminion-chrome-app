@@ -9,11 +9,39 @@
 // });
 
 var base_url="http://localhost:3000";
+var window_id=null;
+chrome.app.runtime.onLaunched.addListener(function() {
+  chrome.app.window.create('../popup.html', {
+    "bounds": {
+      "width": 500,
+      "height": 650
+    },
+  });
+});
 
-chrome.browserAction.onClicked.addListener(openPanel);
+// function openPanel()
+// {
+// 	console.log("Inside opening panel");
+// 	chrome.app.window.create('../popup.html',{
+// 		"bounds":{
+// 			"width":560,
+// 			"height":730
+// 		}
 
-function openPanel()
-{
-	console.log("Inside opening panel");
-	chrome.windows.create({url:'../popup.html',type:'panel'});
-}
+// 	});
+// }
+
+chrome.runtime.onMessage.addListener(function(request,sender,sendResponse){
+
+	console.log("Message recieved "+request.close_window);
+	if(request.close_window)
+		if(chrome.app.window.current())
+			chrome.app.window.current().close();
+
+});
+
+// function getWindowId(Window window)
+// {
+// 	window_id=window.id;
+// }
+

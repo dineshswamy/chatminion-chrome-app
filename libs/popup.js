@@ -7,13 +7,18 @@ document.addEventListener("DOMContentLoaded",function()
 			var sign_up_view = new SignupView;
 			console.log(sign_up_view.render());
 			$("body").html(sign_up_view.render().el);
+			console.log("Event listeners initialized");
 
 });
 
 function keyUpListener(event)
 {
-	if(e.keyCode == 27)
-		
+	console.log("Event listener "+event.keyCode);
+	if(event.keyCode == 27)
+	{
+		console.log("Message sent "+request.close_window);
+		chrome.runtime.sendMessage({"close_window":true},null);
+	}
 }
 
 // function addFriends(event)
