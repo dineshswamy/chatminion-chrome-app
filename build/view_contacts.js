@@ -36,7 +36,7 @@
     RelaterView.prototype.className = 'available_contact';
 
     RelaterView.prototype.events = {
-      'click li.available_contact': ''
+      'click li.available_contact': 'sendRelaterModel'
     };
 
     RelaterView.prototype.initialize = function(attributes) {};
@@ -46,6 +46,10 @@
         user_model: this.model
       }));
       return this;
+    };
+
+    RelaterView.prototype.sendRelaterModel = function(event) {
+      return localStorage["relator_to_send"] = this.model;
     };
 
     return RelaterView;
@@ -62,8 +66,6 @@
 
     RelatersCollectionView.prototype.tagName = 'ul';
 
-    RelatersCollectionView.prototype.className = 'friends_contacts_container';
-
     RelatersCollectionView.prototype.render = function() {
       var relater, users_model, _i, _len, _ref;
       _ref = this.collection.models;
@@ -78,6 +80,107 @@
     };
 
     return RelatersCollectionView;
+
+  })(Backbone.View);
+
+  this.Message = (function(_super) {
+
+    __extends(Message, _super);
+
+    function Message() {
+      return Message.__super__.constructor.apply(this, arguments);
+    }
+
+    Message.prototype.initialize = function(attributes) {
+      this.msg_id = attributes.msg_id;
+      this.user_message = attributes.user_message;
+      return this.transform_pattern = attributes.transform_pattern;
+    };
+
+    return Message;
+
+  })(Backbone.Model);
+
+  this.MessageCollection = (function(_super) {
+
+    __extends(MessageCollection, _super);
+
+    function MessageCollection() {
+      return MessageCollection.__super__.constructor.apply(this, arguments);
+    }
+
+    MessageCollection.prototype.model = Message;
+
+    MessageCollection.prototype.url = chrome.extension.getBackgroundPage().base_url;
+
+    MessageCollection.prototype.initialize = function(attributes) {
+      return this.url = this.url + "/messages.json";
+    };
+
+    return MessageCollection;
+
+  })(Backbone.Collection);
+
+  this.MessageView = (function(_super) {
+
+    __extends(MessageView, _super);
+
+    function MessageView() {
+      return MessageView.__super__.constructor.apply(this, arguments);
+    }
+
+    MessageView.prototype.tagName = 'li';
+
+    MessageView.prototype.className = 'messages_li_element';
+
+    MessageView.prototype.events = {
+      "click": "send_message"
+    };
+
+    MessageView.prototype.initialize = function(attributes) {};
+
+    MessageView.prototype.render = function() {
+      this.$el.html(HAML["message"]({
+        message_view_model: this.message_model_class
+      }));
+      return this;
+    };
+
+    MessageView.prototype.send_message = function(event) {
+      return console.log("message clicked");
+    };
+
+    return MessageView;
+
+  })(Backbone.View);
+
+  this.MessageCollectionView = (function(_super) {
+
+    __extends(MessageCollectionView, _super);
+
+    function MessageCollectionView() {
+      return MessageCollectionView.__super__.constructor.apply(this, arguments);
+    }
+
+    MessageCollectionView.prototype.tagName = 'ul';
+
+    MessageCollectionView.prototype.className = 'messages_container';
+
+    MessageCollectionView.prototype.initialize = function(attributes) {};
+
+    MessageCollectionView.prototype.render = function() {
+      var num, relater, _i, _ref;
+      for (num = _i = 0, _ref = this.message_collection.models.length; 0 <= _ref ? _i <= _ref : _i >= _ref; num = 0 <= _ref ? ++_i : --_i) {
+        console.log(this.message_collection.models[num]);
+        relater = new MessageView({
+          "message_model_class": this.message_collection.models[num]
+        });
+        this.$el.append(relater.render().$el);
+      }
+      return this;
+    };
+
+    return MessageCollectionView;
 
   })(Backbone.View);
 

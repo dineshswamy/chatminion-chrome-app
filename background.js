@@ -10,14 +10,14 @@
 
 var base_url="http://localhost:3000";
 var window_id=null;
-chrome.app.runtime.onLaunched.addListener(function() {
-  chrome.app.window.create('../popup.html', {
-    "bounds": {
-      "width": 500,
-      "height": 650
-    },
-  });
-});
+// chrome.app.runtime.onLaunched.addListener(function() {
+//   chrome.app.window.create('../popup.html', {
+//     "bounds": {
+//       "width": 500,
+//       "height": 650
+//     },
+//   });
+// });
 
 // function openPanel()
 // {

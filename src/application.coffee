@@ -14,4 +14,12 @@ loadRelators = (user_id)->
 				relater_collection.fetch
 					success : -> 
 							relater_collection_view = new RelatersCollectionView({"collection":relater_collection})
-							$("body").html relater_collection_view.render().el
+							$("#contacts_container").html relater_collection_view.render().el
+
+				message_collection = new MessageCollection()
+				message_collection.fetch
+					success : ->
+							 message_collection_view = new MessageCollectionView({"message_collection":message_collection})
+							 $("#messages_container").html message_collection_view.render().el
+					error :->
+							console.log("Error occurred while parsing messages")

@@ -10,7 +10,7 @@ class @RelaterView extends Backbone.View
 	tagName:'li'
 	className:'available_contact'
 	events : {
-		'click li.available_contact' : 	'showMessages'
+		'click li.available_contact' : 	'sendRelaterModel'
 	}
 	initialize:(attributes) ->
 
@@ -19,18 +19,11 @@ class @RelaterView extends Backbone.View
 		@$el.html HAML["relater"](user_model:@model)
 		@
 
-	showMessages:(event) ->
+	sendRelaterModel:(event) ->
 		localStorage["relator_to_send"]=@model
-		message_collection = new MessageCollection()
-		message_collection.fetch
-					success : ->
-						message_collection_view = new MessageCollectionView({"collection":message_collection})
-						message_collection_view.render()
-						$("body").html message_collection_view.$el
 
 class @RelatersCollectionView extends Backbone.View
 	tagName:'ul'
-	className:'friends_contacts_container'
 	render : ->
 		for users_model in @collection.models
 			relater = new RelaterView({"model":users_model})
@@ -61,9 +54,10 @@ class @MessageView extends Backbone.View
 	initialize :(attributes)->
 
 	render : ->
-		@$el.html HAML["message"](message:@message_model)
+		@$el.html HAML["message"](message_view_model:@message_model_class)
 		@
 	send_message :(event)->
+		console.log("message clicked")
 		
 
 class @MessageCollectionView extends Backbone.View
@@ -72,7 +66,8 @@ class @MessageCollectionView extends Backbone.View
 	initialize :(attributes)->
 
 	render : ->
-		for message_model in @collection.models
-			relater= new MessageView({"message_model":@message_model})
+		for num in [0..@message_collection.models.length]
+			console.log @message_collection.models[num]
+			relater= new MessageView({"message_model_class":@message_collection.models[num]})
 			@$el.append relater.render().$el
 		@

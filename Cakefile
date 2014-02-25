@@ -28,6 +28,7 @@ is_coffee_available= ->
 		present ||= path.exists("#{value}/coffee")
 	present
 
+
 if_coffee = (callback)->	
 	unless is_coffee_available
 		console.log("Coffeescript not found ! Install and try again")

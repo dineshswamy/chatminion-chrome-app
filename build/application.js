@@ -16,17 +16,30 @@
   document.addEventListener("DOMContentLoaded", initialize_extension);
 
   loadRelators = function(user_id) {
-    var relater_collection;
+    var message_collection, relater_collection;
     relater_collection = new RelaterCollection({
       "user_id": user_id
     });
-    return relater_collection.fetch({
+    relater_collection.fetch({
       success: function() {
         var relater_collection_view;
         relater_collection_view = new RelatersCollectionView({
           "collection": relater_collection
         });
-        return $("body").html(relater_collection_view.render().el);
+        return $("#contacts_container").html(relater_collection_view.render().el);
+      }
+    });
+    message_collection = new MessageCollection();
+    return message_collection.fetch({
+      success: function() {
+        var message_collection_view;
+        message_collection_view = new MessageCollectionView({
+          "message_collection": message_collection
+        });
+        return $("#messages_container").html(message_collection_view.render().el);
+      },
+      error: function() {
+        return console.log("Error occurred while parsing messages");
       }
     });
   };
