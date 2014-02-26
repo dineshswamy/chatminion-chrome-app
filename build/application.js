@@ -34,7 +34,7 @@
       success: function() {
         var message_collection_view;
         message_collection_view = new MessageCollectionView({
-          "message_collection": message_collection
+          "collection": message_collection
         });
         return $("#messages_container").html(message_collection_view.render().el);
       },

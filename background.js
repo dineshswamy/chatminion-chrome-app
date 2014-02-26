@@ -9,7 +9,9 @@
 // });
 
 var base_url="http://localhost:3000";
-var window_id=null;
+  var window_id=null;
+var user_to_send=null;
+var message_to_send=null;
 // chrome.app.runtime.onLaunched.addListener(function() {
 //   chrome.app.window.create('../popup.html', {
 //     "bounds": {
@@ -32,13 +34,33 @@ var window_id=null;
 // }
 
 chrome.runtime.onMessage.addListener(function(request,sender,sendResponse){
-
-	console.log("Message recieved "+request.close_window);
-	if(request.close_window)
-		if(chrome.app.window.current())
-			chrome.app.window.current().close();
+  if(request.user_to_send)
+  {
+    user_to_send=request.user_to_send;
+  }
+  else if(request.message_to_send)
+  { 
+    message_to_send=request.message_to_send;
+    data={
+      "sender":user_to_send.id,
+      "channel_id":user_to_send.channel_id,
+      "message":message_to_send.user_message
+    };
+    console.log("sending request");
+    $.post(base_url+"/calltheteam/sendmessage",data,null);
+  }
 
 });
+
+chrome.pushMessaging.onMessage.addListener(show_notification);
+
+function show_notification(message)
+{
+    var notification = window.webkitNotifications.createNotification(
+    '', 'Call my team notification', message.payload + " [" + message.subchannelId + "]");
+  notification.show();
+
+}
 
 // function getWindowId(Window window)
 // {

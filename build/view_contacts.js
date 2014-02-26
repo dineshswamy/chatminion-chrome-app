@@ -36,7 +36,7 @@
     RelaterView.prototype.className = 'available_contact';
 
     RelaterView.prototype.events = {
-      'click li.available_contact': 'sendRelaterModel'
+      'click': 'sendRelaterModel'
     };
 
     RelaterView.prototype.initialize = function(attributes) {};
@@ -49,7 +49,9 @@
     };
 
     RelaterView.prototype.sendRelaterModel = function(event) {
-      return localStorage["relator_to_send"] = this.model;
+      return chrome.runtime.sendMessage({
+        "user_to_send": this.model
+      });
     };
 
     return RelaterView;
@@ -141,13 +143,15 @@
 
     MessageView.prototype.render = function() {
       this.$el.html(HAML["message"]({
-        message_view_model: this.message_model_class
+        message_view_model: this.model
       }));
       return this;
     };
 
     MessageView.prototype.send_message = function(event) {
-      return console.log("message clicked");
+      return chrome.runtime.sendMessage({
+        "message_to_send": this.model
+      }, null);
     };
 
     return MessageView;
@@ -169,11 +173,12 @@
     MessageCollectionView.prototype.initialize = function(attributes) {};
 
     MessageCollectionView.prototype.render = function() {
-      var num, relater, _i, _ref;
-      for (num = _i = 0, _ref = this.message_collection.models.length; 0 <= _ref ? _i <= _ref : _i >= _ref; num = 0 <= _ref ? ++_i : --_i) {
-        console.log(this.message_collection.models[num]);
+      var message_models, relater, _i, _len, _ref;
+      _ref = this.collection.models;
+      for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+        message_models = _ref[_i];
         relater = new MessageView({
-          "message_model_class": this.message_collection.models[num]
+          "model": message_models
         });
         this.$el.append(relater.render().$el);
       }

@@ -10,7 +10,7 @@ class @RelaterView extends Backbone.View
 	tagName:'li'
 	className:'available_contact'
 	events : {
-		'click li.available_contact' : 	'sendRelaterModel'
+		'click' : 	'sendRelaterModel'
 	}
 	initialize:(attributes) ->
 
@@ -20,7 +20,7 @@ class @RelaterView extends Backbone.View
 		@
 
 	sendRelaterModel:(event) ->
-		localStorage["relator_to_send"]=@model
+		chrome.runtime.sendMessage({"user_to_send":@model})		
 
 class @RelatersCollectionView extends Backbone.View
 	tagName:'ul'
@@ -54,10 +54,10 @@ class @MessageView extends Backbone.View
 	initialize :(attributes)->
 
 	render : ->
-		@$el.html HAML["message"](message_view_model:@message_model_class)
+		@$el.html HAML["message"](message_view_model:@model)
 		@
 	send_message :(event)->
-		console.log("message clicked")
+		chrome.runtime.sendMessage({"message_to_send":@model},null)
 		
 
 class @MessageCollectionView extends Backbone.View
@@ -66,8 +66,7 @@ class @MessageCollectionView extends Backbone.View
 	initialize :(attributes)->
 
 	render : ->
-		for num in [0..@message_collection.models.length]
-			console.log @message_collection.models[num]
-			relater= new MessageView({"message_model_class":@message_collection.models[num]})
+		for message_models in @collection.models
+			relater= new MessageView({"model":message_models})
 			@$el.append relater.render().$el
 		@

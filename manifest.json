@@ -20,6 +20,7 @@
   "permissions": [
     "storage",
     "pushMessaging",
+    "notifications",
     "tts",
     "http://localhost:3000/*",
     "https://www.google.com/accounts/OAuthGetRequestToken",
