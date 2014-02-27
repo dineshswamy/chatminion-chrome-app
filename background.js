@@ -56,10 +56,7 @@ chrome.pushMessaging.onMessage.addListener(show_notification);
 
 function show_notification(message)
 {
-    var notification = window.webkitNotifications.createNotification(
-    '', 'Call my team notification', message.payload + " [" + message.subchannelId + "]");
-  notification.show();
-
+    chrome.tts.speak(message.payload);
 }
 
 // function getWindowId(Window window)
