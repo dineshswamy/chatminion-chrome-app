@@ -6,6 +6,8 @@ initialize_extension = ->
 	else
 		loadRelators(localStorage["registered_user_id"])
 
+	$("#").click();
+
 document.addEventListener("DOMContentLoaded",initialize_extension);
 
 
@@ -23,3 +25,17 @@ loadRelators = (user_id)->
 							 $("#messages_container").html message_collection_view.render().el
 					error :->
 							console.log("Error occurred while parsing messages")
+check_and_addRelator = (add_relator_id) ->
+				data =
+					relator_id:add_relator_id
+				url	= chrome.extension.getBackgroundPage().base_url+"/calltheteam/addcontact"
+				$.post(url,data,callback_check_and_addRelator);
+
+callback_check_and_addRelator = (response_data)->
+				switch response_data.status 
+					when response_data.status=="success" then add_relator(response_data)
+					when response_data.status=="not "
+
+
+
+

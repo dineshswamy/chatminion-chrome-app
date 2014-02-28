@@ -46,7 +46,8 @@ chrome.runtime.onMessage.addListener(function(request,sender,sendResponse){
       "channel_id":user_to_send.channel_id,
       "message":message_to_send.user_message
     };
-    console.log("sending request");
+    //console.log("sending request");
+
     $.post(base_url+"/calltheteam/sendmessage",data,null);
   }
 
@@ -56,7 +57,17 @@ chrome.pushMessaging.onMessage.addListener(show_notification);
 
 function show_notification(message)
 {
-    chrome.tts.speak(message.payload);
+    
+     var notification = window.webkitNotifications.createNotification(
+    '', 'New notification', message.payload + " [" + message.subchannelId + "]");
+     
+       notification.show();
+    // chrome.tts.speak(message.payload,null,function(){
+    //   if(chrome.extension.lastError)
+    //   {
+    //     console.log("TTS error "+ chrome.extension.lastError.message);
+    //   }
+    // });
 }
 
 // function getWindowId(Window window)
