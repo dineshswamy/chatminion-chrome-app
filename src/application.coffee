@@ -1,12 +1,10 @@
 'use-strict';
 initialize_extension = ->
-	if !localStorage["registered"] and localStorage["registered_user_id"]!=null
-		sign_up_view = new SignupView()
-		$("body").html(sign_up_view.render().$el)
-	else
+	# if !localStorage["registered"] and localStorage["registered_user_id"]!=null
+	# 	sign_up_view = new SignupView()
+	# 	$("body").html(sign_up_view.render().$el)
+	# else
 		loadRelators(localStorage["registered_user_id"])
-
-	$("#").click();
 
 document.addEventListener("DOMContentLoaded",initialize_extension);
 
@@ -32,9 +30,16 @@ check_and_addRelator = (add_relator_id) ->
 				$.post(url,data,callback_check_and_addRelator);
 
 callback_check_and_addRelator = (response_data)->
-				switch response_data.status 
-					when response_data.status=="success" then add_relator(response_data)
-					when response_data.status=="not "
+#				switch response_data.status 
+#					when response_data.status=="success" then add_relator(response_data)
+#					when response_data.status=="user_not_registered" then openGmailForRequest()
+#					else display_response(response)
+
+
+# set_alert = (alert_type,alert_message,alert_dom_id)->
+# 		switch alert_type			
+# 			when alert_type=="info" then 
+# 				$("#"+alert_dom_id).addClass("")
 
 
 

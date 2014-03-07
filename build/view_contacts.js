@@ -170,7 +170,11 @@
 
     MessageCollectionView.prototype.className = 'messages_container';
 
-    MessageCollectionView.prototype.initialize = function(attributes) {};
+    MessageCollectionView.prototype.initialize = function(attributes) {
+      var messages;
+      messages = new Messages();
+      return messages.init();
+    };
 
     MessageCollectionView.prototype.render = function() {
       var message_models, relater, _i, _len, _ref;

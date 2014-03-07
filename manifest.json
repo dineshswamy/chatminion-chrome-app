@@ -13,9 +13,12 @@
                     "page":"background.html"
     },
   "default_locale": "en",
-  "browser_action":
+  "app":
         {
-          "popup":"popup.html"
+       "launch" :{
+                    "local_path":"popup.html",
+                    "container":"panel"
+                  }
         },    
   "permissions": [
     "storage",

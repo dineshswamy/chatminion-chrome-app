@@ -1,7 +1,6 @@
 <!doctype html>
 <html>
     <head>
-        <link href="css/bootstrap.css" rel="stylesheet" />
         <title>Chat Minion</title>
     </head>
     <body>
@@ -9,19 +8,18 @@
             <div class="row">
                     <div class="col-md-4 col-xs-4">
                         <div class="panel panel-default">
-                            
-                                <div class="panel-body">
-                                    Contacts
-                                </div>
+                        
+                            <div class="panel-body">
+                                Contacts
+                            </div>
                             
                             <form class="form-inline" role="form">
                                 <div class="form-group">
                                     <input type="email" class="form-control" id="add_relater_id" placeholder="Your contact's id" />
                                 </div>
                                 <div class="form-group">
-                                    <button class="btn btn-default" id="add_relator_button">add</button>
+                                    <button class="btn button-default" id="add_relator_button">add</button>
                                 </div>
-
                             </form>
 
                         </div>
@@ -52,11 +50,11 @@
     </body>
             
         <script type="text/javascript" src="libs/jquery-2.1.0.min.js"></script>
-        <script type="text/javascript" src="libs/bootstrap.min.js"></script>
         <script type="text/javascript" src="libs/underscore-min.js"></script>
         <script type="text/javascript" src="libs/backbone-min.js"></script>
         <script type="text/javascript" src="build/templates.js"></script>
         <script type="text/javascript" src="build/models/user_model.js"></script>
+        <script type="text/javascript" src="build/models/messages_db_helper.js"></script>
         <script type="text/javascript" src="build/views/signup_view.js"></script>
         <script type="text/javascript" src="build/view_contacts.js"></script>
         <script type="text/javascript" src="build/application.js"></script>
