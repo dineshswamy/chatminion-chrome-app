@@ -16,17 +16,15 @@ class @Messages
 			object_store_messages = db.createObjectStore("messages",{keyPath:"id"})
 			object_store_message_options = db.createObjectStore("message_options",{keyPath:"id"})
 		@request.onsuccess = (event)=>
-			console.log "database opening good"
 			@database=event.target.result
 			@.getAllMessages()
-			console.log chrome.extension.getBackgroundPage().messages_with_options
 			#chrome.runtime.sendMessage({"messages_loaded":true},null)
 		@request.onerror = (event)->
 			console.log "database_logging_error" +event.value
 
 	addMessage : (object_to_store)->
 		if @database != null 
-			@transaction=@database.transaction(["messages"],"readwrite")
+			@transaction=@database.transaction(["messages","message_options"],"readwrite")
 			@store = @transaction.objectStore("messages");
 			request = @store.put(object_to_store)
 			request.onsuccess = (event)->
@@ -36,11 +34,11 @@ class @Messages
 
 	addMessageOptions : (object_to_store)->
 		if @database != null 
-			@transaction=@database.transaction(["message_options"],"readwrite")
+			@transaction=@database.transaction(["messages","message_options"],"readwrite")
 			@store = @transaction.objectStore("message_options");
 			request = @store.put(object_to_store)
 			request.onsuccess = (event)->
-				console.log "message successfully written"
+				console.log "message options successfully written"
 			request.onerror = (event)->
 				console.log "insertion error"
 
@@ -53,17 +51,20 @@ class @Messages
 		now = new Date()
 
 			
-	getAllMessages:()->	
+	getAllMessages:() ->	
 		#initializing array
-		chrome.extension.getBackgroundPage().messages_with_options = []
-		message_transactions = @database.transaction(["message_options","messages"])
-		objectstore = message_transactions.objectStore("message_options")
-		messages_objectstore = message_transactions.objectStore("messages")
-		objectstore.openCursor().onsuccess = (event)->
-			cursor = event.target.result
-			if cursor
-				messages_objectstore.openCursor(cursor.value.message_id).onsuccess = (event)->
-					messages_cursor = event.target.result
-					chrome.extension.getBackgroundPage().messages_with_options.push(messages_cursor.value)	
-					cursor.continue()
-			
+        chrome.extension.getBackgroundPage().messages_with_options = []
+        message_transactions = @database.transaction(["message_options","messages"])
+        objectstore = message_transactions.objectStore("message_options")
+        messages_objectstore = message_transactions.objectStore("messages")
+        objectstore.openCursor().onsuccess = (event)->
+        	cursor = event.target.result
+        	if cursor
+        		messages_objectstore.openCursor(cursor.value.message_id).onsuccess = (event)->
+        			messages_cursor = event.target.result
+        			chrome.extension.getBackgroundPage().messages_with_options.push(messages_cursor.value)	
+        			cursor.continue()
+        	else
+        		message_collection = chrome.extension.getBackgroundPage().messages_with_options
+        		message_collection_view = new MessageCollectionView({"collection":message_collection})
+        		$("#messages_container").html message_collection_view.render().el

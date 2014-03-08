@@ -37,7 +37,7 @@
         }
       };
       $o = [];
-      $o.push("" + $e($c(this.message_view_model.get("user_message"))));
+      $o.push("" + $e($c(this.message_view_model.user_message)));
       return $o.join("\n").replace(/\s([\w-]+)='true'/mg, ' $1').replace(/\s([\w-]+)='false'/mg, '');
     }).call(context);
   };
@@ -67,8 +67,10 @@
         }
       };
       $o = [];
-      $o.push("" + $e($c(this.user_model.get("name"))));
-      return $o.join("\n").replace(/\s([\w-]+)='true'/mg, ' $1').replace(/\s([\w-]+)='false'/mg, '');
+      $o.push("<div class='todo-icon fui-time'></div>\n<div class='todo-content'>\n  <h4 class='todo-name'>");
+      $o.push("    " + $e($c(this.user_model.get("name"))));
+      $o.push("  </h4>\n</div>");
+      return $o.join("\n").replace(/\s([\w-]+)='true'/mg, ' $1').replace(/\s([\w-]+)='false'/mg, '').replace(/\s(?:id|class)=(['"])(\1)/mg, "");
     }).call(context);
   };
 

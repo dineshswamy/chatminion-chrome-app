@@ -36,27 +36,21 @@ var message_to_send=null;
 var messages_with_options=[]
 
 
-chrome.runtime.onMessage.addListener(function(request,sender,sendResponse){
-  if(request.user_to_send)
-  {
-    user_to_send=request.user_to_send;
-  }
-  else if(request.message_to_send)
-  { 
-    message_to_send=request.message_to_send;
+
+function sendMessage()
+{
+    console.log("sending request");
     data={
       "sender":user_to_send.id,
       "channel_id":user_to_send.channel_id,
       "message":message_to_send.user_message
     };
-    //console.log("sending request");
-
     $.post(base_url+"/calltheteam/sendmessage",data,null);
-  }
+} 
 
-});
 
-chrome.pushMessaging.onMessage.addListener(show_notification);
+
+//chrome.pushMessaging.onMessage.addListener(show_notification);
 
 function show_notification(message)
 {

@@ -6,6 +6,15 @@ html,body,.strip-lines {
     height: 100%;
 }
 
+body {
+
+
+}
+
+.container {
+	background-image: url('../images/chat_minion_bg.jpg');
+	background-position: 0px 50%;
+}
 .strip-lines {
 	background-image: url("../images/jarviz_background.png");
 }

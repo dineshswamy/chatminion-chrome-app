@@ -9,24 +9,12 @@
 
   document.addEventListener("DOMContentLoaded", initialize_extension);
 
-  chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
-    var message_collection, message_collection_view;
-    if (request.messages_loaded) {
-      message_collection = chrome.extension.getBackgroundPage().messages_with_options;
-      console.log(message_collection);
-      message_collection_view = new MessageCollectionView({
-        "collection": message_collection
-      });
-      return $("#messages_container").html(message_collection_view.render().el);
-    }
-  });
-
   loadRelators = function(user_id) {
-    var relater_collection;
+    var messages, relater_collection;
     relater_collection = new RelaterCollection({
       "user_id": user_id
     });
-    return relater_collection.fetch({
+    relater_collection.fetch({
       success: function() {
         var relater_collection_view;
         relater_collection_view = new RelatersCollectionView({
@@ -35,6 +23,8 @@
         return $("#contacts_container").html(relater_collection_view.render().el);
       }
     });
+    messages = new Messages();
+    return messages.init();
   };
 
   check_and_addRelator = function(add_relator_id) {

@@ -49,9 +49,8 @@
     };
 
     RelaterView.prototype.sendRelaterModel = function(event) {
-      return chrome.runtime.sendMessage({
-        "user_to_send": this.model
-      });
+      console.log("relater clicked");
+      return chrome.extension.getBackgroundPage().user_to_send = this.model;
     };
 
     return RelaterView;
@@ -149,9 +148,9 @@
     };
 
     MessageView.prototype.send_message = function(event) {
-      return chrome.runtime.sendMessage({
-        "message_to_send": this.model
-      }, null);
+      console.log("message clicked");
+      chrome.extension.getBackgroundPage().message_to_send = this.model;
+      return chrome.extension.getBackgroundPage().sendMessage();
     };
 
     return MessageView;
@@ -170,14 +169,10 @@
 
     MessageCollectionView.prototype.className = 'messages_container';
 
-    MessageCollectionView.prototype.initialize = function(attributes) {
-      var messages;
-      messages = new Messages();
-      return messages.init();
-    };
+    MessageCollectionView.prototype.initialize = function(attributes) {};
 
-    MessageCollectionView.prototype.render = function(message_models) {
-      var relater, _i, _len, _ref;
+    MessageCollectionView.prototype.render = function() {
+      var message_models, relater, _i, _len, _ref;
       _ref = this.collection;
       for (_i = 0, _len = _ref.length; _i < _len; _i++) {
         message_models = _ref[_i];

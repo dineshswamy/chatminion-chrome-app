@@ -7,21 +7,16 @@ initialize_extension = ->
 		loadRelators(localStorage["registered_user_id"])
 
 document.addEventListener("DOMContentLoaded",initialize_extension);
-
-
-chrome.runtime.onMessage.addListener (request,sender,sendResponse) -> if request.messages_loaded 
-    message_collection = chrome.extension.getBackgroundPage().messages_with_options
-    console.log message_collection
-    message_collection_view = new MessageCollectionView({"collection":message_collection})
-    $("#messages_container").html message_collection_view.render().el
-	
-
+  	
+      
 loadRelators = (user_id) ->
     relater_collection = new RelaterCollection({"user_id":user_id})
     relater_collection.fetch
         success : -> 
             relater_collection_view = new RelatersCollectionView({"collection":relater_collection})
             $("#contacts_container").html relater_collection_view.render().el
+    messages = new Messages()
+    messages.init()
 
 check_and_addRelator = (add_relator_id) ->
 				data =

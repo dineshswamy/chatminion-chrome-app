@@ -31,10 +31,8 @@
         });
       };
       this.request.onsuccess = function(event) {
-        console.log("database opening good");
         _this.database = event.target.result;
-        _this.getAllMessages();
-        return console.log(chrome.extension.getBackgroundPage().messages_with_options);
+        return _this.getAllMessages();
       };
       return this.request.onerror = function(event) {
         return console.log("database_logging_error" + event.value);
@@ -44,7 +42,7 @@
     Messages.prototype.addMessage = function(object_to_store) {
       var request;
       if (this.database !== null) {
-        this.transaction = this.database.transaction(["messages"], "readwrite");
+        this.transaction = this.database.transaction(["messages", "message_options"], "readwrite");
         this.store = this.transaction.objectStore("messages");
         request = this.store.put(object_to_store);
         request.onsuccess = function(event) {
@@ -59,11 +57,11 @@
     Messages.prototype.addMessageOptions = function(object_to_store) {
       var request;
       if (this.database !== null) {
-        this.transaction = this.database.transaction(["message_options"], "readwrite");
+        this.transaction = this.database.transaction(["messages", "message_options"], "readwrite");
         this.store = this.transaction.objectStore("message_options");
         request = this.store.put(object_to_store);
         request.onsuccess = function(event) {
-          return console.log("message successfully written");
+          return console.log("message options successfully written");
         };
         return request.onerror = function(event) {
           return console.log("insertion error");
@@ -113,7 +111,7 @@
       objectstore = message_transactions.objectStore("message_options");
       messages_objectstore = message_transactions.objectStore("messages");
       return objectstore.openCursor().onsuccess = function(event) {
-        var cursor;
+        var cursor, message_collection, message_collection_view;
         cursor = event.target.result;
         if (cursor) {
           return messages_objectstore.openCursor(cursor.value.message_id).onsuccess = function(event) {
@@ -122,6 +120,12 @@
             chrome.extension.getBackgroundPage().messages_with_options.push(messages_cursor.value);
             return cursor["continue"]();
           };
+        } else {
+          message_collection = chrome.extension.getBackgroundPage().messages_with_options;
+          message_collection_view = new MessageCollectionView({
+            "collection": message_collection
+          });
+          return $("#messages_container").html(message_collection_view.render().el);
         }
       };
     };

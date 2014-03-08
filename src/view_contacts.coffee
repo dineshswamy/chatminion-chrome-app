@@ -20,7 +20,8 @@ class @RelaterView extends Backbone.View
 		@
 
 	sendRelaterModel:(event) ->
-		chrome.runtime.sendMessage({"user_to_send":@model})		
+		console.log "relater clicked"
+		chrome.extension.getBackgroundPage().user_to_send = @model
 
 class @RelatersCollectionView extends Backbone.View
 	tagName:'ul'
@@ -57,17 +58,17 @@ class @MessageView extends Backbone.View
 		@$el.html HAML["message"](message_view_model:@model)
 		@
 	send_message :(event)->
-		chrome.runtime.sendMessage({"message_to_send":@model},null)
+		console.log "message clicked"
+		chrome.extension.getBackgroundPage().message_to_send = @model
+		chrome.extension.getBackgroundPage().sendMessage()
 		
 
 class @MessageCollectionView extends Backbone.View
 	tagName:'ul'
 	className:'messages_container'
 	initialize :(attributes)->
-		messages = new Messages()
-		messages.init()
 	
-	render : (message_models)->
+	render : ()->
 		for message_models in @collection
 			relater= new MessageView({"model":message_models})
 			@$el.append relater.render().$el

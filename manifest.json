@@ -18,6 +18,8 @@
        "launch" :{
                     "local_path":"popup.html",
                     "container":"panel"
+                    "width":"200"
+                    "height":"400"
                   }
         },    
   "permissions": [
