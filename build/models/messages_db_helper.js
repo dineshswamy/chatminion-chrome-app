@@ -5,12 +5,11 @@
 
     function Messages() {}
 
-    Messages.prototype.init = function(callback) {
+    Messages.prototype.init = function() {
       var _this = this;
       this.version = 2;
       this.database = null;
       this.transaction = null;
-      this.callback = callback;
       this.messages_url = chrome.extension.getBackgroundPage().base_url + "/messages.json";
       this.message_options_url = chrome.extension.getBackgroundPage().base_url + "/message_options.json";
       this.db_name = "calltheteam";
@@ -33,7 +32,9 @@
       };
       this.request.onsuccess = function(event) {
         console.log("database opening good");
-        return _this.database = event.target.result;
+        _this.database = event.target.result;
+        _this.getAllMessages();
+        return console.log(chrome.extension.getBackgroundPage().messages_with_options);
       };
       return this.request.onerror = function(event) {
         return console.log("database_logging_error" + event.value);
@@ -106,15 +107,22 @@
     };
 
     Messages.prototype.getAllMessages = function() {
-      var objectstore;
-      objectstore = this.database.transaction("message_options").objectStore("message_options");
+      var message_transactions, messages_objectstore, objectstore;
+      chrome.extension.getBackgroundPage().messages_with_options = [];
+      message_transactions = this.database.transaction(["message_options", "messages"]);
+      objectstore = message_transactions.objectStore("message_options");
+      messages_objectstore = message_transactions.objectStore("messages");
       return objectstore.openCursor().onsuccess = function(event) {
         var cursor;
         cursor = event.target.result;
         if (cursor) {
-          this.callback(cursor.value);
+          return messages_objectstore.openCursor(cursor.value.message_id).onsuccess = function(event) {
+            var messages_cursor;
+            messages_cursor = event.target.result;
+            chrome.extension.getBackgroundPage().messages_with_options.push(messages_cursor.value);
+            return cursor["continue"]();
+          };
         }
-        return cursor["continue"]();
       };
     };
 

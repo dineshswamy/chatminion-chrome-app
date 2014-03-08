@@ -9,29 +9,30 @@
 
   document.addEventListener("DOMContentLoaded", initialize_extension);
 
+  chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
+    var message_collection, message_collection_view;
+    if (request.messages_loaded) {
+      message_collection = chrome.extension.getBackgroundPage().messages_with_options;
+      console.log(message_collection);
+      message_collection_view = new MessageCollectionView({
+        "collection": message_collection
+      });
+      return $("#messages_container").html(message_collection_view.render().el);
+    }
+  });
+
   loadRelators = function(user_id) {
-    var message_collection, relater_collection;
+    var relater_collection;
     relater_collection = new RelaterCollection({
       "user_id": user_id
     });
-    relater_collection.fetch({
+    return relater_collection.fetch({
       success: function() {
         var relater_collection_view;
         relater_collection_view = new RelatersCollectionView({
           "collection": relater_collection
         });
         return $("#contacts_container").html(relater_collection_view.render().el);
-      }
-    });
-    console.log(chrome.extension.getBackgroundPage().messages_with_options);
-    message_collection = new MessageCollection();
-    return message_collection.fetch({
-      success: function() {
-        var message_collection_view;
-        message_collection_view = new MessageCollectionView({
-          "collection": message_collection
-        });
-        return $("#messages_container").html(message_collection_view.render().el);
       }
     });
   };

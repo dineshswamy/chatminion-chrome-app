@@ -177,14 +177,17 @@
     };
 
     MessageCollectionView.prototype.render = function(message_models) {
-      var relater;
-      relater = new MessageView({
-        "model": message_models
-      });
-      return this.$el.append(relater.render().$el);
+      var relater, _i, _len, _ref;
+      _ref = this.collection;
+      for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+        message_models = _ref[_i];
+        relater = new MessageView({
+          "model": message_models
+        });
+        this.$el.append(relater.render().$el);
+      }
+      return this;
     };
-
-    MessageCollectionView;
 
     return MessageCollectionView;
 

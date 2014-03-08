@@ -18,7 +18,9 @@ class @Messages
 		@request.onsuccess = (event)=>
 			console.log "database opening good"
 			@database=event.target.result
-			getAllMessages()
+			@.getAllMessages()
+			console.log chrome.extension.getBackgroundPage().messages_with_options
+			#chrome.runtime.sendMessage({"messages_loaded":true},null)
 		@request.onerror = (event)->
 			console.log "database_logging_error" +event.value
 
@@ -52,9 +54,16 @@ class @Messages
 
 			
 	getAllMessages:()->	
-		objectstore = @database.transaction(["message_options"]).objectStore("message_options")
+		#initializing array
+		chrome.extension.getBackgroundPage().messages_with_options = []
+		message_transactions = @database.transaction(["message_options","messages"])
+		objectstore = message_transactions.objectStore("message_options")
+		messages_objectstore = message_transactions.objectStore("messages")
 		objectstore.openCursor().onsuccess = (event)->
 			cursor = event.target.result
-			chrome.extension.getBackgroundPage().messages_with_options.push(cursor.value)
-			if cursor 
-			cursor.continue()
+			if cursor
+				messages_objectstore.openCursor(cursor.value.message_id).onsuccess = (event)->
+					messages_cursor = event.target.result
+					chrome.extension.getBackgroundPage().messages_with_options.push(messages_cursor.value)	
+					cursor.continue()
+			
