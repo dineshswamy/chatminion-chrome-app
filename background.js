@@ -33,6 +33,9 @@ var message_to_send=null;
 // 	});
 // }
 
+var messages_with_options=[]
+
+
 chrome.runtime.onMessage.addListener(function(request,sender,sendResponse){
   if(request.user_to_send)
   {

@@ -176,18 +176,15 @@
       return messages.init();
     };
 
-    MessageCollectionView.prototype.render = function() {
-      var message_models, relater, _i, _len, _ref;
-      _ref = this.collection.models;
-      for (_i = 0, _len = _ref.length; _i < _len; _i++) {
-        message_models = _ref[_i];
-        relater = new MessageView({
-          "model": message_models
-        });
-        this.$el.append(relater.render().$el);
-      }
-      return this;
+    MessageCollectionView.prototype.render = function(message_models) {
+      var relater;
+      relater = new MessageView({
+        "model": message_models
+      });
+      return this.$el.append(relater.render().$el);
     };
+
+    MessageCollectionView;
 
     return MessageCollectionView;
 

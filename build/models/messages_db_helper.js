@@ -5,17 +5,18 @@
 
     function Messages() {}
 
-    Messages.prototype.init = function() {
+    Messages.prototype.init = function(callback) {
       var _this = this;
       this.version = 2;
       this.database = null;
       this.transaction = null;
+      this.callback = callback;
       this.messages_url = chrome.extension.getBackgroundPage().base_url + "/messages.json";
-      this.message_options_url = chrome.extension.getBackgroundPage() + "/message_options.json";
+      this.message_options_url = chrome.extension.getBackgroundPage().base_url + "/message_options.json";
       this.db_name = "calltheteam";
       this.request = indexedDB.open(this.db_name, this.version);
       this.request.onupgradeneeded = function(event) {
-        var db, object_store_messages;
+        var db, object_store_message_options, object_store_messages;
         db = event.target.result;
         if (db.objectStoreNames.contains("messages")) {
           db.deleteObjectStore("messages");
@@ -23,14 +24,16 @@
         if (db.objectStoreNames.contains("message_options")) {
           db.deleteObjectStore("message_options");
         }
-        return object_store_messages = db.createObjectStore("messages", {
+        object_store_messages = db.createObjectStore("messages", {
+          keyPath: "id"
+        });
+        return object_store_message_options = db.createObjectStore("message_options", {
           keyPath: "id"
         });
       };
       this.request.onsuccess = function(event) {
         console.log("database opening good");
-        _this.database = event.target.result;
-        return _this.fetch();
+        return _this.database = event.target.result;
       };
       return this.request.onerror = function(event) {
         return console.log("database_logging_error" + event.value);
@@ -69,7 +72,7 @@
 
     Messages.prototype.fetch = function() {
       var _this = this;
-      return $.get(this.url, function(data) {
+      $.get(this.messages_url, function(data) {
         var messages, _i, _len, _results;
         _results = [];
         for (_i = 0, _len = data.length; _i < _len; _i++) {
@@ -82,11 +85,37 @@
         }
         return _results;
       });
+      return $.get(this.message_options_url, function(data) {
+        var message_option, _i, _len, _results;
+        _results = [];
+        for (_i = 0, _len = data.length; _i < _len; _i++) {
+          message_option = data[_i];
+          _results.push(_this.addMessageOptions({
+            "id": message_option.id,
+            "message_id": message_option.message_id,
+            "options_id": message_option.options_id
+          }));
+        }
+        return _results;
+      });
     };
 
     Messages.prototype.needToSync = function() {
       var now;
       return now = new Date();
+    };
+
+    Messages.prototype.getAllMessages = function() {
+      var objectstore;
+      objectstore = this.database.transaction("message_options").objectStore("message_options");
+      return objectstore.openCursor().onsuccess = function(event) {
+        var cursor;
+        cursor = event.target.result;
+        if (cursor) {
+          this.callback(cursor.value);
+        }
+        return cursor["continue"]();
+      };
     };
 
     return Messages;

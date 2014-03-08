@@ -67,9 +67,7 @@ class @MessageCollectionView extends Backbone.View
 		messages = new Messages()
 		messages.init()
 	
-	render : ->
-		for message_models in @collection.models
-			# @messages.addMessage({"id":message_models.id,"user_message":message_models.user_message,"transform_pattern":message_models.transform_pattern})
+	render : (message_models)->
 			relater= new MessageView({"model":message_models})
 			@$el.append relater.render().$el
 		@

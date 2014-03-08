@@ -15,14 +15,15 @@ loadRelators = (user_id)->
 					success : -> 
 							relater_collection_view = new RelatersCollectionView({"collection":relater_collection})
 							$("#contacts_container").html relater_collection_view.render().el
-
+				console.log chrome.extension.getBackgroundPage().messages_with_options
 				message_collection = new MessageCollection()
 				message_collection.fetch
 					success : ->
 							 message_collection_view = new MessageCollectionView({"collection":message_collection})
 							 $("#messages_container").html message_collection_view.render().el
-					error :->
-							console.log("Error occurred while parsing messages")
+
+
+
 check_and_addRelator = (add_relator_id) ->
 				data =
 					relator_id:add_relator_id

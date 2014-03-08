@@ -23,6 +23,7 @@
         return $("#contacts_container").html(relater_collection_view.render().el);
       }
     });
+    console.log(chrome.extension.getBackgroundPage().messages_with_options);
     message_collection = new MessageCollection();
     return message_collection.fetch({
       success: function() {
@@ -31,9 +32,6 @@
           "collection": message_collection
         });
         return $("#messages_container").html(message_collection_view.render().el);
-      },
-      error: function() {
-        return console.log("Error occurred while parsing messages");
       }
     });
   };
