@@ -9,18 +9,11 @@
         "48": "images/jarviz_background-48.png",
         "128": "images/jarviz_background-120.png"
     },
-  "background": {
-                    "page":"background.html"
-    },
   "default_locale": "en",
-  "app":
-        {
-       "launch" :{
-                    "local_path":"popup.html",
-                    "container":"panel"
-                    "width":"200"
-                    "height":"400"
-                  }
+  "app":{
+        "background": {
+                    "page":"background.html"
+            }
         },    
   "permissions": [
     "storage",

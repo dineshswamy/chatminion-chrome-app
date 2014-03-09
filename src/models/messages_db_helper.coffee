@@ -7,6 +7,7 @@ class @Messages
 		@message_options_url=chrome.extension.getBackgroundPage().base_url+"/message_options.json"
 		@db_name="calltheteam"
 		@request = indexedDB.open(@db_name,@version)
+		@.fetch()
 		@request.onupgradeneeded = (event)->
 			db = event.target.result
 			if db.objectStoreNames.contains("messages") 

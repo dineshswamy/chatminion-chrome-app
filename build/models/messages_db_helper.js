@@ -14,6 +14,7 @@
       this.message_options_url = chrome.extension.getBackgroundPage().base_url + "/message_options.json";
       this.db_name = "calltheteam";
       this.request = indexedDB.open(this.db_name, this.version);
+      this.fetch();
       this.request.onupgradeneeded = function(event) {
         var db, object_store_message_options, object_store_messages;
         db = event.target.result;
