@@ -1,15 +1,26 @@
 'use-strict';
 initialize_extension = ->
-	# if !localStorage["registered"] and localStorage["registered_user_id"]!=null
-	# 	sign_up_view = new SignupView()
-	# 	$("body").html(sign_up_view.render().$el)
-	# else
-		loadRelators(localStorage["registered_user_id"])
+    chrome.storage.local.get ["registered","registered_user_id"],(result)->
+        console.log result
+        if result.registered is undefined and result.registered_user_id is undefined
+                sign_up_view = new SignupView({"call_back":loadRelators})
+                $("body").html(sign_up_view.render().$el)
+        else
+            console.log "registered id"+result.registered_user_id
+            loadRelators result.registered_user_id
+
 
 document.addEventListener("DOMContentLoaded",initialize_extension);
-  	
-      
+
+
+class @ContactsMessageView  extends Backbone.View
+	render: ->
+		@$el.html HAML["contacts_message_view"]	
+		@
+
 loadRelators = (user_id) ->
+    contacts_message_view = new ContactsMessageView()
+    $("body").html(contacts_message_view.render().$el)
     relater_collection = new RelaterCollection({"user_id":user_id})
     relater_collection.fetch
         success : -> 

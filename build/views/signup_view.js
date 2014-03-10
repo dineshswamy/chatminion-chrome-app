@@ -20,7 +20,10 @@
       'click button#google_sign_in': 'register'
     };
 
-    SignupView.prototype.initialize = function() {
+    SignupView.prototype.initialize = function(attributes) {
+      if (attributes.call_back) {
+        this.call_back = attributes.call_back;
+      }
       return console.log("signup view initialized");
     };
 
@@ -30,12 +33,13 @@
     };
 
     complete_registration = function(google_chrome_channel_id) {
-      var email_id_value, new_user;
+      var email_id_value, name_value, new_user;
+      name_value = $("#user_name").val();
       email_id_value = $("#user_email_id").val();
       new_user = new User({
         email_id: email_id_value,
         channel_id: google_chrome_channel_id.channelId,
-        name: 'sample_username'
+        name: name_value
       });
       return new_user.save({}, {
         success: function(model) {
@@ -45,16 +49,23 @@
               "id": model.get("user_id")
             });
             $(".status").html("Registered successfully");
-            localStorage["registered"] = true;
-            return localStorage["registered_user_id"] = model.get("user_id");
+            chrome.storage.local.set({
+              "registered": true,
+              "registered_user_id": model.get("user_id")
+            }, null);
+            return call_back(model.get("user_id"));
           } else if (model.get("status") === "failure") {
             $(".status").html("For some reasons registration failed.Please try again later");
-            localStorage["registered"] = false;
-            return localStorage["registered_user_id"] = null;
+            return chrome.storage.local.set({
+              "registered": false,
+              "registered_user_id": null
+            }, null);
           } else {
             $(".status").html(model.get("status"));
-            localStorage["registered"] = false;
-            return localStorage["registered_user_id"] = null;
+            return chrome.storage.local.set({
+              "registered": false,
+              "registered_user_id": null
+            }, null);
           }
         },
         error: function() {

@@ -63,7 +63,7 @@ notificationandTTS = (notification_title,notification_message)->
   #   console.log('TTS Error: ' + chrome.extension.lastError.message)
 
 
-chrome.pushMessaging.onMessage.addListener(dissectRecievedMessage);
+#chrome.pushMessaging.onMessage.addListener(dissectRecievedMessage);
 
 
 
@@ -75,11 +75,12 @@ getTransformedMessage = ()->
   notificationandTTS "Dinesh",message_transform_helper.getMessage()
   
 
-getTransformedMessage()
+#getTransformedMessage()
 
 
-dissectRecievedMessage = (message)->
-  
+# dissectRecievedMessage = (message)->
+#   notification = webkitNotifications.createNotification(null,"Notification title","Notification Message")
+#   notification.show()
 
     
   

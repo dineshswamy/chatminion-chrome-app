@@ -18,6 +18,21 @@
     window.HAML = {};
   }
 
+  window.HAML['contacts_message_view'] = function(context) {
+    return (function() {
+      var $o;
+      $o = [];
+      $o.push("<div class='container'>\n  <div class='row'>\n    <div class='col-md-4 col-xs-4'>\n      <div class='panel panel-default'>\n        Contacts\n      </div>\n    </div>\n  </div>\n  <div class='row'>\n    <div class='col-md-4 col-xs-4' id='contacts_container'></div>\n    <div class='col-md-4 col-xs-4' id='messages_container'></div>\n  </div>\n</div>");
+      return $o.join("\n").replace(/\s(?:id|class)=(['"])(\1)/mg, "");
+    }).call(context);
+  };
+
+}).call(this);
+(function() {
+  if (window.HAML == null) {
+    window.HAML = {};
+  }
+
   window.HAML['message'] = function(context) {
     return (function() {
       var $c, $e, $o;
@@ -84,7 +99,7 @@
     return (function() {
       var $o;
       $o = [];
-      $o.push("<div class='status'></div>\n<div id='email_sending_template'>\n  <input id='user_email_id' placeholder='Your email ...'>\n    <button id='google_sign_in'>Google sign in</button>\n</div>");
+      $o.push("<center>\n  <div class='status'></div>\n  <div id='email_sending_template'></div>\n  <input id='user_email_id' placeholder='Your email ...'>\n  <input id='user_name' placeholder='Your name ...'>\n  <button id='google_sign_in'>Signup</button>\n</center>");
       return $o.join("\n").replace(/\s(?:id|class)=(['"])(\1)/mg, "");
     }).call(context);
   };

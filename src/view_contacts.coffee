@@ -5,7 +5,6 @@ class @RelaterCollection extends Backbone.Collection
 	initialize :(attributes) ->
 		@url = chrome.extension.getBackgroundPage().base_url+"/user/"+attributes.user_id+"/contacts"
 
-
 class @RelaterView extends Backbone.View
 	tagName:'li'
 	className:'available_contact'
