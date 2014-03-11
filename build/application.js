@@ -5,45 +5,39 @@
     __hasProp = {}.hasOwnProperty,
     __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; };
 
-  initialize_extension = function() {
-    return chrome.storage.local.get(["registered", "registered_user_id"], function(result) {
-      var sign_up_view;
-      console.log(result);
-      if (result.registered === void 0 && result.registered_user_id === void 0) {
-        sign_up_view = new SignupView({
-          "call_back": loadRelators
-        });
-        return $("body").html(sign_up_view.render().$el);
-      } else {
-        console.log("registered id" + result.registered_user_id);
-        return loadRelators(result.registered_user_id);
-      }
-    });
-  };
+  this.ContactsView = (function(_super) {
 
-  document.addEventListener("DOMContentLoaded", initialize_extension);
+    __extends(ContactsView, _super);
 
-  this.ContactsMessageView = (function(_super) {
-
-    __extends(ContactsMessageView, _super);
-
-    function ContactsMessageView() {
-      return ContactsMessageView.__super__.constructor.apply(this, arguments);
+    function ContactsView() {
+      return ContactsView.__super__.constructor.apply(this, arguments);
     }
 
-    ContactsMessageView.prototype.render = function() {
-      this.$el.html(HAML["contacts_message_view"]);
-      return this;
+    ContactsView.prototype.events = {
+      "click #submit_new_contact": "addContact"
     };
 
-    return ContactsMessageView;
+    return ContactsView;
 
   })(Backbone.View);
 
+  ({
+    render: function() {
+      this.$el.html(HAML["contacts_view"]);
+      return this({
+        addcontact: function() {
+          var new_contact_email;
+          new_contact_email = $("#new_contact_email").val();
+          return check_and_addRelator(new_contact_email);
+        }
+      });
+    }
+  });
+
   loadRelators = function(user_id) {
     var contacts_message_view, messages, relater_collection;
-    contacts_message_view = new ContactsMessageView();
-    $("body").html(contacts_message_view.render().$el);
+    contacts_message_view = new ContactsView();
+    $(".container").html(contacts_message_view.render().$el);
     relater_collection = new RelaterCollection({
       "user_id": user_id
     });
@@ -70,5 +64,21 @@
   };
 
   callback_check_and_addRelator = function(response_data) {};
+
+  initialize_extension = function() {
+    return chrome.storage.local.get(["registered", "registered_user_id"], function(result) {
+      var sign_up_view;
+      console.log(result);
+      if (result.registered === void 0 && result.registered_user_id === void 0) {
+        sign_up_view = new SignupView(loadRelators);
+        return $(".container").html(sign_up_view.render().$el);
+      } else {
+        console.log("registered id" + result.registered_user_id);
+        return loadRelators(result.registered_user_id);
+      }
+    });
+  };
+
+  document.addEventListener("DOMContentLoaded", initialize_extension);
 
 }).call(this);

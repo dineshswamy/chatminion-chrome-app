@@ -18,11 +18,11 @@
     window.HAML = {};
   }
 
-  window.HAML['contacts_message_view'] = function(context) {
+  window.HAML['contacts_view'] = function(context) {
     return (function() {
       var $o;
       $o = [];
-      $o.push("<div class='container'>\n  <div class='row'>\n    <div class='col-md-4 col-xs-4'>\n      <div class='panel panel-default'>\n        Contacts\n      </div>\n    </div>\n  </div>\n  <div class='row'>\n    <div class='col-md-4 col-xs-4' id='contacts_container'></div>\n    <div class='col-md-4 col-xs-4' id='messages_container'></div>\n  </div>\n</div>");
+      $o.push("<div class='container'>\n  <div class='row'>\n    <div class='col-md-4 col-xs-4'>Contacts</div>\n  </div>\n  <div class='row'>\n    <div class=' col-md-4 col-xs-4' id='contacts_container'></div>\n  </div>\n  <div class='row add_contact'>\n    <div class=' col-md-4 col-xs-4'></div>\n    <input id='new_contact_email' placeholder='enter email id' type='email'>\n    <button id='submit_new_contact'>Add</button>\n  </div>\n</div>");
       return $o.join("\n").replace(/\s(?:id|class)=(['"])(\1)/mg, "");
     }).call(context);
   };
@@ -54,6 +54,21 @@
       $o = [];
       $o.push("" + $e($c(this.message_view_model.user_message)));
       return $o.join("\n").replace(/\s([\w-]+)='true'/mg, ' $1').replace(/\s([\w-]+)='false'/mg, '');
+    }).call(context);
+  };
+
+}).call(this);
+(function() {
+  if (window.HAML == null) {
+    window.HAML = {};
+  }
+
+  window.HAML['messages_view'] = function(context) {
+    return (function() {
+      var $o;
+      $o = [];
+      $o.push("<div class='container'>\n  <div class='row'>\n    <div class='col-md-4 col-xs-4'>\n      Messages\n    </div>\n  </div>\n  <div class='row'>\n    <div class=' col-md-4 col-xs-4' id='messages_container'></div>\n  </div>\n</div>");
+      return $o.join("\n").replace(/\s(?:id|class)=(['"])(\1)/mg, "");
     }).call(context);
   };
 

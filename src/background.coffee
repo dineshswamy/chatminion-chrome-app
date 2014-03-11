@@ -8,20 +8,10 @@
  #  'app_name': 'Minion your team mate'
  # });
 
-base_url = "http://localhost:3000"
-#window_id=null;
-# var 
-user_to_send = null
-# var 
-message_to_send = null
-#  chrome.app.runtime.onLaunched.addListener(function() {
-#    chrome.app.window.create('../popup.html', {
-#      "bounds": {
-#        "width": 500,
-#        "height": 650
-#     },
-#    });
-#  });
+window.base_url = "http://localhost:3000"
+window.user_to_send = null
+window.message_to_send = null
+
 
  # function openPanel()
  # {
@@ -35,20 +25,15 @@ message_to_send = null
  #  });
  # }
 
-messages_with_options = []
-chrome.app.runtime.onLaunched.addListener( ()-> 
-  chrome.app.window.create("../popup.html",
-      bounds: 
-         width: 360
-         height: 300
-         left: 600
-      minWidth: 220
-      minHeight: 220
-  ))
+window.messages_with_options = []
+chrome.browserAction.onClicked.addListener( (tab)-> chrome.windows.create( 
+   url:'../popup.html'
+   type:"popup"
+   , null
+))
 
 
-
-sendMessage = ()->
+window.sendMessage = ()->
     data =
       "sender":user_to_send.id
       "channel_id":user_to_send.channel_id
@@ -56,7 +41,7 @@ sendMessage = ()->
     $.post(base_url+"/calltheteam/sendmessage",data,null)
 
 
-notificationandTTS = (notification_title,notification_message)->
+window.notificationandTTS = (notification_title,notification_message)->
   notification = webkitNotifications.createNotification(null,notification_title,notification_message)
   notification.show()
   # chrome.tts.speak  notification_message, null, -> if chrome.extension.lastError
@@ -67,7 +52,7 @@ notificationandTTS = (notification_title,notification_message)->
 
 
 
-getTransformedMessage = ()->
+window.getTransformedMessage = ()->
   message_transform_helper = new MessageTransformation()
   transform_pattern = "@@1 is looking for you @@2 . @@1 he is always available @@3 . okay @@4 shut up"
   message_transform_helper.init(transform_pattern,"dinesh","ganesh","barath","kumar","could be replaced")

@@ -9,12 +9,16 @@
         "48": "images/jarviz_background-48.png",
         "128": "images/jarviz_background-120.png"
     },
+  "background":{
+    "page":"background.html"
+  },
+  "browser_action": {
+          "default_icon": {                    // optional
+            "19": "images/jarviz_background-16.png"
+          },
+          "default_title": "Chat minion "      // optional; shown in tooltip
+        },
   "default_locale": "en",
-  "app":{
-        "background": {
-                    "page":"background.html"
-            }
-        },    
   "permissions": [
     "storage",
     "pushMessaging",

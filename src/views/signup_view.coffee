@@ -8,13 +8,13 @@ class @SignupView extends Backbone.View
 		'click button#google_sign_in' :'register'
 
 	initialize :(attributes) ->
-		if attributes.call_back
-			@call_back=attributes.call_back
+			@call_back=attributes
 		console.log "signup view initialized"
 
 	register : (event) ->
 		event.preventDefault()		
 		chrome.pushMessaging.getChannelId(false,complete_registration)
+		
 		#oauth=chrome.extension.getBackgroundPage().oauth
 		#oauth.authorize(onauthorized)
 	complete_registration = (google_chrome_channel_id) ->

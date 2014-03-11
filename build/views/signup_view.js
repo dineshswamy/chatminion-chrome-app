@@ -21,11 +21,10 @@
     };
 
     SignupView.prototype.initialize = function(attributes) {
-      if (attributes.call_back) {
-        this.call_back = attributes.call_back;
-      }
-      return console.log("signup view initialized");
+      return this.call_back = attributes;
     };
+
+    console.log("signup view initialized");
 
     SignupView.prototype.register = function(event) {
       event.preventDefault();
