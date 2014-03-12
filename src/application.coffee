@@ -1,9 +1,4 @@
 'use-strict';
-
-
-
-
-
 class @ContactsView  extends Backbone.View
     events:
         "click #submit_new_contact":"addContact"
@@ -17,8 +12,8 @@ class @ContactsView  extends Backbone.View
 loadRelators = (user_id) ->
     contacts_message_view = new ContactsView()
     $(".container").html(contacts_message_view.render().$el)
-    relater_collection = new RelaterCollection({"user_id":user_id})
-    relater_collection.fetch
+    window.relater_collection = new RelaterCollection({"user_id":user_id})
+    window.relater_collection.fetch
         success : -> 
             relater_collection_view = new RelatersCollectionView({"collection":relater_collection})
             $("#contacts_container").html relater_collection_view.render().el
@@ -32,16 +27,19 @@ check_and_addRelator = (add_relator_id) ->
 				$.post(url,data,callback_check_and_addRelator);
 
 callback_check_and_addRelator = (response_data)->
-#				switch response_data.status 
-#					when response_data.status=="success" then add_relator(response_data)
-#					when response_data.status=="user_not_registered" then openGmailForRequest()
-#					else display_response(response)
+				switch response_data.status 
+					when response_data.status=="success" then add_relator(response_data)
+					when response_data.status=="user_not_registered" then openGmailForRequest()
+					else display_response(response)
 
 
 # set_alert = (alert_type,alert_message,alert_dom_id)->
 # 		switch alert_type			
 # 			when alert_type=="info" then 
 # 				$("#"+alert_dom_id).addClass("")
+
+openGmailForRequest = ()->
+    ##to be filled with gmail
 
 
 initialize_extension = ->
