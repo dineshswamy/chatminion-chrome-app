@@ -6,8 +6,9 @@ class @MessagesViewContainer  extends Backbone.View
         @
     addcontact:(event)->
         event.preventDefault()
-        new_contact_email = $("#new_contact_email").val()
-        check_and_addRelator(new_contact_email)
+        console.log "handler to be written"
+        # new_contact_email = $("#new_contact_email").val()
+        # check_and_addRelator(new_contact_email)
 
 
 class @RelaterCollection extends Backbone.Collection
@@ -29,10 +30,10 @@ class @RelaterView extends Backbone.View
 
 	sendRelaterModel:(event) ->
 		chrome.extension.getBackgroundPage().user_to_send = @model
-		#messages_container_view =  new MessagesViewContainer()
-		#$(".container").html messages_container_view.render().$el
+		messages_container_view =  new MessagesViewContainer()
+		$(".container").html messages_container_view.render().$el
 		message_collection_view = new MessageCollectionView({"collection":window.message_collection})
-		$(".container").html message_collection_view.render().el
+		$("#messages_container").html message_collection_view.render().el
 
 
 class @RelatersCollectionView extends Backbone.View

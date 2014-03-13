@@ -21,10 +21,8 @@
     };
 
     MessagesViewContainer.prototype.addcontact = function(event) {
-      var new_contact_email;
       event.preventDefault();
-      new_contact_email = $("#new_contact_email").val();
-      return check_and_addRelator(new_contact_email);
+      return console.log("handler to be written");
     };
 
     return MessagesViewContainer;
@@ -73,12 +71,14 @@
     };
 
     RelaterView.prototype.sendRelaterModel = function(event) {
-      var message_collection_view;
+      var message_collection_view, messages_container_view;
       chrome.extension.getBackgroundPage().user_to_send = this.model;
+      messages_container_view = new MessagesViewContainer();
+      $(".container").html(messages_container_view.render().$el);
       message_collection_view = new MessageCollectionView({
         "collection": window.message_collection
       });
-      return $(".container").html(message_collection_view.render().el);
+      return $("#messages_container").html(message_collection_view.render().el);
     };
 
     return RelaterView;

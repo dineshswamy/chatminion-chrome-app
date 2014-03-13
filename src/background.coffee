@@ -50,7 +50,7 @@ window.notificationandTTS = (notification_title,notification_message)->
   #   console.log('TTS Error: ' + chrome.extension.lastError.message)
 
 
-#chrome.pushMessaging.onMessage.addListener(dissectRecievedMessage);
+chrome.pushMessaging.onMessage.addListener(dissectRecievedMessage);
 
 
 
@@ -65,9 +65,10 @@ window.getTransformedMessage = ()->
 #getTransformedMessage()
 
 
-# dissectRecievedMessage = (message)->
-#   notification = webkitNotifications.createNotification(null,"Notification title","Notification Message")
-#   notification.show()
+dissectRecievedMessage = (message)->
+  window.message_to_send = findUserById(message.sender_id)
+  messages = new Messages()
+  messages.init()
 
     
   
