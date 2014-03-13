@@ -66,6 +66,5 @@ class @Messages
         			chrome.extension.getBackgroundPage().messages_with_options.push(messages_cursor.value)	
         			cursor.continue()
         	else
-        		message_collection = chrome.extension.getBackgroundPage().messages_with_options
-        		message_collection_view = new MessageCollectionView({"collection":message_collection})
-        		$("#messages_container").html message_collection_view.render().el
+        		window.message_collection = chrome.extension.getBackgroundPage().messages_with_options
+        		

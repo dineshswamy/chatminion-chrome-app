@@ -1,3 +1,15 @@
+class @MessagesViewContainer  extends Backbone.View
+    events:
+        "click button#submit_new_contact":"send_message"
+    render: ->
+        @$el.html HAML["messages_container_view"] 
+        @
+    addcontact:(event)->
+        event.preventDefault()
+        new_contact_email = $("#new_contact_email").val()
+        check_and_addRelator(new_contact_email)
+
+
 class @RelaterCollection extends Backbone.Collection
 	model : User
 	url : chrome.extension.getBackgroundPage().base_url
@@ -6,28 +18,31 @@ class @RelaterCollection extends Backbone.Collection
 		@url = chrome.extension.getBackgroundPage().base_url+"/user/"+attributes.user_id+"/contacts"
 
 class @RelaterView extends Backbone.View
-	tagName:'li'
-	className:'available_contact'
 	events : {
 		'click' : 	'sendRelaterModel'
 	}
 	initialize:(attributes) ->
-
 
 	render: ->
 		@$el.html HAML["relater"](user_model:@model)
 		@
 
 	sendRelaterModel:(event) ->
-		console.log "relater clicked"
 		chrome.extension.getBackgroundPage().user_to_send = @model
+		#messages_container_view =  new MessagesViewContainer()
+		#$(".container").html messages_container_view.render().$el
+		message_collection_view = new MessageCollectionView({"collection":window.message_collection})
+		$(".container").html message_collection_view.render().el
+
 
 class @RelatersCollectionView extends Backbone.View
-	tagName:'ul'
+	tagName:"div"
+	className:"list-group"
 	initialize : ->
 		@collection.on "add",@.render,@
 		@collection.on "reset",@.render,@
 	render : ->
+		console.log "rendering views"
 		for users_model in @collection.models
 			relater = new RelaterView({"model":users_model})
 			@$el.append relater.render().$el
@@ -45,15 +60,10 @@ class @MessageCollection extends Backbone.Collection
 		@url=@url+"/messages.json"
 
 class @MessageView extends Backbone.View
-	tagName:'li'
-
-	className:'messages_li_element'
-
 	events :{
 		"click": "send_message" 		
 	}
 
-	
 	initialize :(attributes)->
 
 	render : ->
@@ -66,8 +76,8 @@ class @MessageView extends Backbone.View
 		
 
 class @MessageCollectionView extends Backbone.View
-	tagName:'ul'
-	className:'messages_container'
+	tagName:"div"
+	className:"list-group"
 	initialize :(attributes)->
 	
 	render : ()->

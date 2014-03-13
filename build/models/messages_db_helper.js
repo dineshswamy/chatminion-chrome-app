@@ -112,7 +112,7 @@
       objectstore = message_transactions.objectStore("message_options");
       messages_objectstore = message_transactions.objectStore("messages");
       return objectstore.openCursor().onsuccess = function(event) {
-        var cursor, message_collection, message_collection_view;
+        var cursor;
         cursor = event.target.result;
         if (cursor) {
           return messages_objectstore.openCursor(cursor.value.message_id).onsuccess = function(event) {
@@ -122,11 +122,7 @@
             return cursor["continue"]();
           };
         } else {
-          message_collection = chrome.extension.getBackgroundPage().messages_with_options;
-          message_collection_view = new MessageCollectionView({
-            "collection": message_collection
-          });
-          return $("#messages_container").html(message_collection_view.render().el);
+          return window.message_collection = chrome.extension.getBackgroundPage().messages_with_options;
         }
       };
     };

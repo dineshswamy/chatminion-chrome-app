@@ -3,6 +3,34 @@
   var __hasProp = {}.hasOwnProperty,
     __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; };
 
+  this.MessagesViewContainer = (function(_super) {
+
+    __extends(MessagesViewContainer, _super);
+
+    function MessagesViewContainer() {
+      return MessagesViewContainer.__super__.constructor.apply(this, arguments);
+    }
+
+    MessagesViewContainer.prototype.events = {
+      "click button#submit_new_contact": "send_message"
+    };
+
+    MessagesViewContainer.prototype.render = function() {
+      this.$el.html(HAML["messages_container_view"]);
+      return this;
+    };
+
+    MessagesViewContainer.prototype.addcontact = function(event) {
+      var new_contact_email;
+      event.preventDefault();
+      new_contact_email = $("#new_contact_email").val();
+      return check_and_addRelator(new_contact_email);
+    };
+
+    return MessagesViewContainer;
+
+  })(Backbone.View);
+
   this.RelaterCollection = (function(_super) {
 
     __extends(RelaterCollection, _super);
@@ -31,10 +59,6 @@
       return RelaterView.__super__.constructor.apply(this, arguments);
     }
 
-    RelaterView.prototype.tagName = 'li';
-
-    RelaterView.prototype.className = 'available_contact';
-
     RelaterView.prototype.events = {
       'click': 'sendRelaterModel'
     };
@@ -49,8 +73,12 @@
     };
 
     RelaterView.prototype.sendRelaterModel = function(event) {
-      console.log("relater clicked");
-      return chrome.extension.getBackgroundPage().user_to_send = this.model;
+      var message_collection_view;
+      chrome.extension.getBackgroundPage().user_to_send = this.model;
+      message_collection_view = new MessageCollectionView({
+        "collection": window.message_collection
+      });
+      return $(".container").html(message_collection_view.render().el);
     };
 
     return RelaterView;
@@ -65,7 +93,9 @@
       return RelatersCollectionView.__super__.constructor.apply(this, arguments);
     }
 
-    RelatersCollectionView.prototype.tagName = 'ul';
+    RelatersCollectionView.prototype.tagName = "div";
+
+    RelatersCollectionView.prototype.className = "list-group";
 
     RelatersCollectionView.prototype.initialize = function() {
       this.collection.on("add", this.render, this);
@@ -74,6 +104,7 @@
 
     RelatersCollectionView.prototype.render = function() {
       var relater, users_model, _i, _len, _ref;
+      console.log("rendering views");
       _ref = this.collection.models;
       for (_i = 0, _len = _ref.length; _i < _len; _i++) {
         users_model = _ref[_i];
@@ -135,10 +166,6 @@
       return MessageView.__super__.constructor.apply(this, arguments);
     }
 
-    MessageView.prototype.tagName = 'li';
-
-    MessageView.prototype.className = 'messages_li_element';
-
     MessageView.prototype.events = {
       "click": "send_message"
     };
@@ -170,9 +197,9 @@
       return MessageCollectionView.__super__.constructor.apply(this, arguments);
     }
 
-    MessageCollectionView.prototype.tagName = 'ul';
+    MessageCollectionView.prototype.tagName = "div";
 
-    MessageCollectionView.prototype.className = 'messages_container';
+    MessageCollectionView.prototype.className = "list-group";
 
     MessageCollectionView.prototype.initialize = function(attributes) {};
 
