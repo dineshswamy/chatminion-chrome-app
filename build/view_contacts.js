@@ -67,6 +67,11 @@
 
     RelatersCollectionView.prototype.tagName = 'ul';
 
+    RelatersCollectionView.prototype.initialize = function() {
+      this.collection.on("add", this.render, this);
+      return this.collection.on("reset", this.render, this);
+    };
+
     RelatersCollectionView.prototype.render = function() {
       var relater, users_model, _i, _len, _ref;
       _ref = this.collection.models;

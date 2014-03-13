@@ -12,7 +12,9 @@
   chrome.browserAction.onClicked.addListener(function(tab) {
     return chrome.windows.create({
       url: '../popup.html',
-      type: "popup"
+      type: "popup",
+      width: 300,
+      height: 600
     }, null);
   });
 

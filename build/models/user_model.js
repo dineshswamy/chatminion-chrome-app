@@ -13,8 +13,6 @@
 
     User.prototype.initialize = function(attributes) {
       this.url = chrome.extension.getBackgroundPage().base_url + "/calltheteam/register";
-      console.log("background page value");
-      console.log(chrome.extension.getBackgroundPage().base_url);
       if (attributes.email_id) {
         this.email_id = attributes.email_id;
       }

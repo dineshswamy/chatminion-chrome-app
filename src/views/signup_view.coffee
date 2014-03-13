@@ -2,13 +2,13 @@ class @SignupView extends Backbone.View
 	
 	tagName : 'div'
 	
-	className : 'sign_up'
+	className : 'sign_up form-group'
 	
 	events : 
 		'click button#google_sign_in' :'register'
 
 	initialize :(attributes) ->
-			@call_back=attributes
+		@call_back=attributes
 		console.log "signup view initialized"
 
 	register : (event) ->
@@ -28,14 +28,14 @@ class @SignupView extends Backbone.View
 				if model.get("status")=="success"
 					new_user.set({"id":model.get("user_id")})
 					$(".status").html("Registered successfully")
-					chrome.storage.local.set {"registered":true,"registered_user_id":model.get("user_id")},null
+					chrome.storage.local.set {"registered":true,"registered_user":model},null
 					call_back(model.get("user_id"))
 				else if model.get("status")=="failure"
 					$(".status").html("For some reasons registration failed.Please try again later")
-					chrome.storage.local.set {"registered":false,"registered_user_id":null},null
+					chrome.storage.local.set {"registered":false,"registered_user":null},null
 				else
 					$(".status").html(model.get("status"))
-					chrome.storage.local.set {"registered":false,"registered_user_id":null},null
+					chrome.storage.local.set {"registered":false,"registered_user":null},null
 					
 			error : ->
 					$(".status").html("For some reasons registration failed.Please try again later")

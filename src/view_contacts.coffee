@@ -24,6 +24,9 @@ class @RelaterView extends Backbone.View
 
 class @RelatersCollectionView extends Backbone.View
 	tagName:'ul'
+	initialize : ->
+		@collection.on "add",@.render,@
+		@collection.on "reset",@.render,@
 	render : ->
 		for users_model in @collection.models
 			relater = new RelaterView({"model":users_model})

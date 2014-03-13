@@ -1,9 +1,13 @@
 %div{:class=>"container"}
   %div{:class=>"row"}
-    %div{:class=>"col-md-4 col-xs-4"}Contacts
+    %div{:class=>"col-md-4 col-xs-4"}
+      %h1{}Contacts
   %div{:class => "row"}
-    %div{:class=>" col-md-4 col-xs-4" , :id=>"contacts_container"}
+    %div{:class=>"col-md-4 col-xs-4" , :id=>"contacts_container"}
   %div{:class=>"row add_contact"}
-    %div{:class=>" col-md-4 col-xs-4"}
-    %input{:id=>"new_contact_email", :placeholder=>"enter email id",:type=>"email"}
-    %button{:id=>"submit_new_contact"}Add
+    %div{}
+      %input{:id=>"new_contact_email", :placeholder=>"enter email id",:type=>"email" ,:class=>"form-group form-control"}
+      %button{:id=>"submit_new_contact" , :class=>"btn btn-default"}Add
+  %div{:class=>"row", :id=>"friend_request_join" , :style=>"display:none"}
+    %p{:class=>"text-primary"} It seems , your friend not yet joined
+      %button{:class=>"btn-square btn-success",:type=>"submit"}ask him
