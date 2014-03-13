@@ -8,7 +8,14 @@ class @ContactsView  extends Backbone.View
     addcontact:(event)->
         event.preventDefault()
         new_contact_email = $("#new_contact_email").val()
-        check_and_addRelator(new_contact_email)        
+        check_and_addRelator(new_contact_email)
+
+
+class @InfoView extends Backbone.View
+    render:->
+        @$el.html HAML["info_view"]
+        @
+
 
 loadRelators = (user_id) ->
     contacts_view = new ContactsView()
@@ -16,8 +23,11 @@ loadRelators = (user_id) ->
     window.relater_collection = new RelaterCollection({"user_id":user_id})
     window.relater_collection.fetch
         success : -> 
-            relater_collection_view = new RelatersCollectionView({"collection":relater_collection})
-            $("#contacts_container").html relater_collection_view.render().el
+            if relater_collection.models.length > 0
+                relater_collection_view = new RelatersCollectionView({"collection":relater_collection})
+                $("#contacts_container").html relater_collection_view.render().el
+            else
+                $("#contacts_container").html 
     messages = new Messages()
     messages.init()
 
