@@ -67,4 +67,9 @@ class @Messages
         			cursor.continue()
         	else
         		window.message_collection = chrome.extension.getBackgroundPage().messages_with_options
-        		
+    
+
+   loadOptionsforMessage:(message_id)->
+   		message_transactions = @database.transaction(["message_options","messages"])
+   		objectstore = message_transactions.objectStore("message_options")
+   		messages_objectstore = message_transactions.objectStore("messages")

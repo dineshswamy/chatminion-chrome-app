@@ -1,23 +1,11 @@
 'use-strict';
-class @ContactsViewContainer  extends Backbone.View
-    events:
-        "click button#submit_new_contact":"addcontact"
-    render: ->
-        @$el.html HAML["contacts_view"] 
-        @
-    addcontact:(event)->
-        event.preventDefault()
-        new_contact_email = $("#new_contact_email").val()
-        check_and_addRelator(new_contact_email)
-
 class @InfoView extends Backbone.View
     render:(message)->
         @$el.html HAML["info_view"]({"info":message})
         @
 
-
 loadRelators = (user_id) ->
-    contacts_view = new ContactsViewContainer()
+    contacts_view = new RelatersViewContainer()
     $(".container").html(contacts_view.render().$el)
     window.relater_collection = new RelaterCollection({"user_id":user_id})
     window.relater_collection.fetch

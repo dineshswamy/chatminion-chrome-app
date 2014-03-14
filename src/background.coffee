@@ -66,9 +66,9 @@ window.getTransformedMessage = ()->
 
 
 dissectRecievedMessage = (message)->
-  window.message_to_send = findUserById(message.sender_id)
+  window.user_to_send = findUserById(message.sender_id)
   messages = new Messages()
   messages.init()
-
+  window.options_for_message = messages.loadOptionsforMessage(message)
     
   
