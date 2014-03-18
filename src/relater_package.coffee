@@ -9,41 +9,29 @@ class @RelatersViewContainer  extends Backbone.View
         new_contact_email = $("#new_contact_email").val()
         check_and_addRelator(new_contact_email)
 
+    check_and_addRelator = (add_relater) ->
+                    data =
+                        relater_email:add_relater
+                        user_id: chrome.extension.getBackgroundPage().logged_in_user.id
+                    url = chrome.extension.getBackgroundPage().base_url+"/calltheteam/addcontact"
+                    $.post(url,data,callback_check_and_addRelator);
 
-class @RelaterCollection extends Backbone.Collection
-	model : User
-	url : chrome.extension.getBackgroundPage().base_url
+    callback_check_and_addRelator = (response_json)->
+	    console.log response_json.status
+	    new_relater = 
+	        "id": response_json.new_relater.id
+	        "name":  response_json.new_relater.name
+	        "channel_id": response_json.new_relater.channel_id
+	    switch response_json.status 
+	        when response_json.status=="success" then add_new_relater_and_render(new_relater)
+	        when response_json.status=="user_not_registered" then openGmailForRequest()
 
-	initialize :(attributes) ->
-		@url = chrome.extension.getBackgroundPage().base_url+"/user/"+attributes.user_id+"/contacts"
+    add_new_relater_and_render = (relater)->
+            chrome.extension.getBackgroundPage().relater_collection.add(new_relater)
+            console.log "adding the new relater"
+            relater_collection_view = new RelatersCollectionView({"collection":chrome.extension.getBackgroundPage().relater_collection})
+            $("#contacts_container").html relater_collection_view.render().el
+            
 
-class @RelaterView extends Backbone.View
-	events : {
-		'click' : 	'sendRelaterModel'
-	}
-	initialize:(attributes) ->
-
-	render: ->
-		@$el.html HAML["relater"](user_model:@model)
-		@
-
-	sendRelaterModel:(event) ->
-		chrome.extension.getBackgroundPage().user_to_send = @model
-		messages_container_view =  new MessagesViewContainer()
-		$(".container").html messages_container_view.render().$el
-		message_collection_view = new MessageCollectionView({"collection":window.message_collection})
-		$("#messages_container").html message_collection_view.render().el
-
-
-class @RelatersCollectionView extends Backbone.View
-	tagName:"div"
-	className:"list-group"
-	initialize : ->
-		@collection.on "add",@.render,@
-		@collection.on "reset",@.render,@
-	render : ->
-		console.log "rendering views"
-		for users_model in @collection.models
-			relater = new RelaterView({"model":users_model})
-			@$el.append relater.render().$el
-		@
+    openGmailForRequest = ()->
+    ##to be filled with gmail

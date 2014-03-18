@@ -11,8 +11,10 @@
 window.base_url = "http://localhost:3000"
 window.user_to_send = null
 window.message_to_send = null
-
-
+relater_collections = null
+sender = null
+logged_in_user = null
+sender_message = null
  # function openPanel()
  # {
  #     console.log("Inside opening panel");
@@ -26,6 +28,10 @@ window.message_to_send = null
  # }
 
 window.messages_with_options = []
+window.options_for_message = []
+
+
+
 chrome.browserAction.onClicked.addListener( (tab)-> chrome.windows.create( 
    url:'../popup.html'
    type:"popup"
@@ -35,7 +41,7 @@ chrome.browserAction.onClicked.addListener( (tab)-> chrome.windows.create(
 ))
 
 
-window.sendMessage = ()->
+sendMessage = ()->
     data =
       "sender":user_to_send.id
       "channel_id":user_to_send.channel_id
@@ -43,32 +49,37 @@ window.sendMessage = ()->
     $.post(base_url+"/calltheteam/sendmessage",data,null)
 
 
-window.notificationandTTS = (notification_title,notification_message)->
+notificationandTTS = (notification_title,notification_message)->
   notification = webkitNotifications.createNotification(null,notification_title,notification_message)
   notification.show()
   # chrome.tts.speak  notification_message, null, -> if chrome.extension.lastError
   #   console.log('TTS Error: ' + chrome.extension.lastError.message)
 
 
-chrome.pushMessaging.onMessage.addListener(dissectRecievedMessage);
+#chrome.pushMessaging.onMessage.addListener(dissectRecievedMessage);
 
 
 
-window.getTransformedMessage = ()->
+getTransformedMessage = (sender_name,reciever_name,transform_pattern)->
   message_transform_helper = new MessageTransformation()
-  transform_pattern = "@@1 is looking for you @@2 . @@1 he is always available @@3 . okay @@4 shut up"
-  message_transform_helper.init(transform_pattern,"dinesh","ganesh","barath","kumar","could be replaced")
+  message_transform_helper.init(transform_pattern,sender_name,reciever_name)
   message_transform_helper.applyTransformation()
-  notificationandTTS "Dinesh",message_transform_helper.getMessage()
+  message_transform_helper.getMessage()
+
+openOptionsPopupwindow = ()->window.options_window_id = chrome.windows.create( 
+    url:'../options_popup.html'
+    type:"popup"
+    width:300
+    height:600
+    , null)
+
+
+
+dissectRecievedMessage = (payload)->
+  if relater_collections != null
+    sender = relater_collections.findWhere({"id":payload.user_id,"message_id":payload.message_id})
+    sender_message = getTransformedMessage(sender.name,logged_in_user.name,payload.transform_pattern)
+    messages = new Messages()
+    messages.loadOptionsforMessage(message,openOptionsPopupwindow)
   
-
-#getTransformedMessage()
-
-
-dissectRecievedMessage = (message)->
-  window.user_to_send = findUserById(message.sender_id)
-  messages = new Messages()
-  messages.init()
-  window.options_for_message = messages.loadOptionsforMessage(message)
-    
-  
+dissectRecievedMessage({"id":60,"message_id":9})mai

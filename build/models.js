@@ -20,10 +20,7 @@
         this.channel_id = attributes.channel_id;
       }
       if (attributes.name) {
-        this.name = attributes.name;
-      }
-      if (attributes.id) {
-        return this.id = attributes.id;
+        return this.name = attributes.name;
       }
     };
 

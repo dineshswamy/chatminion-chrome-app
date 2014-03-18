@@ -1,11 +1,14 @@
 class @Messages
-	init : ->
+
+	constructor : ->
 		@version = 2
 		@database=null
 		@transaction=null
 		@messages_url=chrome.extension.getBackgroundPage().base_url+"/messages.json"
 		@message_options_url=chrome.extension.getBackgroundPage().base_url+"/message_options.json"
 		@db_name="calltheteam"
+
+	init : ->
 		@request = indexedDB.open(@db_name,@version)
 		@.fetch()
 		@request.onupgradeneeded = (event)->
@@ -69,7 +72,24 @@ class @Messages
         		window.message_collection = chrome.extension.getBackgroundPage().messages_with_options
     
 
-   loadOptionsforMessage:(message_id)->
-   		message_transactions = @database.transaction(["message_options","messages"])
-   		objectstore = message_transactions.objectStore("message_options")
-   		messages_objectstore = message_transactions.objectStore("messages")
+   loadOptionsforMessage:(message_id,callback)->
+   	chrome.extension.getBackgroundPage().options_for_message = []
+    @request = indexedDB.open(@db_name,@version)
+    @request.onsuccess = (event)->
+        @database=event.target.result
+        message_transactions = @database.transaction(["message_options","messages"])
+        objectstore = message_transactions.objectStore("message_options")
+        messages_objectstore = message_transactions.objectStore("messages")
+        objectstore.openCursor().onsuccess = (event)->
+            cursor = event.target.result
+            if cursor 
+                if cursor.value.message_id == message_id
+                	options = cursor.value.options_id.split(";")
+                	for msg_id in options
+	                    messages_objectstore.openCursor(Number(msg_id)).onsuccess = (event)->
+	                        messages_cursor = event.target.result
+	                        chrome.extension.getBackgroundPage().options_for_message.push(messages_cursor.value);
+                cursor.continue()                	
+                
+            else
+                        callback()

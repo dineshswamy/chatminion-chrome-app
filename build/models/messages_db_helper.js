@@ -3,16 +3,17 @@
 
   this.Messages = (function() {
 
-    function Messages() {}
-
-    Messages.prototype.init = function() {
-      var _this = this;
+    function Messages() {
       this.version = 2;
       this.database = null;
       this.transaction = null;
       this.messages_url = chrome.extension.getBackgroundPage().base_url + "/messages.json";
       this.message_options_url = chrome.extension.getBackgroundPage().base_url + "/message_options.json";
       this.db_name = "calltheteam";
+    }
+
+    Messages.prototype.init = function() {
+      var _this = this;
       this.request = indexedDB.open(this.db_name, this.version);
       this.fetch();
       this.request.onupgradeneeded = function(event) {
@@ -124,6 +125,38 @@
         } else {
           return window.message_collection = chrome.extension.getBackgroundPage().messages_with_options;
         }
+      };
+    };
+
+    Messages.prototype.loadOptionsforMessage = function(message_id, callback) {
+      chrome.extension.getBackgroundPage().options_for_message = [];
+      this.request = indexedDB.open(this.db_name, this.version);
+      return this.request.onsuccess = function(event) {
+        var message_transactions, messages_objectstore, objectstore;
+        this.database = event.target.result;
+        message_transactions = this.database.transaction(["message_options", "messages"]);
+        objectstore = message_transactions.objectStore("message_options");
+        messages_objectstore = message_transactions.objectStore("messages");
+        return objectstore.openCursor().onsuccess = function(event) {
+          var cursor, msg_id, options, _i, _len;
+          cursor = event.target.result;
+          if (cursor) {
+            if (cursor.value.message_id === message_id) {
+              options = cursor.value.options_id.split(";");
+              for (_i = 0, _len = options.length; _i < _len; _i++) {
+                msg_id = options[_i];
+                messages_objectstore.openCursor(Number(msg_id)).onsuccess = function(event) {
+                  var messages_cursor;
+                  messages_cursor = event.target.result;
+                  return chrome.extension.getBackgroundPage().options_for_message.push(messages_cursor.value);
+                };
+              }
+            }
+            return cursor["continue"]();
+          } else {
+            return callback();
+          }
+        };
       };
     };
 

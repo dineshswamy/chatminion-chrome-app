@@ -3,29 +3,29 @@
   var __hasProp = {}.hasOwnProperty,
     __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; };
 
-  this.RelatorModel = (function(_super) {
+  this.RelaterModel = (function(_super) {
 
-    __extends(RelatorModel, _super);
+    __extends(RelaterModel, _super);
 
-    function RelatorModel() {
-      return RelatorModel.__super__.constructor.apply(this, arguments);
+    function RelaterModel() {
+      return RelaterModel.__super__.constructor.apply(this, arguments);
     }
 
-    RelatorModel.prototype.initialize = function(attributes) {
+    RelaterModel.prototype.initialize = function(attributes) {
       this.user_id = attributes.user_id;
       this.name = attributes.name;
       this.friend_id = attributes.friend_id;
       return this.rel_status = attributes.rel_status;
     };
 
-    RelatorModel.prototype.defaults = {
+    RelaterModel.prototype.defaults = {
       user_id: "sample_user_id",
       rel_status: "sample rel status",
       friend_id: "sample friend id",
       name: "name"
     };
 
-    return RelatorModel;
+    return RelaterModel;
 
   })(Backbone.Model);
 
