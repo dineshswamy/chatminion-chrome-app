@@ -25,12 +25,13 @@
     };
 
     RelaterView.prototype.sendRelaterModel = function(event) {
-      var message_collection_view, messages_container_view;
+      var message_collection, message_collection_view, messages_container_view;
+      message_collection = chrome.extension.getBackgroundPage().messages_with_options;
       chrome.extension.getBackgroundPage().user_to_send = this.model;
       messages_container_view = new MessagesViewContainer();
       $(".container").html(messages_container_view.render().$el);
       message_collection_view = new MessageCollectionView({
-        "collection": window.message_collection
+        "collection": message_collection
       });
       return $("#messages_container").html(message_collection_view.render().el);
     };

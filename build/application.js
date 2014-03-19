@@ -25,42 +25,30 @@
   })(Backbone.View);
 
   loadRelators = function(user_id) {
-    var contacts_view, messages;
+    var contacts_view, relater_collection, relater_collection_view;
     contacts_view = new RelatersViewContainer();
     $(".container").html(contacts_view.render().$el);
-    window.relater_collection = new RelaterCollection({
-      "user_id": user_id
-    });
-    window.relater_collection.fetch({
-      success: function() {
-        var relater_collection_view;
-        chrome.extension.getBackgroundPage().relater_collections = relater_collection;
-        if (window.relater_collection.models.length > 0) {
-          relater_collection_view = new RelatersCollectionView({
-            "collection": window.relater_collection
-          });
-          return $("#contacts_container").html(relater_collection_view.render().el);
-        } else {
-          return $("#contacts_container").html(new InfoView().render("You have no contacts!").$el);
-        }
-      }
-    });
-    messages = new Messages();
-    return messages.init();
+    relater_collection = chrome.extension.getBackgroundPage().relater_collection;
+    if (relater_collection.models.length > 0) {
+      relater_collection_view = new RelatersCollectionView({
+        "collection": relater_collection
+      });
+      return $("#contacts_container").html(relater_collection_view.render().el);
+    } else {
+      return $("#contacts_container").html(new InfoView().render("You have no contacts!").$el);
+    }
   };
 
   initialize_extension = function() {
-    return chrome.storage.local.get(["registered", "registered_user"], function(result) {
-      var sign_up_view;
-      if (result.registered === void 0 || result.registered_user === void 0) {
-        sign_up_view = new SignupView(loadRelators);
-        return $(".container").html(sign_up_view.render().$el);
-      } else {
-        window.logged_in_user = result.registered_user;
-        chrome.extension.getBackgroundPage().logged_in_user = result.registered_user;
-        return loadRelators(result.registered_user.id);
-      }
-    });
+    var logged_in_user, sign_up_view;
+    logged_in_user = chrome.extension.getBackgroundPage().logged_in_user;
+    console.log(logged_in_user);
+    if (logged_in_user === null || logged_in_user.id === null) {
+      sign_up_view = new SignupView(loadRelators);
+      return $(".container").html(sign_up_view.render().$el);
+    } else {
+      return loadRelators(logged_in_user.id);
+    }
   };
 
   document.addEventListener("DOMContentLoaded", initialize_extension);

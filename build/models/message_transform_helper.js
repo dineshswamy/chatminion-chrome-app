@@ -9,7 +9,7 @@
     MessageTransformation.prototype.init = function() {
       var options, transform_pattern;
       transform_pattern = arguments[0], options = 2 <= arguments.length ? __slice.call(arguments, 1) : [];
-      this.transform_pattern = transform_pattern;
+      this.pattern = transform_pattern;
       return this.options = options;
     };
 
@@ -21,13 +21,14 @@
         option = _ref[index];
         index = index + 1;
         str_to_search = new RegExp("@@" + index, 'g');
-        _results.push(this.transform_pattern = this.transform_pattern.replace(str_to_search, option));
+        console.log(this.pattern);
+        _results.push(this.transformed_message = this.pattern.replace(str_to_search, option));
       }
       return _results;
     };
 
     MessageTransformation.prototype.getMessage = function() {
-      return this.transform_pattern;
+      return this.transformed_message;
     };
 
     return MessageTransformation;

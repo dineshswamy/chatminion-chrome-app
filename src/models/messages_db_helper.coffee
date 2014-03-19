@@ -69,10 +69,10 @@ class @Messages
         			chrome.extension.getBackgroundPage().messages_with_options.push(messages_cursor.value)	
         			cursor.continue()
         	else
-        		window.message_collection = chrome.extension.getBackgroundPage().messages_with_options
+        		chrome.extension.getBackgroundPage().dissectRecievedMessage({"user_id":38,"message_id":5})
     
 
-   loadOptionsforMessage:(message_id,callback)->
+   loadOptionsforMessage:(message_id)->
    	chrome.extension.getBackgroundPage().options_for_message = []
     @request = indexedDB.open(@db_name,@version)
     @request.onsuccess = (event)->
@@ -91,5 +91,5 @@ class @Messages
 	                        chrome.extension.getBackgroundPage().options_for_message.push(messages_cursor.value);
                 cursor.continue()                	
                 
-            else
-                        callback()
+            #else
+                        #callback()

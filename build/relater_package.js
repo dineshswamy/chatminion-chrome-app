@@ -57,7 +57,6 @@
     add_new_relater_and_render = function(relater) {
       var relater_collection_view;
       chrome.extension.getBackgroundPage().relater_collection.add(new_relater);
-      console.log("adding the new relater");
       relater_collection_view = new RelatersCollectionView({
         "collection": chrome.extension.getBackgroundPage().relater_collection
       });

@@ -123,12 +123,15 @@
             return cursor["continue"]();
           };
         } else {
-          return window.message_collection = chrome.extension.getBackgroundPage().messages_with_options;
+          return chrome.extension.getBackgroundPage().dissectRecievedMessage({
+            "user_id": 38,
+            "message_id": 5
+          });
         }
       };
     };
 
-    Messages.prototype.loadOptionsforMessage = function(message_id, callback) {
+    Messages.prototype.loadOptionsforMessage = function(message_id) {
       chrome.extension.getBackgroundPage().options_for_message = [];
       this.request = indexedDB.open(this.db_name, this.version);
       return this.request.onsuccess = function(event) {
@@ -153,8 +156,6 @@
               }
             }
             return cursor["continue"]();
-          } else {
-            return callback();
           }
         };
       };

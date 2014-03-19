@@ -24,7 +24,6 @@ class @SignupView extends Backbone.View
 		new_user = new User({email_id:email_id_value,channel_id:google_chrome_channel_id.channelId,name:name_value})
 		new_user.save {} ,
 			success : (model) ->
-				console.log model
 				if model.get("status")=="success"
 					new_user.set({"id":model.get("user_id")})
 					$(".status").html("Registered successfully")

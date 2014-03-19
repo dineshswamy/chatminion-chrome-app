@@ -28,7 +28,6 @@ class @RelatersViewContainer  extends Backbone.View
 
     add_new_relater_and_render = (relater)->
             chrome.extension.getBackgroundPage().relater_collection.add(new_relater)
-            console.log "adding the new relater"
             relater_collection_view = new RelatersCollectionView({"collection":chrome.extension.getBackgroundPage().relater_collection})
             $("#contacts_container").html relater_collection_view.render().el
             

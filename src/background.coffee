@@ -11,10 +11,11 @@
 window.base_url = "http://localhost:3000"
 window.user_to_send = null
 window.message_to_send = null
-relater_collections = null
+window.relater_collection = null
 sender = null
-logged_in_user = null
+window.logged_in_user = null
 sender_message = null
+messages = null
  # function openPanel()
  # {
  #     console.log("Inside opening panel");
@@ -41,11 +42,11 @@ chrome.browserAction.onClicked.addListener( (tab)-> chrome.windows.create(
 ))
 
 
-sendMessage = ()->
+window.sendMessage = ()->
     data =
-      "sender":user_to_send.id
-      "channel_id":user_to_send.channel_id
-      "message":message_to_send.user_message
+      "sender_id":window.user_to_send.id
+      "channel_id":window.user_to_send.channel_id
+      "message_id":window.message_to_send.id
     $.post(base_url+"/calltheteam/sendmessage",data,null)
 
 
@@ -60,13 +61,14 @@ notificationandTTS = (notification_title,notification_message)->
 
 
 
-getTransformedMessage = (sender_name,reciever_name,transform_pattern)->
+window.getTransformedMessage = (sender_name,reciever_name,transform_pattern)->
   message_transform_helper = new MessageTransformation()
   message_transform_helper.init(transform_pattern,sender_name,reciever_name)
   message_transform_helper.applyTransformation()
-  message_transform_helper.getMessage()
+  window.transformed_message = message_transform_helper.getMessage()
+  openOptionsPopupwindow()
 
-openOptionsPopupwindow = ()->window.options_window_id = chrome.windows.create( 
+window.openOptionsPopupwindow = ()->window.options_window_id = chrome.windows.create( 
     url:'../options_popup.html'
     type:"popup"
     width:300
@@ -74,12 +76,36 @@ openOptionsPopupwindow = ()->window.options_window_id = chrome.windows.create(
     , null)
 
 
+window.dissectRecievedMessage = (payload)->
+  if window.relater_collection != null
+    sender = window.relater_collection.findWhere({"id":payload.user_id})
+    window.user_to_send = sender
+    window.messages_with_options = new MessageCollection(window.messages_with_options)
+    payload.message = window.messages_with_options.findWhere({"id":payload.message_id})
+    messages.loadOptionsforMessage(payload.message_id)
+    sender_message = getTransformedMessage(sender.name,window.logged_in_user.name,payload.message.transform_pattern)
 
-dissectRecievedMessage = (payload)->
-  if relater_collections != null
-    sender = relater_collections.findWhere({"id":payload.user_id,"message_id":payload.message_id})
-    sender_message = getTransformedMessage(sender.name,logged_in_user.name,payload.transform_pattern)
-    messages = new Messages()
-    messages.loadOptionsforMessage(message,openOptionsPopupwindow)
+
+
+initialize_extension = ->
+    chrome.storage.local.get ["registered","registered_user"],(result)->
+        if result.registered is undefined or result.registered_user is undefined
+                window.logged_in_user = null
+        else
+            window.logged_in_user = result.registered_user
+            loadRelators(window.logged_in_user.id)
   
-dissectRecievedMessage({"id":60,"message_id":9})mai
+
+loadRelators = (user_id) ->
+    window.relater_collection = new RelaterCollection({"user_id":user_id})
+    window.relater_collection.fetch
+                  success : -> 
+                        messages = new Messages()
+                        messages.init()
+                        console.log "relaters retrieved"
+                  error : ->
+                        console.log "relaters retrieval error"
+
+
+
+initialize_extension()
