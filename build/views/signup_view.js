@@ -50,6 +50,7 @@
               "registered": true,
               "registered_user": model
             }, null);
+            chrome.extension.getBackgroundPage().initialize_extension(window.loadRelaters);
             return call_back(model.get("user_id"));
           } else if (model.get("status") === "failure") {
             $(".status").html("For some reasons registration failed.Please try again later");

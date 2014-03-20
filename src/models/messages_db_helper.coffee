@@ -68,8 +68,8 @@ class @Messages
         			messages_cursor = event.target.result
         			chrome.extension.getBackgroundPage().messages_with_options.push(messages_cursor.value)	
         			cursor.continue()
-        	else
-        		chrome.extension.getBackgroundPage().dissectRecievedMessage({"user_id":38,"message_id":5})
+        	#else
+        		#chrome.extension.getBackgroundPage().dissectRecievedMessage({"user_id":38,"message_id":5})
     
 
    loadOptionsforMessage:(message_id)->

@@ -22,7 +22,7 @@
 
     RelatersCollectionView.prototype.render = function() {
       var relater, users_model, _i, _len, _ref;
-      console.log("rendering views");
+      console.log("refreshing views");
       _ref = this.collection.models;
       for (_i = 0, _len = _ref.length; _i < _len; _i++) {
         users_model = _ref[_i];
@@ -32,6 +32,11 @@
         this.$el.append(relater.render().$el);
       }
       return this;
+    };
+
+    RelatersCollectionView.prototype.add = function(relater) {
+      console.log("relater added");
+      return this.collection.add(relater);
     };
 
     return RelatersCollectionView;

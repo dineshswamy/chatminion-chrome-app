@@ -47,20 +47,16 @@
         "channel_id": response_json.new_relater.channel_id
       };
       switch (response_json.status) {
-        case response_json.status === "success":
+        case "success":
           return add_new_relater_and_render(new_relater);
-        case response_json.status === "user_not_registered":
+        case "user_not_registered":
           return openGmailForRequest();
       }
     };
 
     add_new_relater_and_render = function(relater) {
-      var relater_collection_view;
-      chrome.extension.getBackgroundPage().relater_collection.add(new_relater);
-      relater_collection_view = new RelatersCollectionView({
-        "collection": chrome.extension.getBackgroundPage().relater_collection
-      });
-      return $("#contacts_container").html(relater_collection_view.render().el);
+      chrome.extension.getBackgroundPage().addRelaterToCollection(relater, window.loadRelaters);
+      return console.log("refreshing views");
     };
 
     openGmailForRequest = function() {};

@@ -28,7 +28,7 @@ messages = null
  #  });
  # }
 
-window.messages_with_options = []
+window.messages_with_options   = []
 window.options_for_message = []
 
 
@@ -57,7 +57,7 @@ notificationandTTS = (notification_title,notification_message)->
   #   console.log('TTS Error: ' + chrome.extension.lastError.message)
 
 
-#chrome.pushMessaging.onMessage.addListener(dissectRecievedMessage);
+
 
 
 
@@ -76,36 +76,44 @@ window.openOptionsPopupwindow = ()->window.options_window_id = chrome.windows.cr
     , null)
 
 
-window.dissectRecievedMessage = (payload)->
+window.dissectRecievedMessage = (recieved_message)->
   if window.relater_collection != null
-    sender = window.relater_collection.findWhere({"id":payload.user_id})
+    payload = JSON.parse(recieved_message.payload)
+    console.log payload.user_id
+    sender = window.relater_collection.findWhere({"id":Number(payload.user_id)})
     window.user_to_send = sender
     window.messages_with_options = new MessageCollection(window.messages_with_options)
-    payload.message = window.messages_with_options.findWhere({"id":payload.message_id})
+    payload.message = window.messages_with_options.findWhere({"id":Number(payload.message_id)})
     messages.loadOptionsforMessage(payload.message_id)
     sender_message = getTransformedMessage(sender.name,window.logged_in_user.name,payload.message.transform_pattern)
 
 
 
-initialize_extension = ->
+window.initialize_extension = (call_back)->
     chrome.storage.local.get ["registered","registered_user"],(result)->
         if result.registered is undefined or result.registered_user is undefined
                 window.logged_in_user = null
         else
             window.logged_in_user = result.registered_user
-            loadRelators(window.logged_in_user.id)
+            loadRelaters(window.logged_in_user.id,call_back)
+            chrome.pushMessaging.onMessage.addListener(dissectRecievedMessage);
   
 
-loadRelators = (user_id) ->
+loadRelaters = (user_id,call_back) ->
     window.relater_collection = new RelaterCollection({"user_id":user_id})
     window.relater_collection.fetch
                   success : -> 
                         messages = new Messages()
                         messages.init()
+                        if call_back != null and call_back != undefined
+                          call_back()
                         console.log "relaters retrieved"
                   error : ->
                         console.log "relaters retrieval error"
 
-
+window.addRelaterToCollection = (relater,call_back)->
+  window.relater_collection.add(relater)
+  if call_back != null and call_back != undefined
+    call_back(relater)
 
 initialize_extension()

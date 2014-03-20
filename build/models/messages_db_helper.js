@@ -122,11 +122,6 @@
             chrome.extension.getBackgroundPage().messages_with_options.push(messages_cursor.value);
             return cursor["continue"]();
           };
-        } else {
-          return chrome.extension.getBackgroundPage().dissectRecievedMessage({
-            "user_id": 38,
-            "message_id": 5
-          });
         }
       };
     };

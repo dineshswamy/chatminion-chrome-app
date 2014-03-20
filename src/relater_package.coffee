@@ -23,13 +23,15 @@ class @RelatersViewContainer  extends Backbone.View
 	        "name":  response_json.new_relater.name
 	        "channel_id": response_json.new_relater.channel_id
 	    switch response_json.status 
-	        when response_json.status=="success" then add_new_relater_and_render(new_relater)
-	        when response_json.status=="user_not_registered" then openGmailForRequest()
+	        when "success" then add_new_relater_and_render(new_relater)    
+	        when "user_not_registered" then openGmailForRequest()
 
     add_new_relater_and_render = (relater)->
-            chrome.extension.getBackgroundPage().relater_collection.add(new_relater)
-            relater_collection_view = new RelatersCollectionView({"collection":chrome.extension.getBackgroundPage().relater_collection})
-            $("#contacts_container").html relater_collection_view.render().el
+            chrome.extension.getBackgroundPage().addRelaterToCollection(relater,window.loadRelaters)
+            console.log "refreshing views"
+            
+            #relater_collection_view = new RelatersCollectionView({"collection":chrome.extension.getBackgroundPage().relater_collection})
+            #$("#contacts_container").html relater_collection_view.render().el
             
 
     openGmailForRequest = ()->
