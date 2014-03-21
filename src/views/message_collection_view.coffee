@@ -4,7 +4,7 @@ class @MessageCollectionView extends Backbone.View
 	initialize :(attributes)->
 	
 	render : ()->
-			for message_models in @collection
+			for message_models in @collection.models
 				relater = new MessageView({"model":message_models})
 				@$el.append relater.render().$el
 			custom_message = new CustomMessageView()

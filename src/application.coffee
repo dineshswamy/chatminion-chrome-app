@@ -16,7 +16,7 @@ window.loadRelaters = (user_id) ->
     
 initialize_extension = ->
         logged_in_user = chrome.extension.getBackgroundPage().logged_in_user
-        console.log logged_in_user
+        chrome.extension.getBackgroundPage().popup_window_opened = true
         if logged_in_user is null or logged_in_user.id is null
                 sign_up_view = new SignupView(loadRelaters)
                 $(".container").html(sign_up_view.render().$el)

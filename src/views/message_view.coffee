@@ -11,3 +11,4 @@ class @MessageView extends Backbone.View
 	send_message :(event)->
 		chrome.extension.getBackgroundPage().message_to_send = @model
 		chrome.extension.getBackgroundPage().sendMessage()
+		window.close()

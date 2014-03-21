@@ -50,14 +50,8 @@ class @Messages
     	$.get(@messages_url,(data) => @.addMessage {"id":messages.msg_id,"user_message":messages.user_message,"transform_pattern":messages.transform_pattern} for messages in data)
     	$.get(@message_options_url,(data) => @.addMessageOptions {"id":message_option.id,"message_id":message_option.message_id,"options_id":message_option.options_id} for message_option in data)
 
-
-	needToSync:()->
-		now = new Date()
-
-			
-	getAllMessages:() ->	
-		#initializing array
-        chrome.extension.getBackgroundPage().messages_with_options = []
+    getAllMessages:()->
+        arr_messages_with_options = []
         message_transactions = @database.transaction(["message_options","messages"])
         objectstore = message_transactions.objectStore("message_options")
         messages_objectstore = message_transactions.objectStore("messages")
@@ -66,13 +60,24 @@ class @Messages
         	if cursor
         		messages_objectstore.openCursor(cursor.value.message_id).onsuccess = (event)->
         			messages_cursor = event.target.result
-        			chrome.extension.getBackgroundPage().messages_with_options.push(messages_cursor.value)	
+        			arr_messages_with_options.push(messages_cursor.value)	
         			cursor.continue()
-        	#else
-        		#chrome.extension.getBackgroundPage().dissectRecievedMessage({"user_id":38,"message_id":5})
-    
+        	else
+        		chrome.extension.getBackgroundPage().messages_with_options = new MessageCollection(arr_messages_with_options)
+                
+    getMessageInfo:(message_id,callback)->
+	    @request = indexedDB.open(@db_name,@version)
+	    @request.onsuccess = (event)->
+	        @database=event.target.result
+	        message_transactions = @database.transaction(["messages"])
+	        messages_objectstore = message_transactions.objectStore("messages")
+	        messages_objectstore.openCursor(message_id).onsuccess = (event)->
+	            cursor = event.target.result
+	            if cursor 
+		               	callback(cursor.value)
+	            
 
-   loadOptionsforMessage:(message_id)->
+   loadOptionsforMessage:(message_id,callback)->
    	chrome.extension.getBackgroundPage().options_for_message = []
     @request = indexedDB.open(@db_name,@version)
     @request.onsuccess = (event)->
@@ -89,7 +94,8 @@ class @Messages
 	                    messages_objectstore.openCursor(Number(msg_id)).onsuccess = (event)->
 	                        messages_cursor = event.target.result
 	                        chrome.extension.getBackgroundPage().options_for_message.push(messages_cursor.value);
+	                        
                 cursor.continue()                	
                 
-            #else
-                        #callback()
+            else if callback != null and callback != undefined then callback()	
+                        

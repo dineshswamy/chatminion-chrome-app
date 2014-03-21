@@ -22,13 +22,13 @@
         index = index + 1;
         str_to_search = new RegExp("@@" + index, 'g');
         console.log(this.pattern);
-        _results.push(this.transformed_message = this.pattern.replace(str_to_search, option));
+        _results.push(this.pattern = this.pattern.replace(str_to_search, option));
       }
       return _results;
     };
 
     MessageTransformation.prototype.getMessage = function() {
-      return this.transformed_message;
+      return this.pattern;
     };
 
     return MessageTransformation;

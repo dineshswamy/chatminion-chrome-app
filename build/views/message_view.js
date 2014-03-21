@@ -26,7 +26,8 @@
 
     MessageView.prototype.send_message = function(event) {
       chrome.extension.getBackgroundPage().message_to_send = this.model;
-      return chrome.extension.getBackgroundPage().sendMessage();
+      chrome.extension.getBackgroundPage().sendMessage();
+      return window.close();
     };
 
     return MessageView;

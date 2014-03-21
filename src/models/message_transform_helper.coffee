@@ -9,7 +9,7 @@ class @MessageTransformation
 			index = index+1
 			str_to_search = new RegExp("@@#{index}",'g')
 			console.log @pattern
-			@transformed_message=@pattern.replace str_to_search,option
+			@pattern=@pattern.replace str_to_search,option
 
 	getMessage : ()->
-		@transformed_message
+		@pattern

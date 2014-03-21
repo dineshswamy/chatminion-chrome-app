@@ -101,14 +101,9 @@
       });
     };
 
-    Messages.prototype.needToSync = function() {
-      var now;
-      return now = new Date();
-    };
-
     Messages.prototype.getAllMessages = function() {
-      var message_transactions, messages_objectstore, objectstore;
-      chrome.extension.getBackgroundPage().messages_with_options = [];
+      var arr_messages_with_options, message_transactions, messages_objectstore, objectstore;
+      arr_messages_with_options = [];
       message_transactions = this.database.transaction(["message_options", "messages"]);
       objectstore = message_transactions.objectStore("message_options");
       messages_objectstore = message_transactions.objectStore("messages");
@@ -119,14 +114,33 @@
           return messages_objectstore.openCursor(cursor.value.message_id).onsuccess = function(event) {
             var messages_cursor;
             messages_cursor = event.target.result;
-            chrome.extension.getBackgroundPage().messages_with_options.push(messages_cursor.value);
+            arr_messages_with_options.push(messages_cursor.value);
             return cursor["continue"]();
           };
+        } else {
+          return chrome.extension.getBackgroundPage().messages_with_options = new MessageCollection(arr_messages_with_options);
         }
       };
     };
 
-    Messages.prototype.loadOptionsforMessage = function(message_id) {
+    Messages.prototype.getMessageInfo = function(message_id, callback) {
+      this.request = indexedDB.open(this.db_name, this.version);
+      return this.request.onsuccess = function(event) {
+        var message_transactions, messages_objectstore;
+        this.database = event.target.result;
+        message_transactions = this.database.transaction(["messages"]);
+        messages_objectstore = message_transactions.objectStore("messages");
+        return messages_objectstore.openCursor(message_id).onsuccess = function(event) {
+          var cursor;
+          cursor = event.target.result;
+          if (cursor) {
+            return callback(cursor.value);
+          }
+        };
+      };
+    };
+
+    Messages.prototype.loadOptionsforMessage = function(message_id, callback) {
       chrome.extension.getBackgroundPage().options_for_message = [];
       this.request = indexedDB.open(this.db_name, this.version);
       return this.request.onsuccess = function(event) {
@@ -151,6 +165,8 @@
               }
             }
             return cursor["continue"]();
+          } else if (callback !== null && callback !== void 0) {
+            return callback();
           }
         };
       };

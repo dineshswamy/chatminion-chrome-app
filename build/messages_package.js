@@ -12,7 +12,7 @@
     }
 
     MessagesViewContainer.prototype.events = {
-      "click button#submit_new_contact": "send_message"
+      "click button#submit_custom_message": "send_message"
     };
 
     MessagesViewContainer.prototype.render = function() {
@@ -20,9 +20,17 @@
       return this;
     };
 
-    MessagesViewContainer.prototype.addcontact = function(event) {
+    MessagesViewContainer.prototype.send_message = function(event) {
+      var custom_message;
       event.preventDefault();
-      return console.log("handler to be written");
+      custom_message = $("#custom_message").val();
+      if (custom_message.length > 0) {
+        console.log(custom_message);
+        chrome.extension.getBackgroundPage().is_custom_message = true;
+        chrome.extension.getBackgroundPage().custom_message = custom_message;
+        chrome.extension.getBackgroundPage().sendMessage();
+        return window.close();
+      }
     };
 
     return MessagesViewContainer;
