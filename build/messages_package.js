@@ -25,7 +25,6 @@
       event.preventDefault();
       custom_message = $("#custom_message").val();
       if (custom_message.length > 0) {
-        console.log(custom_message);
         chrome.extension.getBackgroundPage().is_custom_message = true;
         chrome.extension.getBackgroundPage().custom_message = custom_message;
         chrome.extension.getBackgroundPage().sendMessage();

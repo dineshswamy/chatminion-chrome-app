@@ -4,7 +4,7 @@
   this.Messages = (function() {
 
     function Messages() {
-      this.version = 2;
+      this.version = 3;
       this.database = null;
       this.transaction = null;
       this.messages_url = chrome.extension.getBackgroundPage().base_url + "/messages.json";
@@ -15,7 +15,6 @@
     Messages.prototype.init = function() {
       var _this = this;
       this.request = indexedDB.open(this.db_name, this.version);
-      this.fetch();
       this.request.onupgradeneeded = function(event) {
         var db, object_store_message_options, object_store_messages;
         db = event.target.result;
@@ -34,6 +33,7 @@
       };
       this.request.onsuccess = function(event) {
         _this.database = event.target.result;
+        _this.fetch();
         return _this.getAllMessages();
       };
       return this.request.onerror = function(event) {
@@ -134,6 +134,7 @@
           var cursor;
           cursor = event.target.result;
           if (cursor) {
+            console.log(cursor.value);
             return callback(cursor.value);
           }
         };

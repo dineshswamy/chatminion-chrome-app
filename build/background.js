@@ -2,7 +2,7 @@
 (function() {
   var loadRelaters, notificationandTTS, sender, sender_message;
 
-  window.base_url = "http://localhost:3000";
+  window.base_url = "http://lit-refuge-2289.herokuapp.com";
 
   window.user_to_send = null;
 
@@ -22,7 +22,7 @@
 
   window.popup_window_opened = false;
 
-  window.is_custom_message = true;
+  window.is_custom_message = false;
 
   window.custom_message = "";
 
@@ -31,32 +31,29 @@
   window.options_for_message = [];
 
   chrome.browserAction.onClicked.addListener(function(tab) {
-    if (!window.popup_window_opened) {
-      return chrome.windows.create({
-        url: '../popup.html',
-        type: "popup",
-        width: 300,
-        height: 600
-      }, null);
-    }
+    return chrome.windows.create({
+      url: '../popup.html',
+      type: "popup",
+      width: 300,
+      height: 600
+    }, null);
   });
 
   window.sendMessage = function() {
     var data;
     data = {
-      "sender_id": window.user_to_send.id,
-      "channel_id": window.user_to_send.channel_id
+      "sender_id": window.logged_in_user.id,
+      "channel_id": window.user_to_send.channel_id,
+      "is_custom_message": window.is_custom_message,
+      "custom_message": window.custom_message
     };
-    if (window.is_custom_message) {
-      data["is_custom_message"] = true;
-      data["custom_message"] = window.custom_message;
-    } else {
-      ({
-        "message_id": window.message_to_send.id
-      });
-    }
-    console.log("data sent");
+    console.log("Data");
     console.log(data);
+    if (!window.is_custom_message) {
+      data["message_id"] = window.message_to_send.id;
+    } else {
+      data["message_id"] = " ";
+    }
     return $.post(base_url + "/calltheteam/sendmessage", data, null);
   };
 
@@ -80,24 +77,30 @@
       url: '../options_popup.html',
       type: "popup",
       width: 300,
-      height: 600,
-      title: "Chat minion"
+      height: 600
     }, null);
   };
 
   window.dissectRecievedMessage = function(recieved_message) {
     var payload;
+    console.log(recieved_message);
+    window.initializeValues();
     if (window.relater_collection !== null) {
       payload = JSON.parse(recieved_message.payload);
       sender = window.relater_collection.findWhere({
         "id": Number(payload.user_id)
       });
+      console.log(sender);
       window.user_to_send = sender;
-      if (!payload.is_custom_message) {
+      console.log(payload.is_custom_message);
+      if (payload.is_custom_message === "false") {
         return window.messages.getMessageInfo(Number(payload.message_id), function(payload_message) {
-          return window.messages.loadOptionsforMessage(Number(payload.message_id), function() {}, window.getTransformedMessage(sender.name, window.logged_in_user.name, payload_message.transform_pattern));
+          return window.messages.loadOptionsforMessage(Number(payload.message_id), function() {
+            return window.getTransformedMessage(sender.name, window.logged_in_user.name, payload_message.transform_pattern);
+          });
         });
       } else {
+        window.transformed_message = payload.custom_message;
         return window.getTransformedMessage(sender.name, window.logged_in_user.name, null);
       }
     }
@@ -116,13 +119,13 @@
   };
 
   loadRelaters = function(user_id, call_back) {
+    window.messages = new Messages();
+    window.messages.init();
     window.relater_collection = new RelaterCollection({
       "user_id": user_id
     });
     return window.relater_collection.fetch({
       success: function() {
-        window.messages = new Messages();
-        window.messages.init();
         if (call_back !== null && call_back !== void 0) {
           call_back();
         }
@@ -139,6 +142,15 @@
     if (call_back !== null && call_back !== void 0) {
       return call_back(relater);
     }
+  };
+
+  window.initializeValues = function() {
+    window.user_to_send = null;
+    window.message_to_send = null;
+    window.transformed_message = null;
+    window.is_custom_message = false;
+    window.custom_message = "";
+    return window.options_for_message = [];
   };
 
   initialize_extension();

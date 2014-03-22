@@ -41,6 +41,7 @@
 
   initialize_extension = function() {
     var logged_in_user, sign_up_view;
+    chrome.extension.getBackgroundPage().initializeValues();
     logged_in_user = chrome.extension.getBackgroundPage().logged_in_user;
     chrome.extension.getBackgroundPage().popup_window_opened = true;
     if (logged_in_user === null || logged_in_user.id === null) {

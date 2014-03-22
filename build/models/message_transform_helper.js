@@ -15,16 +15,19 @@
 
     MessageTransformation.prototype.applyTransformation = function() {
       var index, option, str_to_search, _i, _len, _ref, _results;
-      _ref = this.options;
-      _results = [];
-      for (index = _i = 0, _len = _ref.length; _i < _len; index = ++_i) {
-        option = _ref[index];
-        index = index + 1;
-        str_to_search = new RegExp("@@" + index, 'g');
-        console.log(this.pattern);
-        _results.push(this.pattern = this.pattern.replace(str_to_search, option));
+      if (this.pattern !== null) {
+        _ref = this.options;
+        _results = [];
+        for (index = _i = 0, _len = _ref.length; _i < _len; index = ++_i) {
+          option = _ref[index];
+          index = index + 1;
+          str_to_search = new RegExp("@@" + index, 'g');
+          _results.push(this.pattern = this.pattern.replace(str_to_search, option));
+        }
+        return _results;
+      } else {
+        return this.pattern = this.options[0] + " says " + chrome.extension.getBackgroundPage().transformed_message;
       }
-      return _results;
     };
 
     MessageTransformation.prototype.getMessage = function() {

@@ -15,6 +15,8 @@ window.loadRelaters = (user_id) ->
         $("#contacts_container").html new InfoView().render("You have no contacts!").$el
     
 initialize_extension = ->
+        #initialize background variables
+        chrome.extension.getBackgroundPage().initializeValues()
         logged_in_user = chrome.extension.getBackgroundPage().logged_in_user
         chrome.extension.getBackgroundPage().popup_window_opened = true
         if logged_in_user is null or logged_in_user.id is null

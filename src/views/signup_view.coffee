@@ -26,6 +26,7 @@ class @SignupView extends Backbone.View
 			success : (model) ->
 				if model.get("status")=="success"
 					new_user.set({"id":model.get("user_id")})
+					chrome.extension.getBackgroundPage().logged_in_user = new_user
 					$(".status").html("Registered successfully")
 					chrome.storage.local.set {"registered":true,"registered_user":model},null
 					chrome.extension.getBackgroundPage().initialize_extension(window.loadRelaters)	

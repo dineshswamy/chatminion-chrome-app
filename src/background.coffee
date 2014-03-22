@@ -8,7 +8,11 @@
  #  'app_name': 'Minion your team mate'
  # });
 
-window.base_url = "http://localhost:3000"
+
+
+
+#window.base_url = "http://localhost:3000"
+window.base_url = "http://lit-refuge-2289.herokuapp.com"
 window.user_to_send = null
 window.message_to_send = null
 window.relater_collection = null
@@ -18,7 +22,7 @@ sender_message = null
 window.messages = null
 window.transformed_message = null
 window.popup_window_opened = false
-window.is_custom_message = true
+window.is_custom_message = false
 window.custom_message = ""
  # function openPanel()
  # {
@@ -43,21 +47,25 @@ chrome.browserAction.onClicked.addListener( (tab)->
         type:"popup" 
         width:300 
         height:600 , null
-    ) if !window.popup_window_opened)
+    ))
+
+#if !window.popup_window_opened
 
 
 window.sendMessage = ()->
     data =
-      "sender_id":window.user_to_send.id
+      "sender_id":window.logged_in_user.id
       "channel_id":window.user_to_send.channel_id
-    if window.is_custom_message
-      data["is_custom_message"] = true 
-      data["custom_message"] = window.custom_message 
-    else
-      "message_id":window.message_to_send.id
+      "is_custom_message":window.is_custom_message
+      "custom_message": window.custom_message 
 
-    console.log "data sent"
-    console.log data 
+    console.log "Data"
+    console.log data
+    if !window.is_custom_message 
+      data["message_id"] = window.message_to_send.id
+    else
+      data["message_id"] = " "
+
     $.post(base_url+"/calltheteam/sendmessage",data,null)
 
 
@@ -84,23 +92,29 @@ window.openOptionsPopupwindow = ()->window.options_window_id = chrome.windows.cr
     type:"popup"
     width:300
     height:600
-    title:"Chat minion"
     , null)
 
 
 window.dissectRecievedMessage = (recieved_message)->
+  ## initialize values 
+  console.log recieved_message
+  window.initializeValues()
   if window.relater_collection != null
     payload = JSON.parse(recieved_message.payload)
     sender = window.relater_collection.findWhere({"id":Number(payload.user_id)})
+    console.log sender    
     window.user_to_send = sender
     #Nested call backs
-    if !payload.is_custom_message 
-        window.messages.getMessageInfo(Number(payload.message_id),(payload_message)->
-          window.messages.loadOptionsforMessage(Number(payload.message_id),()->
+    console.log payload.is_custom_message
+    if payload.is_custom_message == "false"
+      window.messages.getMessageInfo(Number(payload.message_id),(payload_message)->
+        window.messages.loadOptionsforMessage(Number(payload.message_id),
+        ()->
           window.getTransformedMessage(sender.name,window.logged_in_user.name,payload_message.transform_pattern)
-          ))
+        ))
     else
-        window.getTransformedMessage(sender.name,window.logged_in_user.name,null)
+       window.transformed_message = payload.custom_message
+       window.getTransformedMessage(sender.name,window.logged_in_user.name,null)
 
 
 window.initialize_extension = (call_back)->
@@ -114,11 +128,11 @@ window.initialize_extension = (call_back)->
   
 
 loadRelaters = (user_id,call_back) ->
+    window.messages = new Messages()
+    window.messages.init()
     window.relater_collection = new RelaterCollection({"user_id":user_id})
     window.relater_collection.fetch
                   success : -> 
-                        window.messages = new Messages()
-                        window.messages.init()
                         if call_back != null and call_back != undefined
                           call_back()
                         console.log "relaters retrieved"
@@ -129,5 +143,13 @@ window.addRelaterToCollection = (relater,call_back)->
   window.relater_collection.add(relater)
   if call_back != null and call_back != undefined
     call_back(relater)
+
+window.initializeValues = ()->
+  window.user_to_send = null
+  window.message_to_send = null
+  window.transformed_message = null
+  window.is_custom_message = false
+  window.custom_message = ""
+  window.options_for_message = []
 
 initialize_extension()

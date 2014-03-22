@@ -26,6 +26,8 @@
 
     MessageView.prototype.send_message = function(event) {
       chrome.extension.getBackgroundPage().message_to_send = this.model;
+      chrome.extension.getBackgroundPage().is_custom_message = false;
+      chrome.extension.getBackgroundPage().custom_message = "";
       chrome.extension.getBackgroundPage().sendMessage();
       return window.close();
     };

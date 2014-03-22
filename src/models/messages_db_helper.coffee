@@ -1,7 +1,7 @@
 class @Messages
 
 	constructor : ->
-		@version = 2
+		@version = 3
 		@database=null
 		@transaction=null
 		@messages_url=chrome.extension.getBackgroundPage().base_url+"/messages.json"
@@ -10,7 +10,6 @@ class @Messages
 
 	init : ->
 		@request = indexedDB.open(@db_name,@version)
-		@.fetch()
 		@request.onupgradeneeded = (event)->
 			db = event.target.result
 			if db.objectStoreNames.contains("messages") 
@@ -21,6 +20,7 @@ class @Messages
 			object_store_message_options = db.createObjectStore("message_options",{keyPath:"id"})
 		@request.onsuccess = (event)=>
 			@database=event.target.result
+			@.fetch()
 			@.getAllMessages()
 			#chrome.runtime.sendMessage({"messages_loaded":true},null)
 		@request.onerror = (event)->
@@ -73,12 +73,13 @@ class @Messages
 	        messages_objectstore = message_transactions.objectStore("messages")
 	        messages_objectstore.openCursor(message_id).onsuccess = (event)->
 	            cursor = event.target.result
-	            if cursor 
-		               	callback(cursor.value)
+	            if cursor
+	            	console.log cursor.value
+	            	callback(cursor.value)
 	            
 
    loadOptionsforMessage:(message_id,callback)->
-   	chrome.extension.getBackgroundPage().options_for_message = []
+    chrome.extension.getBackgroundPage().options_for_message = []
     @request = indexedDB.open(@db_name,@version)
     @request.onsuccess = (event)->
         @database=event.target.result
@@ -89,13 +90,11 @@ class @Messages
             cursor = event.target.result
             if cursor 
                 if cursor.value.message_id == message_id
-                	options = cursor.value.options_id.split(";")
-                	for msg_id in options
-	                    messages_objectstore.openCursor(Number(msg_id)).onsuccess = (event)->
-	                        messages_cursor = event.target.result
-	                        chrome.extension.getBackgroundPage().options_for_message.push(messages_cursor.value);
-	                        
+                    options = cursor.value.options_id.split(";")
+                    for msg_id in options
+                     messages_objectstore.openCursor(Number(msg_id)).onsuccess = (event)->
+                                    messages_cursor = event.target.result
+                                    chrome.extension.getBackgroundPage().options_for_message.push(messages_cursor.value);
                 cursor.continue()                	
-                
             else if callback != null and callback != undefined then callback()	
                         

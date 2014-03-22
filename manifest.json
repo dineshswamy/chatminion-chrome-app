@@ -15,11 +15,11 @@
       "16": "images/jarviz_background-16.png",
       "48": "images/jarviz_background-48.png"
    },
-   "key": "MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAkqBFLDHm5NkTOaGCbf8hrW4UWWL5SOGNmnuyA+Sf/va25J47gJbWCzMyEUN6BAqxXCZuvWcav3KBFG9OYz+rSHc4XKvVQndb6m0B0JyxGEwPjSxGjxg5wSI1IO3pr1vC4Peh482YbzOiVfVs8FUSdwNzxU6bX6eVSkO0bm4QdSLOpRuBg6J27LJHZMGz8n1kfilTdXbX7VbRh8dV6RPqo6lFfzsoHEr6mhZyusjoW9XvfBgtxpUjelInyhfd2rQy4gscXVJrYj4+EUhRFCNwzv4AzdrtTd13EAv46ilsiPKA5r5riGt1JKJzMp+USREfLXfSICBsa7xyMV+8q35D3wIDAQAB",
+   "key": "MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAjMLxDHzMCoil/Rzjj+M+vmKpm4JZN5vFXk6UcKcunhDH9Vi18GypOQXrOR3+HmjYVscICdTPRZNPmqRd15vaZ8n2v8c8IzrNtojQCUgMyt5k8modycxDDHPFdhhIpuzX49yUIL7xK+AW88lmkUdTHrYqmPN8UnlT4KKWhlKvq4YSmeQeMdEN6DDElc2EpVTICgNqakceQdb7EBSla4vbmNmggRwSv4HaUsKaeEKlM88wf6+594JCVUvgVzZvSrl0CFzX7AEb/Dih13P8ufspTTubrU06oY3grMGO9g0vTyjkQiRJI5AVoP5bynQsxsPPlj4yiH1bt+180ZS6xVp7XQIDAQAB",
    "manifest_version": 2,
    "minimum_chrome_version": "23",
-   "name": "Jarviz CalltheTeam 2",
-   "permissions": [ "storage", "pushMessaging", "notifications", "tts", "http://localhost:3000/*", "https://www.google.com/accounts/OAuthGetRequestToken", "https://www.google.com/accounts/OAuthAuthorizeToken", "https://www.google.com/accounts/OAuthGetAccessToken", "https://www.googleapis.com/auth/userinfo#email" ],
+   "name": "Chat minion",
+   "permissions": [ "storage", "pushMessaging", "notifications", "tts", "http://*/*", "http://localhost:3000/*", "https://www.google.com/accounts/OAuthGetRequestToken", "https://www.google.com/accounts/OAuthAuthorizeToken", "https://www.google.com/accounts/OAuthGetAccessToken", "https://www.googleapis.com/auth/userinfo#email" ],
    "update_url": "https://clients2.google.com/service/update2/crx",
    "version": "0.0.2"
 }
