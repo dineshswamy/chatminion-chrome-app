@@ -30,19 +30,10 @@
 
   window.options_for_message = [];
 
-  chrome.browserAction.onClicked.addListener(function(tab) {
-    return chrome.windows.create({
-      url: '../popup.html',
-      type: "popup",
-      width: 300,
-      height: 600
-    }, null);
-  });
-
   window.sendMessage = function() {
     var data;
     data = {
-      "sender_id": window.logged_in_user.id,
+      "sender_id": window.user_to_send.id,
       "channel_id": window.user_to_send.channel_id,
       "is_custom_message": window.is_custom_message,
       "custom_message": window.custom_message
@@ -107,6 +98,8 @@
   };
 
   window.initialize_extension = function(call_back) {
+    window.messages = new Messages();
+    window.messages.init();
     return chrome.storage.local.get(["registered", "registered_user"], function(result) {
       if (result.registered === void 0 || result.registered_user === void 0) {
         return window.logged_in_user = null;
@@ -119,8 +112,6 @@
   };
 
   loadRelaters = function(user_id, call_back) {
-    window.messages = new Messages();
-    window.messages.init();
     window.relater_collection = new RelaterCollection({
       "user_id": user_id
     });

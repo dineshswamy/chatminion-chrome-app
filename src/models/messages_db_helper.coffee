@@ -18,7 +18,8 @@ class @Messages
 				db.deleteObjectStore("message_options")
 			object_store_messages = db.createObjectStore("messages",{keyPath:"id"})
 			object_store_message_options = db.createObjectStore("message_options",{keyPath:"id"})
-		@request.onsuccess = (event)=>
+			console.log "upgrade needed"
+		@request.onsuccess = (event) =>
 			@database=event.target.result
 			@.fetch()
 			@.getAllMessages()
@@ -45,12 +46,19 @@ class @Messages
 				console.log "message options successfully written"
 			request.onerror = (event)->
 				console.log "insertion error"
+	fetch:() ->
+		$.get(@messages_url,
+        (data) =>
+	        for messages in data
+	        	@.addMessage {"id":messages.msg_id,"user_message":messages.user_message,"transform_pattern":messages.transform_pattern}
+	        $.get(@message_options_url,
+	        (data)	=>
+	        	for message_option in data
+	        	   @.addMessageOptions {"id":message_option.id,"message_id":message_option.message_id,"options_id":message_option.options_id}
+	           @.getAllMessages())
+		)
 
-	fetch :()->
-    	$.get(@messages_url,(data) => @.addMessage {"id":messages.msg_id,"user_message":messages.user_message,"transform_pattern":messages.transform_pattern} for messages in data)
-    	$.get(@message_options_url,(data) => @.addMessageOptions {"id":message_option.id,"message_id":message_option.message_id,"options_id":message_option.options_id} for message_option in data)
-
-    getAllMessages:()->
+	getAllMessages:()->
         arr_messages_with_options = []
         message_transactions = @database.transaction(["message_options","messages"])
         objectstore = message_transactions.objectStore("message_options")

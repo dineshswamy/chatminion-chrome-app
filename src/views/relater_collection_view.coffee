@@ -5,7 +5,6 @@ class @RelatersCollectionView extends Backbone.View
 		@collection.on "add",@.render,@
 		@collection.on "reset",@.render,@
 	render : ->
-		console.log "refreshing views"
 		for users_model in @collection.models
 			relater = new RelaterView({"model":users_model})
 			@$el.append relater.render().$el

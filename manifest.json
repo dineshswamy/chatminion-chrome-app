@@ -6,7 +6,8 @@
       "default_icon": {
          "19": "images/jarviz_background-16.png"
       },
-      "default_title": "Chat minion "
+      "default_title": "Chat minion ",
+      "default_popup": "popup.html"
    },
    "default_locale": "en",
    "description": "call your team members with the help of Minion",

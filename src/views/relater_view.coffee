@@ -9,6 +9,7 @@ class @RelaterView extends Backbone.View
 		@
 
 	sendRelaterModel:(event) ->
+		$("body").animate({"background-position-x":"90%",10000,'linear'})
 		message_collection = chrome.extension.getBackgroundPage().messages_with_options
 		chrome.extension.getBackgroundPage().user_to_send = @model
 		messages_container_view =  new MessagesViewContainer()

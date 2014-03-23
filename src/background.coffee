@@ -41,20 +41,20 @@ window.options_for_message = []
 
 
 
-chrome.browserAction.onClicked.addListener( (tab)->
-    chrome.windows.create(
-        url:'../popup.html' 
-        type:"popup" 
-        width:300 
-        height:600 , null
-    ))
+# chrome.browserAction.onClicked.addListener( (tab)->
+#     chrome.windows.create(
+#         url:'../popup.html' 
+#         type:"popup" 
+#         width:300 
+#         height:600 , null
+#     ))
 
 #if !window.popup_window_opened
 
 
 window.sendMessage = ()->
     data =
-      "sender_id":window.logged_in_user.id
+      "sender_id":window.user_to_send.id
       "channel_id":window.user_to_send.channel_id
       "is_custom_message":window.is_custom_message
       "custom_message": window.custom_message 
@@ -118,6 +118,8 @@ window.dissectRecievedMessage = (recieved_message)->
 
 
 window.initialize_extension = (call_back)->
+    window.messages = new Messages()
+    window.messages.init()
     chrome.storage.local.get ["registered","registered_user"],(result)->
         if result.registered is undefined or result.registered_user is undefined
                 window.logged_in_user = null
@@ -128,8 +130,6 @@ window.initialize_extension = (call_back)->
   
 
 loadRelaters = (user_id,call_back) ->
-    window.messages = new Messages()
-    window.messages.init()
     window.relater_collection = new RelaterCollection({"user_id":user_id})
     window.relater_collection.fetch
                   success : -> 

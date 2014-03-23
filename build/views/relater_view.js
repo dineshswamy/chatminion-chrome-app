@@ -26,6 +26,11 @@
 
     RelaterView.prototype.sendRelaterModel = function(event) {
       var message_collection, message_collection_view, messages_container_view;
+      $("body").animate({
+        "background-position-x": "90%",
+        10000: 10000,
+        'linear': 'linear'
+      });
       message_collection = chrome.extension.getBackgroundPage().messages_with_options;
       chrome.extension.getBackgroundPage().user_to_send = this.model;
       messages_container_view = new MessagesViewContainer();

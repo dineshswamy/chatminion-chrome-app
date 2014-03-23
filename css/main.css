@@ -1,9 +1,10 @@
 /* Will be compiled down to a single stylesheet with your sass files */
 
-html,body,.strip-lines {
+body{
     /* Defaults css for cssmin process */
-    width: 100%;
-    height: 100%;
+    width: 300px;
+    height: 600px;
+    background:url('../images/despicable_me_wallpaper.jpg') no-repeat;
 }
 .strip-lines {
 	background-image: url("../images/jarviz_background.png");
@@ -35,3 +36,35 @@ html,body,.strip-lines {
 }
 
 
+.contacts_header
+{
+	color: #095d82;
+}
+.contact_names
+{
+	padding: 10px;
+	color:#000000;
+}
+
+.contact_names:hover
+{
+	color:#ffffff;
+	background-color:#095d82;
+
+}
+
+.messages_list
+{
+	padding: 10px;
+	color:#000000;	
+}
+
+.messages_list.active,.messages_list:active
+{
+	color:#095d82;
+}
+.messages_list:hover
+{
+	color:#ffffff;
+	background-color:#095d82;
+}

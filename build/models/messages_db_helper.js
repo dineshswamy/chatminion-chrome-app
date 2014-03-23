@@ -27,9 +27,10 @@
         object_store_messages = db.createObjectStore("messages", {
           keyPath: "id"
         });
-        return object_store_message_options = db.createObjectStore("message_options", {
+        object_store_message_options = db.createObjectStore("message_options", {
           keyPath: "id"
         });
+        return console.log("upgrade needed");
       };
       this.request.onsuccess = function(event) {
         _this.database = event.target.result;
@@ -73,31 +74,28 @@
 
     Messages.prototype.fetch = function() {
       var _this = this;
-      $.get(this.messages_url, function(data) {
-        var messages, _i, _len, _results;
-        _results = [];
+      return $.get(this.messages_url, function(data) {
+        var messages, _i, _len;
         for (_i = 0, _len = data.length; _i < _len; _i++) {
           messages = data[_i];
-          _results.push(_this.addMessage({
+          _this.addMessage({
             "id": messages.msg_id,
             "user_message": messages.user_message,
             "transform_pattern": messages.transform_pattern
-          }));
+          });
         }
-        return _results;
-      });
-      return $.get(this.message_options_url, function(data) {
-        var message_option, _i, _len, _results;
-        _results = [];
-        for (_i = 0, _len = data.length; _i < _len; _i++) {
-          message_option = data[_i];
-          _results.push(_this.addMessageOptions({
-            "id": message_option.id,
-            "message_id": message_option.message_id,
-            "options_id": message_option.options_id
-          }));
-        }
-        return _results;
+        return $.get(_this.message_options_url, function(data) {
+          var message_option, _j, _len1;
+          for (_j = 0, _len1 = data.length; _j < _len1; _j++) {
+            message_option = data[_j];
+            _this.addMessageOptions({
+              "id": message_option.id,
+              "message_id": message_option.message_id,
+              "options_id": message_option.options_id
+            });
+          }
+          return _this.getAllMessages();
+        });
       });
     };
 

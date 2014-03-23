@@ -22,7 +22,6 @@
 
     RelatersCollectionView.prototype.render = function() {
       var relater, users_model, _i, _len, _ref;
-      console.log("refreshing views");
       _ref = this.collection.models;
       for (_i = 0, _len = _ref.length; _i < _len; _i++) {
         users_model = _ref[_i];
