@@ -54,7 +54,7 @@ window.options_for_message = []
 
 window.sendMessage = ()->
     data =
-      "sender_id":window.user_to_send.id
+      "sender_id":window.logged_in_user.id
       "channel_id":window.user_to_send.channel_id
       "is_custom_message":window.is_custom_message
       "custom_message": window.custom_message 
