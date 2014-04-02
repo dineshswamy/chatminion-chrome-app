@@ -6,8 +6,8 @@
       "default_icon": {
          "19": "images/jarviz_background-16.png"
       },
-      "default_title": "Chat minion ",
-      "default_popup": "popup.html"
+      "default_popup": "popup.html",
+      "default_title": "Chat minion "
    },
    "default_locale": "en",
    "description": "call your team members with the help of Minion",
@@ -16,6 +16,7 @@
       "16": "images/jarviz_background-16.png",
       "48": "images/jarviz_background-48.png"
    },
+   "key": "MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAogS+D+YWIju9yhz6vGWgcqHlWe45rGpW5ePi/VyZrlJRkBeNThpRRKBmNs0NPE0lZ/t7IOX+ak0p5RUBxSzCrwtIP7rM2wqD19dKrKZTex4ei+bHomIoIlxQAnO3KZeP/2ciIQ1S2AS6TOSwWqO8/CClvImeeKeuQw5XagMXGcUl69uOZLEtDLUNVL9ZFRLgwrx9w303bDefHQv47bedGpl/PrRMP71Kg1E5hAEt6KQxRvJ3cltRgPvc5/LlmwEwTjjtnyhQXMr8npVy3OJR2ZVtA+CU9MrfRMFtZ8As6K4Jw06JDzx00YqzkqDXVj7qBIoJq0bItFDojoEZocq0lwIDAQAB",
    "manifest_version": 2,
    "minimum_chrome_version": "23",
    "name": "Chat minion",

@@ -1,3 +1,4 @@
+
 class @MessageCollectionView extends Backbone.View
 	tagName:"div"
 	className:"list-group"

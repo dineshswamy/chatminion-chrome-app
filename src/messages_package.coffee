@@ -1,6 +1,7 @@
 class @MessagesViewContainer  extends Backbone.View
     events:
         "click button#submit_custom_message":"send_message"
+        "click button#call_button":"call_relater"
     render: ->
         @$el.html HAML["messages_container_view"] 
         @
@@ -8,10 +9,11 @@ class @MessagesViewContainer  extends Backbone.View
         event.preventDefault()
         custom_message = $("#custom_message").val()
         if custom_message.length > 0
-            chrome.extension.getBackgroundPage().is_custom_message = true
-            chrome.extension.getBackgroundPage().custom_message = custom_message
-            chrome.extension.getBackgroundPage().sendMessage()
+            chrome.extension.getBackgroundPage().sendMessage(window.relater_to_send.channel_id,"",true,custom_message)
             window.close()
-
-        # new_contact_email = $("#new_contact_email").val()
-        # check_and_addRelator(new_contact_email)
+    # call_relater:(event)->
+    #     event.preventDefault()
+    #     peer = new Peer(window.logged_in_user.id,{"key":})
+    #     getUserMedia = navigator.getUserMedia || navigator.webkitGetUserMedia
+    #     # new_contact_email = $("#new_contact_email").val()
+    #     # check_and_addRelator(new_contact_email)

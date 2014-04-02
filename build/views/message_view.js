@@ -25,10 +25,7 @@
     };
 
     MessageView.prototype.send_message = function(event) {
-      chrome.extension.getBackgroundPage().message_to_send = this.model;
-      chrome.extension.getBackgroundPage().is_custom_message = false;
-      chrome.extension.getBackgroundPage().custom_message = "";
-      chrome.extension.getBackgroundPage().sendMessage();
+      chrome.extension.getBackgroundPage().sendMessage(window.relater_to_send.channel_id, this.model.msg_id, false, "");
       return window.close();
     };
 

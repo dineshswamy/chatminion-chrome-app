@@ -31,8 +31,8 @@
         10000: 10000,
         'linear': 'linear'
       });
+      window.relater_to_send = this.model;
       message_collection = chrome.extension.getBackgroundPage().messages_with_options;
-      chrome.extension.getBackgroundPage().user_to_send = this.model;
       messages_container_view = new MessagesViewContainer();
       $(".container").html(messages_container_view.render().$el);
       message_collection_view = new MessageCollectionView({

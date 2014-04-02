@@ -12,7 +12,8 @@
     }
 
     MessagesViewContainer.prototype.events = {
-      "click button#submit_custom_message": "send_message"
+      "click button#submit_custom_message": "send_message",
+      "click button#call_button": "call_relater"
     };
 
     MessagesViewContainer.prototype.render = function() {
@@ -25,9 +26,7 @@
       event.preventDefault();
       custom_message = $("#custom_message").val();
       if (custom_message.length > 0) {
-        chrome.extension.getBackgroundPage().is_custom_message = true;
-        chrome.extension.getBackgroundPage().custom_message = custom_message;
-        chrome.extension.getBackgroundPage().sendMessage();
+        chrome.extension.getBackgroundPage().sendMessage(window.relater_to_send.channel_id, "", true, custom_message);
         return window.close();
       }
     };

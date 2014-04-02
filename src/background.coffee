@@ -24,6 +24,7 @@ window.transformed_message = null
 window.popup_window_opened = false
 window.is_custom_message = false
 window.custom_message = ""
+window.opened_windows = {}
  # function openPanel()
  # {
  #     console.log("Inside opening panel");
@@ -52,20 +53,20 @@ window.options_for_message = []
 #if !window.popup_window_opened
 
 
-window.sendMessage = ()->
+window.sendMessage = (channel_id,message_id,is_custom_message,custom_message)->
     data =
       "sender_id":window.logged_in_user.id
-      "channel_id":window.user_to_send.channel_id
-      "is_custom_message":window.is_custom_message
-      "custom_message": window.custom_message 
+      "channel_id":channel_id
+      "is_custom_message":is_custom_message
+      "custom_message": custom_message 
 
-    console.log "Data"
-    console.log data
-    if !window.is_custom_message 
-      data["message_id"] = window.message_to_send.id
+    if !is_custom_message 
+      data["message_id"] = message_id
     else
       data["message_id"] = " "
 
+    console.log "Data"
+    console.log data
     $.post(base_url+"/calltheteam/sendmessage",data,null)
 
 
@@ -80,19 +81,28 @@ notificationandTTS = (notification_title,notification_message)->
 
 
 
-window.getTransformedMessage = (sender_name,reciever_name,transform_pattern)->
+window.getTransformedMessage = (sender,reciever_name,transform_pattern)->
   message_transform_helper = new MessageTransformation()
-  message_transform_helper.init(transform_pattern,sender_name,reciever_name)
+  message_transform_helper.init(transform_pattern,sender.name,reciever_name)
   message_transform_helper.applyTransformation()
   window.transformed_message = message_transform_helper.getMessage()
-  openOptionsPopupwindow()
+  openOptionsPopupwindow(sender)
 
-window.openOptionsPopupwindow = ()->window.options_window_id = chrome.windows.create( 
-    url:'../options_popup.html'
-    type:"popup"
-    width:300
-    height:600
-    , null)
+window.openOptionsPopupwindow =  (sender) -> 
+    if opened_windows[sender_id] == null
+        options = 
+            url:'../options_popup.html' 
+            type:"popup" 
+            width:300  
+            height:600
+        window.options_window_id = chrome.windows.create(options,(this_window)->
+          opened_windows[sender.id] = this_window.id
+          setWindowOptions(opened_window,sender))
+    else
+      chrome.windows.get(opened_windows[sender.id],null,(sender)->setWindowOptions(sender))
+
+setWindowOptions = (sender_window,sender)->
+  sender_window.relater_to_send = sender
 
 
 window.dissectRecievedMessage = (recieved_message)->
@@ -110,11 +120,11 @@ window.dissectRecievedMessage = (recieved_message)->
       window.messages.getMessageInfo(Number(payload.message_id),(payload_message)->
         window.messages.loadOptionsforMessage(Number(payload.message_id),
         ()->
-          window.getTransformedMessage(sender.name,window.logged_in_user.name,payload_message.transform_pattern)
+          window.getTransformedMessage(sender,window.logged_in_user.name,payload_message.transform_pattern)
         ))
     else
        window.transformed_message = payload.custom_message
-       window.getTransformedMessage(sender.name,window.logged_in_user.name,null)
+       window.getTransformedMessage(sender,window.logged_in_user.name,null)
 
 
 window.initialize_extension = (call_back)->
