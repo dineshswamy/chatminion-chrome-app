@@ -50,7 +50,7 @@
         case "success":
           return add_new_relater_and_render(new_relater);
         case "user_not_registered":
-          return openGmailForRequest();
+          return openGmailForRequest($("#new_contact_email").val());
       }
     };
 
@@ -59,7 +59,24 @@
       return console.log("refreshing views");
     };
 
-    openGmailForRequest = function() {};
+    openGmailForRequest = function(email) {
+      var mail_body, mail_subject, mail_to;
+      $("#relater_request_join").show();
+      mail_to = email;
+      mail_subject = "Try this chrome extension . it is really cool";
+      mail_body = "Hi ! try this chrome extension , its totally cool to chat inside the office.Try this and add me as your contact.Please dont forget . bye";
+      return $("#send_relater_request").click(function(event) {
+        var new_tab_options;
+        event.preventDefault();
+        new_tab_options = {
+          "url": "https://mail.google.com/mail/?ui=2&view=cm&fs=1&tf=1&shva=2&to=" + mail_to + "&su=" + mail_subject + "&body=" + mail_body
+        };
+        return chrome.tabs.create(new_tab_options, function(tab) {
+          $("#relater_request_join").hide();
+          return $("#new_contact_email").val("");
+        });
+      });
+    };
 
     return RelatersViewContainer;
 

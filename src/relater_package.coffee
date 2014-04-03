@@ -24,7 +24,7 @@ class @RelatersViewContainer  extends Backbone.View
 	        "channel_id": response_json.new_relater.channel_id
 	    switch response_json.status 
 	        when "success" then add_new_relater_and_render(new_relater)    
-	        when "user_not_registered" then openGmailForRequest()
+	        when "user_not_registered" then openGmailForRequest($("#new_contact_email").val())
 
     add_new_relater_and_render = (relater)->
             chrome.extension.getBackgroundPage().addRelaterToCollection(relater,window.loadRelaters)
@@ -34,5 +34,17 @@ class @RelatersViewContainer  extends Backbone.View
             #$("#contacts_container").html relater_collection_view.render().el
             
 
-    openGmailForRequest = ()->
-    ##to be filled with gmail
+    openGmailForRequest = (email)->
+        $("#relater_request_join").show()
+        mail_to = email
+        mail_subject = "Try this chrome extension . it is really cool"
+        mail_body = "Hi ! try this chrome extension , its totally cool to chat inside the office.Try this and add me as your contact.Please dont forget . bye"
+        $("#send_relater_request").click((event)->
+            event.preventDefault()
+            new_tab_options = 
+                "url":"https://mail.google.com/mail/?ui=2&view=cm&fs=1&tf=1&shva=2&to="+mail_to+"&su="+mail_subject+"&body="+mail_body
+            chrome.tabs.create(new_tab_options,(tab)->
+                $("#relater_request_join").hide()
+                $("#new_contact_email").val("")
+                )
+            )

@@ -7,7 +7,7 @@
     return (function() {
       var $o;
       $o = [];
-      $o.push("<div class='container'>\n  <div class='row'>\n    <div >\n      <h1 class='contacts_header'>Contacts</h1>\n    </div>\n  </div>\n  <div class='row'>\n    <div id='contacts_container'></div>\n  </div>\n  <footer>\n    <div class='row add_contact'>\n      <form class='form-inline' role='form'>\n        <input class='form-group form-control' id='new_contact_email' placeholder='enter email id' type='email'>\n        <button class='btn btn-default' id='submit_new_contact'>Add</button>\n      </form>\n    </div>\n    <div class='row' id='friend_request_join' style='display:none'>\n      <p class='text-primary'>It seems , your friend not yet joined\n        <button class='btn-square btn-success' type='submit'>ask him</button>\n      </p>\n    </div>\n  </footer>\n</div>");
+      $o.push("<div class='container'>\n  <div class='row'>\n    <div >\n      <h1 class='contacts_header'>Contacts</h1>\n    </div>\n  </div>\n  <div class='row'>\n    <div id='contacts_container'></div>\n  </div>\n  <footer>\n    <div class='row add_contact'>\n      <form class='form-inline' role='form'>\n        <input class='form-group form-control' id='new_contact_email' placeholder='enter email id' type='email'>\n        <button class='btn btn-default' id='submit_new_contact'>Add</button>\n      </form>\n    </div>\n    <div class='row' id='relater_request_join' style='display:none'>\n      <p class='text-primary'>It seems , your friend is not using Chatminion\n        <button class='btn-square btn-success' id='send_relater_request' type='submit'>ask him</button>\n      </p>\n    </div>\n  </footer>\n</div>");
       return $o.join("\n").replace(/\s(?:id|class)=(['"])(\1)/mg, "");
     }).call(context);
   };
