@@ -152,6 +152,8 @@
     }
   };
 
+  window.putMessageinThread = function(relater, message) {};
+
   window.initializeValues = function() {
     window.user_to_send = null;
     window.message_to_send = null;

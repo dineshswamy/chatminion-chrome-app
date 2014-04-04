@@ -25,6 +25,7 @@ window.popup_window_opened = false
 window.is_custom_message = false
 window.custom_message = ""
 window.opened_windows = {}
+window.relater_threads = []
  # function openPanel()
  # {
  #     console.log("Inside opening panel");
@@ -142,7 +143,7 @@ window.initialize_extension = (call_back)->
 loadRelaters = (user_id,call_back) ->
     window.relater_collection = new RelaterCollection({"user_id":user_id})
     window.relater_collection.fetch
-                  success : -> 
+                  success : ->  
                         if call_back != null and call_back != undefined
                           call_back()
                         console.log "relaters retrieved"
@@ -153,6 +154,13 @@ window.addRelaterToCollection = (relater,call_back)->
   window.relater_collection.add(relater)
   if call_back != null and call_back != undefined
     call_back(relater)
+
+window.putMessageinThread = (relater,message)->
+  #get the length of the array
+  if relater_thread_array.length > 4 
+    
+
+
 
 window.initializeValues = ()->
   window.user_to_send = null
