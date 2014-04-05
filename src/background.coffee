@@ -25,7 +25,7 @@ window.popup_window_opened = false
 window.is_custom_message = false
 window.custom_message = ""
 window.opened_windows = {}
-window.relater_threads = []
+window.relater_threads = {}
  # function openPanel()
  # {
  #     console.log("Inside opening panel");
@@ -54,16 +54,18 @@ window.options_for_message = []
 #if !window.popup_window_opened
 
 
-window.sendMessage = (channel_id,message_id,is_custom_message,custom_message)->
+window.sendMessage = (relater_to_send,message,is_custom_message,custom_message)->
     data =
       "sender_id":window.logged_in_user.id
-      "channel_id":channel_id
+      "channel_id":relater_to_send.channel_id
       "is_custom_message":is_custom_message
       "custom_message": custom_message 
 
     if !is_custom_message 
-      data["message_id"] = message_id
+      data["message_id"] = message.msg_id
+      window.putMessageinThread(relater_to_send,message.user_message)
     else
+      window.putMessageinThread(relater_to_send,custom_message)
       data["message_id"] = " "
 
     console.log "Data"
@@ -87,6 +89,7 @@ window.getTransformedMessage = (sender,reciever_name,transform_pattern)->
   message_transform_helper.init(transform_pattern,sender.name,reciever_name)
   message_transform_helper.applyTransformation()
   window.transformed_message = message_transform_helper.getMessage()
+  window.putMessageinThread(sender,window.transformed_message)
   openOptionsPopupwindow(sender)
 
 window.openOptionsPopupwindow =  (sender) -> 
@@ -113,7 +116,6 @@ window.dissectRecievedMessage = (recieved_message)->
   if window.relater_collection != null
     payload = JSON.parse(recieved_message.payload)
     sender = window.relater_collection.findWhere({"id":Number(payload.user_id)})
-    console.log sender    
     window.user_to_send = sender
     #Nested call backs
     console.log payload.is_custom_message
@@ -157,11 +159,13 @@ window.addRelaterToCollection = (relater,call_back)->
 
 window.putMessageinThread = (relater,message)->
   #get the length of the array
-  if relater_thread_array.length > 4 
+  thread =  window.relater_threads[relater.id]
+  if thread.length >= 4 
+    thread = []
+  else
+    thread.push(message)
+  window.relater_threads[relater.id] = thread
     
-
-
-
 window.initializeValues = ()->
   window.user_to_send = null
   window.message_to_send = null

@@ -25,7 +25,7 @@
     };
 
     MessageView.prototype.send_message = function(event) {
-      chrome.extension.getBackgroundPage().sendMessage(window.relater_to_send.channel_id, this.model.msg_id, false, "");
+      chrome.extension.getBackgroundPage().sendMessage(window.relater_to_send, this.model, false, "");
       return window.close();
     };
 

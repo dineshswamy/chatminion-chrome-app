@@ -28,21 +28,25 @@
 
   window.opened_windows = {};
 
+  window.relater_threads = {};
+
   window.messages_with_options = [];
 
   window.options_for_message = [];
 
-  window.sendMessage = function(channel_id, message_id, is_custom_message, custom_message) {
+  window.sendMessage = function(relater_to_send, message, is_custom_message, custom_message) {
     var data;
     data = {
       "sender_id": window.logged_in_user.id,
-      "channel_id": channel_id,
+      "channel_id": relater_to_send.channel_id,
       "is_custom_message": is_custom_message,
       "custom_message": custom_message
     };
     if (!is_custom_message) {
-      data["message_id"] = message_id;
+      data["message_id"] = message.msg_id;
+      window.putMessageinThread(relater_to_send, message.user_message);
     } else {
+      window.putMessageinThread(relater_to_send, custom_message);
       data["message_id"] = " ";
     }
     console.log("Data");
@@ -62,6 +66,7 @@
     message_transform_helper.init(transform_pattern, sender.name, reciever_name);
     message_transform_helper.applyTransformation();
     window.transformed_message = message_transform_helper.getMessage();
+    window.putMessageinThread(sender, window.transformed_message);
     return openOptionsPopupwindow(sender);
   };
 
@@ -98,7 +103,6 @@
       sender = window.relater_collection.findWhere({
         "id": Number(payload.user_id)
       });
-      console.log(sender);
       window.user_to_send = sender;
       console.log(payload.is_custom_message);
       if (payload.is_custom_message === "false") {
@@ -152,7 +156,16 @@
     }
   };
 
-  window.putMessageinThread = function(relater, message) {};
+  window.putMessageinThread = function(relater, message) {
+    var thread;
+    thread = window.relater_threads[relater.id];
+    if (thread.length >= 4) {
+      thread = [];
+    } else {
+      thread.push(message);
+    }
+    return window.relater_threads[relater.id] = thread;
+  };
 
   window.initializeValues = function() {
     window.user_to_send = null;
