@@ -44,13 +44,11 @@
     };
     if (!is_custom_message) {
       data["message_id"] = message.msg_id;
-      window.putMessageinThread(relater_to_send, message.user_message);
+      window.putMessageinThread(relater_to_send, message.user_message, false);
     } else {
-      window.putMessageinThread(relater_to_send, custom_message);
+      window.putMessageinThread(relater_to_send, custom_message, false);
       data["message_id"] = " ";
     }
-    console.log("Data");
-    console.log(data);
     return $.post(base_url + "/calltheteam/sendmessage", data, null);
   };
 
@@ -66,7 +64,7 @@
     message_transform_helper.init(transform_pattern, sender.name, reciever_name);
     message_transform_helper.applyTransformation();
     window.transformed_message = message_transform_helper.getMessage();
-    window.putMessageinThread(sender, window.transformed_message);
+    window.putMessageinThread(sender, window.transformed_message, true);
     return openOptionsPopupwindow(sender);
   };
 
@@ -81,17 +79,20 @@
       };
       return window.options_window_id = chrome.windows.create(options, function(this_window) {
         opened_windows[sender.id] = this_window.id;
-        return setWindowOptions(opened_window, sender);
+        return setWindowOptions(this_window, sender);
       });
     } else {
-      return chrome.windows.get(opened_windows[sender.id], null, function(sender) {
-        return setWindowOptions(sender);
+      return chrome.windows.get(opened_windows[sender.id], null, function(this_window) {
+        return setWindowOptions(this_window, sender);
       });
     }
   };
 
   setWindowOptions = function(sender_window, sender) {
-    return sender_window.relater_to_send = sender;
+    sender_window.relater_to_send = sender;
+    sender_window.relater_threads = getRelaterThread(String(sender.id));
+    sender_window.transformed_message = window.transformed_message;
+    return sender_window.loadMessages();
   };
 
   window.dissectRecievedMessage = function(recieved_message) {
@@ -156,15 +157,20 @@
     }
   };
 
-  window.putMessageinThread = function(relater, message) {
-    var thread;
-    thread = window.relater_threads[relater.id];
-    if (thread.length >= 4) {
-      thread = [];
-    } else {
-      thread.push(message);
-    }
-    return window.relater_threads[relater.id] = thread;
+  window.putMessageinThread = function(relater, message, sent_by) {
+    var relater_thread_key, thread, thread_message;
+    thread_message = {
+      "message": message,
+      "from_relater": sent_by
+    };
+    relater_thread_key = String(relater.id);
+    thread = window.relater_threads[relater_thread_key];
+    thread.push(thread_message);
+    return window.relater_threads[relater_thread_key] = thread;
+  };
+
+  window.getRelaterThread = function(sender_id) {
+    return window.relater_threads[sender_id];
   };
 
   window.initializeValues = function() {

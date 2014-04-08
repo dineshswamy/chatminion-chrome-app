@@ -2,6 +2,7 @@ class @ThreadsCollectionView extends Backbone.Collection
 	tagName:"div"
 	className:"list-group"
 	initialize :(attributes)->
+	@collection = attributes.collection
 	
 	render : ()->
 			for message in @collection

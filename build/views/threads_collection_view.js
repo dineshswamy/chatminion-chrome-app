@@ -17,6 +17,8 @@
 
     ThreadsCollectionView.prototype.initialize = function(attributes) {};
 
+    ThreadsCollectionView.collection = attributes.collection;
+
     ThreadsCollectionView.prototype.render = function() {
       var message, thread_message, _i, _len, _ref;
       _ref = this.collection;

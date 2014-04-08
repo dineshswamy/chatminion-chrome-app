@@ -63,13 +63,10 @@ window.sendMessage = (relater_to_send,message,is_custom_message,custom_message)-
 
     if !is_custom_message 
       data["message_id"] = message.msg_id
-      window.putMessageinThread(relater_to_send,message.user_message)
+      window.putMessageinThread(relater_to_send,message.user_message,false)
     else
-      window.putMessageinThread(relater_to_send,custom_message)
+      window.putMessageinThread(relater_to_send,custom_message,false)
       data["message_id"] = " "
-
-    console.log "Data"
-    console.log data
     $.post(base_url+"/calltheteam/sendmessage",data,null)
 
 
@@ -89,7 +86,7 @@ window.getTransformedMessage = (sender,reciever_name,transform_pattern)->
   message_transform_helper.init(transform_pattern,sender.name,reciever_name)
   message_transform_helper.applyTransformation()
   window.transformed_message = message_transform_helper.getMessage()
-  window.putMessageinThread(sender,window.transformed_message)
+  window.putMessageinThread(sender,window.transformed_message,true)
   openOptionsPopupwindow(sender)
 
 window.openOptionsPopupwindow =  (sender) -> 
@@ -101,13 +98,15 @@ window.openOptionsPopupwindow =  (sender) ->
             height:600
         window.options_window_id = chrome.windows.create(options,(this_window)->
           opened_windows[sender.id] = this_window.id
-          setWindowOptions(opened_window,sender))
+          setWindowOptions(this_window,sender))
     else
-      chrome.windows.get(opened_windows[sender.id],null,(sender)->setWindowOptions(sender))
+      chrome.windows.get(opened_windows[sender.id],null,(this_window)->setWindowOptions(this_window,sender))
 
 setWindowOptions = (sender_window,sender)->
   sender_window.relater_to_send = sender
-
+  sender_window.relater_threads = getRelaterThread(String(sender.id))
+  sender_window.transformed_message = window.transformed_message
+  sender_window.loadMessages()
 
 window.dissectRecievedMessage = (recieved_message)->
   ## initialize values 
@@ -157,14 +156,22 @@ window.addRelaterToCollection = (relater,call_back)->
   if call_back != null and call_back != undefined
     call_back(relater)
 
-window.putMessageinThread = (relater,message)->
+window.putMessageinThread = (relater,message,sent_by)->
   #get the length of the array
-  thread =  window.relater_threads[relater.id]
-  if thread.length >= 4 
-    thread = []
-  else
-    thread.push(message)
-  window.relater_threads[relater.id] = thread
+  thread_message = 
+    "message" : message
+    "from_relater" : sent_by
+  relater_thread_key = String(relater.id)
+  thread =  window.relater_threads[relater_thread_key]
+  # if (thread != null || thread!= undefined ) && thread.length >= 4 
+  #   thread = []
+  # else
+  thread.push(thread_message)
+  window.relater_threads[relater_thread_key] = thread
+
+window.getRelaterThread = (sender_id)->
+  window.relater_threads[sender_id]
+
     
 window.initializeValues = ()->
   window.user_to_send = null
