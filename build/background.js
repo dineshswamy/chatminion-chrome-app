@@ -70,7 +70,7 @@
 
   window.openOptionsPopupwindow = function(sender) {
     var options;
-    if (opened_windows[sender_id] === null) {
+    if (opened_windows[sender.id] === null || opened_windows[sender.id] === void 0) {
       options = {
         url: '../options_popup.html',
         type: "popup",
@@ -82,7 +82,7 @@
         return setWindowOptions(this_window, sender);
       });
     } else {
-      return chrome.windows.get(opened_windows[sender.id], null, function(this_window) {
+      return chrome.windows.get(Integer(opened_windows[sender.id]), null, function(this_window) {
         return setWindowOptions(this_window, sender);
       });
     }
@@ -165,6 +165,9 @@
     };
     relater_thread_key = String(relater.id);
     thread = window.relater_threads[relater_thread_key];
+    if (thread === null || thread === void 0) {
+      thread = [];
+    }
     thread.push(thread_message);
     return window.relater_threads[relater_thread_key] = thread;
   };

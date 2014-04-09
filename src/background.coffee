@@ -90,7 +90,7 @@ window.getTransformedMessage = (sender,reciever_name,transform_pattern)->
   openOptionsPopupwindow(sender)
 
 window.openOptionsPopupwindow =  (sender) -> 
-    if opened_windows[sender_id] == null
+    if opened_windows[sender.id] == null or opened_windows[sender.id] == undefined
         options = 
             url:'../options_popup.html' 
             type:"popup" 
@@ -100,7 +100,7 @@ window.openOptionsPopupwindow =  (sender) ->
           opened_windows[sender.id] = this_window.id
           setWindowOptions(this_window,sender))
     else
-      chrome.windows.get(opened_windows[sender.id],null,(this_window)->setWindowOptions(this_window,sender))
+      chrome.windows.get(Integer(opened_windows[sender.id]),null,(this_window)->setWindowOptions(this_window,sender))
 
 setWindowOptions = (sender_window,sender)->
   sender_window.relater_to_send = sender
@@ -166,6 +166,8 @@ window.putMessageinThread = (relater,message,sent_by)->
   # if (thread != null || thread!= undefined ) && thread.length >= 4 
   #   thread = []
   # else
+  if thread==null or thread==undefined
+    thread = []
   thread.push(thread_message)
   window.relater_threads[relater_thread_key] = thread
 

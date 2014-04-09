@@ -2,7 +2,7 @@ window.options_for_message = null
 window.relater_to_send = null 
 window.relater_threads = null
 window.transformed_message = null
-loadMessages = ()->
+window.loadMessages = ()->
 	console.log "window.options_for_message"
 	console.log window.options_for_message
 	console.log "window.relater_to_send"
