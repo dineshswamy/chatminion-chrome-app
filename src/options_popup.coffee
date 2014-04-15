@@ -2,7 +2,12 @@ window.options_for_message = null
 window.relater_to_send = null 
 window.relater_threads = null
 window.transformed_message = null
-window.loadMessages = ()->
+window.numbers = 34
+window.loadMessages = () ->
+	popup_params =  chrome.extension.getBackgroundPage().popup_params
+	console.log "Window id "
+	console.log this.window.id
+	window.options_for_message = popup_params.options_for_message
 	console.log "window.options_for_message"
 	console.log window.options_for_message
 	console.log "window.relater_to_send"
@@ -19,4 +24,4 @@ window.loadMessages = ()->
 
 
 
-# document.addEventListener("DOMContentLoaded",loadMessages)
+document.addEventListener("DOMContentLoaded",loadMessages)

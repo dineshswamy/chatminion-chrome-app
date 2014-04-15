@@ -40,6 +40,7 @@ window.relater_threads = {}
 
 window.messages_with_options   = []
 window.options_for_message = []
+window.popup_params = {}
 
 
 
@@ -102,11 +103,15 @@ window.openOptionsPopupwindow =  (sender) ->
     else
       chrome.windows.get(Integer(opened_windows[sender.id]),null,(this_window)->setWindowOptions(this_window,sender))
 
-setWindowOptions = (sender_window,sender)->
-  sender_window.relater_to_send = sender
-  sender_window.relater_threads = getRelaterThread(String(sender.id))
-  sender_window.transformed_message = window.transformed_message
-  sender_window.loadMessages()
+window.setWindowOptions = (sender_window,sender)->
+    console.log "sender window "+sender_window.id
+    window.popup_params[String(sender_window.id)] =
+        relater_to_send : sender
+        relater_threads : getRelaterThread(String(sender.id))
+        transformed_message : window.transformed_message
+        options_for_messages : window.options_for_messages
+    
+
 
 window.dissectRecievedMessage = (recieved_message)->
   ## initialize values 

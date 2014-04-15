@@ -9,8 +9,14 @@
 
   window.transformed_message = null;
 
+  window.numbers = 34;
+
   window.loadMessages = function() {
-    var message_collection_view, messages_container_view, relater_threads_view;
+    var message_collection_view, messages_container_view, popup_params, relater_threads_view;
+    popup_params = chrome.extension.getBackgroundPage().popup_params;
+    console.log("Window id ");
+    console.log(this.window.id);
+    window.options_for_message = popup_params.options_for_message;
     console.log("window.options_for_message");
     console.log(window.options_for_message);
     console.log("window.relater_to_send");
@@ -29,5 +35,7 @@
     $("title").html(window.transformed_message);
     return chrome.tts.speak(String(window.transformed_message));
   };
+
+  document.addEventListener("DOMContentLoaded", loadMessages);
 
 }).call(this);

@@ -15,9 +15,7 @@
 
     ThreadsCollectionView.prototype.className = "list-group";
 
-    ThreadsCollectionView.prototype.initialize = function(attributes) {};
-
-    ThreadsCollectionView.collection = attributes.collection;
+    ThreadsCollectionView.prototype.initialize = function() {};
 
     ThreadsCollectionView.prototype.render = function() {
       var message, thread_message, _i, _len, _ref;

@@ -1,8 +1,7 @@
 class @ThreadsCollectionView extends Backbone.Collection
 	tagName:"div"
 	className:"list-group"
-	initialize :(attributes)->
-	@collection = attributes.collection
+	initialize :()->
 	
 	render : ()->
 			for message in @collection
