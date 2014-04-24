@@ -77,11 +77,6 @@ notificationandTTS = (notification_title,notification_message)->
   # chrome.tts.speak  notification_message, null, -> if chrome.extension.lastError
   #   console.log('TTS Error: ' + chrome.extension.lastError.message)
 
-
-
-
-
-
 window.getTransformedMessage = (sender,reciever_name,transform_pattern)->
   message_transform_helper = new MessageTransformation()
   message_transform_helper.init(transform_pattern,sender.name,reciever_name)
@@ -98,19 +93,21 @@ window.openOptionsPopupwindow =  (sender) ->
             width:300  
             height:600
         window.options_window_id = chrome.windows.create(options,(this_window)->
-          opened_windows[sender.id] = this_window.id
-          setWindowOptions(this_window,sender))
+          setMessageOptions(this_window,sender))
     else
-      chrome.windows.get(Integer(opened_windows[sender.id]),null,(this_window)->setWindowOptions(this_window,sender))
+        setMessageOptions(null,sender)
 
-window.setWindowOptions = (sender_window,sender)->
-    console.log "sender window "+sender_window.id
-    window.popup_params[String(sender_window.id)] =
-        relater_to_send : sender
-        relater_threads : getRelaterThread(String(sender.id))
-        transformed_message : window.transformed_message
-        options_for_messages : window.options_for_messages
-    
+window.setMessageOptions = (sender_window,sender)->
+    window.broadcast_message =
+        "relater_id":sender.id
+        "relater_to_send":sender.toJSON()
+        "transformed_message":window.transformed_message
+    window.sendBroadcastMessage()
+    #chrome.runtime.sendMessage(window.message,null)
+
+window.sendBroadcastMessage = ()->
+  chrome.runtime.sendMessage(window.broadcast_message,null)
+
 
 
 window.dissectRecievedMessage = (recieved_message)->
@@ -179,6 +176,8 @@ window.putMessageinThread = (relater,message,sent_by)->
 window.getRelaterThread = (sender_id)->
   window.relater_threads[sender_id]
 
+window.speakMessage = (transformed_message)->
+  chrome.tts.speak(String(window.transformed_message))
     
 window.initializeValues = ()->
   window.user_to_send = null

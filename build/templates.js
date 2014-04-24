@@ -146,7 +146,7 @@
     return (function() {
       var $o;
       $o = [];
-      $o.push("<div class='container'>\n  <div class='row'>\n    <div >\n      <h1 id='message_head'>Message</h1>\n    </div>\n  </div>\n  <div class='row'>\n    <div>{:id => \"threads_container\"}</div>\n    <div id='messages_container'></div>\n  </div>\n  <footer>\n    <div class='row custom_message_container'>\n      <form class='form-inline' role='form'>\n        <input class='form-group form-control' id='custom_message' placeholder='Your message ....' type='text'>\n        <button class='btn btn-default' id='submit_custom_message'>Send</button>\n        <button class='btn btn-default' id='call_button'>Call</button>\n      </form>\n    </div>\n  </footer>\n</div>");
+      $o.push("<div class='container'>\n  <div class='row'>\n    <div >\n      <h1 id='message_head'>Message</h1>\n    </div>\n  </div>\n  <div class='row'>\n    <div id='threads_container'></div>\n    <div id='messages_container'></div>\n  </div>\n  <footer>\n    <div class='row custom_message_container'>\n      <form class='form-inline' role='form'>\n        <input class='form-group form-control' id='custom_message' placeholder='Your message ....' type='text'>\n        <button class='btn btn-default' id='submit_custom_message'>Send</button>\n        <button class='btn btn-default' id='call_button'>Call</button>\n      </form>\n    </div>\n  </footer>\n</div>");
       return $o.join("\n").replace(/\s(?:id|class)=(['"])(\1)/mg, "");
     }).call(context);
   };

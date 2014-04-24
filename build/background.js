@@ -80,24 +80,24 @@
         height: 600
       };
       return window.options_window_id = chrome.windows.create(options, function(this_window) {
-        opened_windows[sender.id] = this_window.id;
-        return setWindowOptions(this_window, sender);
+        return setMessageOptions(this_window, sender);
       });
     } else {
-      return chrome.windows.get(Integer(opened_windows[sender.id]), null, function(this_window) {
-        return setWindowOptions(this_window, sender);
-      });
+      return setMessageOptions(null, sender);
     }
   };
 
-  window.setWindowOptions = function(sender_window, sender) {
-    console.log("sender window " + sender_window.id);
-    return window.popup_params[String(sender_window.id)] = {
-      relater_to_send: sender,
-      relater_threads: getRelaterThread(String(sender.id)),
-      transformed_message: window.transformed_message,
-      options_for_messages: window.options_for_messages
+  window.setMessageOptions = function(sender_window, sender) {
+    window.broadcast_message = {
+      "relater_id": sender.id,
+      "relater_to_send": sender.toJSON(),
+      "transformed_message": window.transformed_message
     };
+    return window.sendBroadcastMessage();
+  };
+
+  window.sendBroadcastMessage = function() {
+    return chrome.runtime.sendMessage(window.broadcast_message, null);
   };
 
   window.dissectRecievedMessage = function(recieved_message) {
@@ -179,6 +179,10 @@
 
   window.getRelaterThread = function(sender_id) {
     return window.relater_threads[sender_id];
+  };
+
+  window.speakMessage = function(transformed_message) {
+    return chrome.tts.speak(String(window.transformed_message));
   };
 
   window.initializeValues = function() {

@@ -13,7 +13,9 @@
     }
 
     ThreadMessageView.prototype.initialize = function(attributes) {
-      return this.message = attributes.message;
+      this.message = attributes.message;
+      this.init_variable = 6;
+      return console.log(this.init_variable);
     };
 
     ThreadMessageView.prototype.render = function() {

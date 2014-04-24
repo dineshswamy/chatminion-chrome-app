@@ -102,7 +102,7 @@ class @Messages
                     for msg_id in options
                      messages_objectstore.openCursor(Number(msg_id)).onsuccess = (event)->
                                     messages_cursor = event.target.result
-                                    chrome.extension.getBackgroundPage().options_for_message.push(messages_cursor.value);
+                                    chrome.extension.getBackgroundPage().options_for_message.push(messages_cursor.value)
                 cursor.continue()                	
             else if callback != null and callback != undefined then callback()	
                         

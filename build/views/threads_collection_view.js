@@ -15,17 +15,20 @@
 
     ThreadsCollectionView.prototype.className = "list-group";
 
-    ThreadsCollectionView.prototype.initialize = function() {};
+    ThreadsCollectionView.prototype.initialize = function(attributes) {
+      if (attributes !== null || attributes !== void 0) {
+        return this.collection = attributes.collection;
+      }
+    };
 
     ThreadsCollectionView.prototype.render = function() {
-      var message, thread_message, _i, _len, _ref;
+      var message, _i, _len, _ref;
+      console.log("Collection");
+      console.log(this.collection);
       _ref = this.collection;
       for (_i = 0, _len = _ref.length; _i < _len; _i++) {
         message = _ref[_i];
-        thread_message = new ThreadMessageView({
-          "message": message
-        });
-        this.$el.append(thread_message.render().$el);
+        this.$el.append("<li>" + message + "</li>");
       }
       return this;
     };
