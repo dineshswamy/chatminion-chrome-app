@@ -48,6 +48,13 @@ task 'build' ,"Building the app" , ->
 			invoke('build-haml')
 			invoke('build-saas'))
 
+task 'clean_build' ,"clean and rebuild" , ->
+	console.log("Cleaning files...")
+	runCmd("rm",["-rf","*","build/"])
+	console.log("Cleaning files complete.")
+	console.log("Building")
+	invoke('build')
+
 task 'watch',"Watching your Coffee script files",->
 	if_coffee ->
 		runCmd("coffee",["--output",JAVASCRIPTS_PATH,"--watch",COFFEESCRIPTS_PATH])

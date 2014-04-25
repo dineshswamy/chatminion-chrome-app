@@ -22,19 +22,20 @@
     };
 
     ThreadsCollectionView.prototype.render = function() {
-      var message, _i, _len, _ref;
-      console.log("Collection");
-      console.log(this.collection);
+      var message, thread, _i, _len, _ref;
       _ref = this.collection;
       for (_i = 0, _len = _ref.length; _i < _len; _i++) {
         message = _ref[_i];
-        this.$el.append("<li>" + message + "</li>");
+        thread = new ThreadMessageView({
+          "message": message
+        });
+        this.$el.append(thread.render().$el);
       }
       return this;
     };
 
     return ThreadsCollectionView;
 
-  })(Backbone.Collection);
+  })(Backbone.View);
 
 }).call(this);

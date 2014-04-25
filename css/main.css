@@ -54,12 +54,20 @@ body{
 
 }
 
-.messages_list
+.messages_list 
 {
 	padding: 10px;
 	color:#000000;	
 }
 
+.messages_list .left_align
+{
+	background-color:#f1c40f;	
+}
+.messages_list .right_align
+{
+	background-color:#d35400;
+}
 .messages_list.active,.messages_list:active
 {
 	color:#095d82;

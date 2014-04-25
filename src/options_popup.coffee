@@ -19,7 +19,7 @@ window.loadMessages = () ->
 	$("#threads_container").html relater_threads_view.render().el
 	$("#message_head").html window.transformed_message
 	$("title").html window.transformed_message
-	chrome.extension.getBackgroundPage().speakMessage(window.transformed_message)
+	#chrome.extension.getBackgroundPage().speakMessage(window.transformed_message)
 
 window.initializeWindow = ()->
 	chrome.extension.getBackgroundPage().sendBroadcastMessage()

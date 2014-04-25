@@ -170,11 +170,12 @@
     };
     relater_thread_key = String(relater.id);
     thread = window.relater_threads[relater_thread_key];
-    if (thread === null || thread === void 0) {
-      thread = [];
+    if ((thread !== null || thread !== void 0) && thread.length >= 4) {
+      return thread = [];
+    } else {
+      thread.push(thread_message);
+      return window.relater_threads[relater_thread_key] = thread;
     }
-    thread.push(thread_message);
-    return window.relater_threads[relater_thread_key] = thread;
   };
 
   window.getRelaterThread = function(sender_id) {

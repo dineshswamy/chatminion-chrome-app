@@ -19,7 +19,7 @@
 
     MessageCollectionView.prototype.render = function() {
       var custom_message, message_models, relater, _i, _len, _ref;
-      _ref = this.collection.models;
+      _ref = this.collection;
       for (_i = 0, _len = _ref.length; _i < _len; _i++) {
         message_models = _ref[_i];
         relater = new MessageView({
