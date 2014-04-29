@@ -2,9 +2,8 @@
 
 body{
     /* Defaults css for cssmin process */
-    width: 300px;
-    height: 600px;
-    background:url('../images/despicable_me_wallpaper.jpg') no-repeat;
+    min-width: 300px;
+    min-height: 600px;
 }
 .strip-lines {
 	background-image: url("../images/jarviz_background.png");
@@ -71,6 +70,7 @@ body{
 .messages_list.active,.messages_list:active
 {
 	color:#095d82;
+
 }
 .messages_list:hover
 {

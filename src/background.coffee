@@ -165,9 +165,9 @@ window.putMessageinThread = (relater,message,sent_by)->
     "from_relater" : sent_by
   relater_thread_key = String(relater.id)
   thread =  window.relater_threads[relater_thread_key]
-  if (thread != null || thread!= undefined ) && thread.length >= 4 
+  if thread == null || thread == undefined
      thread = []
-  else
+     
     thread.push(thread_message)
     window.relater_threads[relater_thread_key] = thread
 

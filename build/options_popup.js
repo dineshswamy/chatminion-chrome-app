@@ -29,8 +29,7 @@
     $("#messages_container").html(message_collection_view.render().el);
     $("#threads_container").html(relater_threads_view.render().el);
     $("#message_head").html(window.transformed_message);
-    $("title").html(window.transformed_message);
-    return chrome.extension.getBackgroundPage().speakMessage(window.transformed_message);
+    return $("title").html(window.transformed_message);
   };
 
   window.initializeWindow = function() {
