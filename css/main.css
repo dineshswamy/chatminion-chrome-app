@@ -1,15 +1,11 @@
 /* Will be compiled down to a single stylesheet with your sass files */
-
 body{
-    /* Defaults css for cssmin process */
-    min-width: 300px;
-    min-height: 600px;
+	width: 70%;
+	height: 40%;
 }
 .strip-lines {
 	background-image: url("../images/jarviz_background.png");
 }
-
-
 .strip-lines div{
 	width: 10px;
 	height: 70%;
@@ -53,6 +49,19 @@ body{
 
 }
 
+.chat_animation{
+	border:1px solid green;
+
+}
+
+.chat_contacts{
+	border:1px solid green;
+}
+
+.chat_messages{
+	border:1px solid green;
+}
+
 .messages_list 
 {
 	padding: 10px;
@@ -76,4 +85,9 @@ body{
 {
 	color:#ffffff;
 	background-color:#095d82;
+}
+.message_selected
+{
+	color:#ffffff;
+	background-color:green;	
 }

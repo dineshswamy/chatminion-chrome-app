@@ -13,7 +13,7 @@
 
 #window.base_url = "http://localhost:3000"
 window.base_url = "http://lit-refuge-2289.herokuapp.com"
-window.user_to_send = null
+window.relater_send_queue = []
 window.message_to_send = null
 window.relater_collection = null
 sender = null
@@ -26,17 +26,7 @@ window.is_custom_message = false
 window.custom_message = ""
 window.opened_windows = {}
 window.relater_threads = {}
- # function openPanel()
- # {
- #     console.log("Inside opening panel");
- #  chrome.app.window.create('../popup.html',{
- #    "bounds":{
- #      "width":560,
- #      "height":730
- #    }
-
- #  });
- # }
+ 
 
 window.messages_with_options   = []
 window.options_for_message = []
@@ -44,18 +34,21 @@ window.popup_params = {}
 
 
 
-# chrome.browserAction.onClicked.addListener( (tab)->
-#     chrome.windows.create(
-#         url:'../popup.html' 
-#         type:"popup" 
-#         width:300 
-#         height:600 , null
-#     ))
+chrome.browserAction.onClicked.addListener((tab)->
+    chrome.windows.create(
+        url:'../popup.html' 
+        width:1300
+        height:300
+        type:"popup"
+        ,null
+    ))
 
-#if !window.popup_window_opened
+window.addSenderToQueue = (relater)->
+  window.relater_send_queue.push(relater)
 
 
-window.sendMessage = (relater_to_send,message,is_custom_message,custom_message)->
+window.sendMessage = (message,is_custom_message,custom_message)->
+  for relater_to_send in window.relater_send_queue
     data =
       "sender_id":window.logged_in_user.id
       "channel_id":relater_to_send.channel_id

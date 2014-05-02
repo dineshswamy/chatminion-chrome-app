@@ -13,13 +13,17 @@
 
     MessageCollectionView.prototype.tagName = "div";
 
-    MessageCollectionView.prototype.className = "list-group";
+    MessageCollectionView.prototype.className = "list-group messages_collection_div";
+
+    MessageCollectionView.prototype.events = {
+      "click": "remove_selection"
+    };
 
     MessageCollectionView.prototype.initialize = function(attributes) {};
 
     MessageCollectionView.prototype.render = function() {
       var custom_message, message_models, relater, _i, _len, _ref;
-      _ref = this.collection;
+      _ref = this.collection.models;
       for (_i = 0, _len = _ref.length; _i < _len; _i++) {
         message_models = _ref[_i];
         relater = new MessageView({
@@ -28,9 +32,11 @@
         this.$el.append(relater.render().$el);
       }
       custom_message = new CustomMessageView();
-      this.$el.append(custom_message.render());
+      this.$el.append(custom_message.render().$el);
       return this;
     };
+
+    MessageCollectionView.prototype.remove_selection = function(event) {};
 
     return MessageCollectionView;
 

@@ -15,6 +15,10 @@
       "click": "send_message"
     };
 
+    MessageView.prototype.tagName = "div";
+
+    MessageView.prototype.className = "messages_list";
+
     MessageView.prototype.initialize = function(attributes) {};
 
     MessageView.prototype.render = function() {
@@ -25,8 +29,8 @@
     };
 
     MessageView.prototype.send_message = function(event) {
-      chrome.extension.getBackgroundPage().sendMessage(window.relater_to_send, this.model, false, "");
-      return window.close();
+      this.$el.siblings().removeClass("message_selected");
+      return this.$el.addClass("message_selected");
     };
 
     return MessageView;

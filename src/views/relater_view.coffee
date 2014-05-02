@@ -7,12 +7,9 @@ class @RelaterView extends Backbone.View
 	render: ->
 		@$el.html HAML["relater"](user_model:@model)
 		@
-
 	sendRelaterModel:(event) ->
-		$("body").animate({"background-position-x":"90%",10000,'linear'})
-		window.relater_to_send = @model
-		message_collection = chrome.extension.getBackgroundPage().messages_with_options
-		messages_container_view =  new MessagesViewContainer()
-		$(".container").html messages_container_view.render().$el
-		message_collection_view = new MessageCollectionView({"collection":message_collection})
-		$("#messages_container").html message_collection_view.render().el
+    getUserMedia = navigator.getUserMedia || navigator.webkitGetUserMedia || navigator.mozGetUserMedia
+    getUserMedia(video: true,audio: true,(stream)->
+	                		call = window.peer.call('another-peers-id', stream)
+	                		call.on('stream',(remoteStream)->$("#chat_video").src(remoteStream))
+                		,null)

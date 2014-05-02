@@ -25,20 +25,18 @@
     };
 
     RelaterView.prototype.sendRelaterModel = function(event) {
-      var message_collection, message_collection_view, messages_container_view;
-      $("body").animate({
-        "background-position-x": "90%",
-        10000: 10000,
-        'linear': 'linear'
-      });
-      window.relater_to_send = this.model;
-      message_collection = chrome.extension.getBackgroundPage().messages_with_options;
-      messages_container_view = new MessagesViewContainer();
-      $(".container").html(messages_container_view.render().$el);
-      message_collection_view = new MessageCollectionView({
-        "collection": message_collection
-      });
-      return $("#messages_container").html(message_collection_view.render().el);
+      var getUserMedia;
+      getUserMedia = navigator.getUserMedia || navigator.webkitGetUserMedia || navigator.mozGetUserMedia;
+      return getUserMedia({
+        video: true,
+        audio: true
+      }, function(stream) {
+        var call;
+        call = window.peer.call('another-peers-id', stream);
+        return call.on('stream', function(remoteStream) {
+          return $("#chat_video").src(remoteStream);
+        });
+      }, null);
     };
 
     return RelaterView;

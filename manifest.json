@@ -6,7 +6,6 @@
       "default_icon": {
          "19": "images/jarviz_background-16.png"
       },
-      "default_popup": "popup.html",
       "default_title": "Chat minion "
    },
    "default_locale": "en",
@@ -20,7 +19,7 @@
    "manifest_version": 2,
    "minimum_chrome_version": "23",
    "name": "Chat minion",
-   "permissions": [ "storage", "pushMessaging", "notifications", "tts", "http://*/*", "http://localhost:3000/*", "https://www.google.com/accounts/OAuthGetRequestToken", "https://www.google.com/accounts/OAuthAuthorizeToken", "https://www.google.com/accounts/OAuthGetAccessToken", "https://www.googleapis.com/auth/userinfo#email" ],
+   "permissions": [ "storage","audioCapture","videoCapture","pushMessaging", "notifications", "tts", "http://*/*", "http://localhost:3000/*", "https://www.google.com/accounts/OAuthGetRequestToken", "https://www.google.com/accounts/OAuthAuthorizeToken", "https://www.google.com/accounts/OAuthGetAccessToken", "https://www.googleapis.com/auth/userinfo#email" ],
    "update_url": "https://clients2.google.com/service/update2/crx",
    "version": "0.0.3"
 }

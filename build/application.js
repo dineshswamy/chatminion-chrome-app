@@ -25,22 +25,31 @@
   })(Backbone.View);
 
   window.loadRelaters = function(user_id) {
-    var contacts_view, relater_collection;
-    contacts_view = new RelatersViewContainer();
-    $(".container").html(contacts_view.render().$el);
+    var add_relaters_view, message_collection, message_collection_view, relater_collection;
+    add_relaters_view = new addRelatersView();
     relater_collection = chrome.extension.getBackgroundPage().relater_collection;
     window.relater_collection_view = new RelatersCollectionView({
       "collection": relater_collection
     });
     if (relater_collection.models.length > 0) {
-      return $("#contacts_container").html(window.relater_collection_view.render().el);
+      $("#relaters_of_the_user").html(window.relater_collection_view.render().el);
     } else {
-      return $("#contacts_container").html(new InfoView().render("You have no contacts!").$el);
+      $("#relaters_of_the_user").html(new InfoView().render("You have no contacts!").$el);
     }
+    $("#relaters_of_the_user").append(add_relaters_view.render().$el);
+    message_collection = chrome.extension.getBackgroundPage().messages_with_options;
+    message_collection_view = new MessageCollectionView({
+      "collection": message_collection
+    });
+    return $("#thread_and_messages").html(message_collection_view.render().$el);
   };
 
   initialize_extension = function() {
-    var logged_in_user, sign_up_view;
+    var getUserMedia, logged_in_user, sign_up_view;
+    window.peer = new Peer("fight_rigorously", {
+      key: "2n9conp4vga2a9k9"
+    });
+    getUserMedia = navigator.getUserMedia || navigator.webkitGetUserMedia || navigator.mozGetUserMedia;
     chrome.extension.getBackgroundPage().initializeValues();
     logged_in_user = chrome.extension.getBackgroundPage().logged_in_user;
     chrome.extension.getBackgroundPage().popup_window_opened = true;

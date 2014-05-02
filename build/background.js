@@ -4,7 +4,7 @@
 
   window.base_url = "http://lit-refuge-2289.herokuapp.com";
 
-  window.user_to_send = null;
+  window.relater_send_queue = [];
 
   window.message_to_send = null;
 
@@ -36,22 +36,41 @@
 
   window.popup_params = {};
 
-  window.sendMessage = function(relater_to_send, message, is_custom_message, custom_message) {
-    var data;
-    data = {
-      "sender_id": window.logged_in_user.id,
-      "channel_id": relater_to_send.channel_id,
-      "is_custom_message": is_custom_message,
-      "custom_message": custom_message
-    };
-    if (!is_custom_message) {
-      data["message_id"] = message.msg_id;
-      window.putMessageinThread(relater_to_send, message.user_message, false);
-    } else {
-      window.putMessageinThread(relater_to_send, custom_message, false);
-      data["message_id"] = " ";
+  chrome.browserAction.onClicked.addListener(function(tab) {
+    return chrome.windows.create({
+      url: '../popup.html',
+      width: 1300,
+      height: 300,
+      type: "popup"
+    }, null);
+  });
+
+  window.addSenderToQueue = function(relater) {
+    return window.relater_send_queue.push(relater);
+  };
+
+  window.sendMessage = function(message, is_custom_message, custom_message) {
+    var data, relater_to_send, _i, _len, _ref, _results;
+    _ref = window.relater_send_queue;
+    _results = [];
+    for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+      relater_to_send = _ref[_i];
+      data = {
+        "sender_id": window.logged_in_user.id,
+        "channel_id": relater_to_send.channel_id,
+        "is_custom_message": is_custom_message,
+        "custom_message": custom_message
+      };
+      if (!is_custom_message) {
+        data["message_id"] = message.msg_id;
+        window.putMessageinThread(relater_to_send, message.user_message, false);
+      } else {
+        window.putMessageinThread(relater_to_send, custom_message, false);
+        data["message_id"] = " ";
+      }
+      _results.push($.post(base_url + "/calltheteam/sendmessage", data, null));
     }
-    return $.post(base_url + "/calltheteam/sendmessage", data, null);
+    return _results;
   };
 
   notificationandTTS = function(notification_title, notification_message) {
