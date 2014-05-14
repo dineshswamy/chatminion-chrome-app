@@ -1,13 +1,12 @@
 {
+
+   "app": {
    "background": {
       "page": "background.html"
-   },
-   "browser_action": {
-      "default_icon": {
-         "19": "images/jarviz_background-16.png"
-      },
-      "default_title": "Chat minion "
-   },
+   }
+   
+   }
+   ,
    "default_locale": "en",
    "description": "call your team members with the help of Minion",
    "icons": {
@@ -15,11 +14,11 @@
       "16": "images/jarviz_background-16.png",
       "48": "images/jarviz_background-48.png"
    },
-   "key": "MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAogS+D+YWIju9yhz6vGWgcqHlWe45rGpW5ePi/VyZrlJRkBeNThpRRKBmNs0NPE0lZ/t7IOX+ak0p5RUBxSzCrwtIP7rM2wqD19dKrKZTex4ei+bHomIoIlxQAnO3KZeP/2ciIQ1S2AS6TOSwWqO8/CClvImeeKeuQw5XagMXGcUl69uOZLEtDLUNVL9ZFRLgwrx9w303bDefHQv47bedGpl/PrRMP71Kg1E5hAEt6KQxRvJ3cltRgPvc5/LlmwEwTjjtnyhQXMr8npVy3OJR2ZVtA+CU9MrfRMFtZ8As6K4Jw06JDzx00YqzkqDXVj7qBIoJq0bItFDojoEZocq0lwIDAQAB",
+   "key": "MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAzOZjX5+ZpDGQY2zsz/M6d80MrpsWvOm4xTpNDUN7irEnlO7qXjplxo2ETfE7O+4fDcfMeQz0uoXKQDGBMhFRgjba0VMJDicF88PLCCXjaRsy6nKp+IV8BGGQuWiVew5rS3GKLxnSz+eN0Z92pgxOkJ3nWS4d8p3e9pcF2FYAW5RMiQXtBQckKmRuLZmTBRtfEKTfktVEakRfLcP6ONPf+EA6+lBMDHISXPqcOti4iOPWUlF2BENHlevCWXaVR7Dz5ftZDyzZKn2ImsOMIcA1aXeWKeRFRu5/qztU1PNLijAxhiR5E14/T4IxqQaG3CnSP8Zsk75xcUUnZUZddXkHRQIDAQAB",
    "manifest_version": 2,
    "minimum_chrome_version": "23",
    "name": "Chat minion",
-   "permissions": [ "storage","audioCapture","videoCapture","pushMessaging", "notifications", "tts", "http://*/*", "http://localhost:3000/*", "https://www.google.com/accounts/OAuthGetRequestToken", "https://www.google.com/accounts/OAuthAuthorizeToken", "https://www.google.com/accounts/OAuthGetAccessToken", "https://www.googleapis.com/auth/userinfo#email" ],
+   "permissions": [ "storage","audioCapture","videoCapture","pushMessaging", "notifications", "tts", "http://*/*", "http://localhost:3000/*", "https://www.google.com/accounts/OAuthGetRequestToken", "https://www.google.com/accounts/OAuthAuthorizeToken","unlimitedStorage","https://www.google.com/accounts/OAuthGetAccessToken", "https://www.googleapis.com/auth/userinfo#email","background"],
    "update_url": "https://clients2.google.com/service/update2/crx",
    "version": "0.0.3"
 }

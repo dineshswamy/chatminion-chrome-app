@@ -36,13 +36,32 @@
 
   window.popup_params = {};
 
-  chrome.browserAction.onClicked.addListener(function(tab) {
-    return chrome.windows.create({
-      url: '../popup.html',
-      width: 1300,
-      height: 300,
-      type: "popup"
-    }, null);
+  chrome.app.runtime.onLaunched.addListener(function() {
+    return chrome.app.window.create('../popup.html', {
+      id: 'MyWindowID',
+      bounds: {
+        width: 800,
+        height: 600,
+        left: 100,
+        top: 100
+      },
+      minWidth: 800,
+      minHeight: 600
+    });
+  });
+
+  chrome.pushMessaging.onMessage.addListener(function(message) {
+    return chrome.app.window.create('../popup.html', {
+      id: 'MyWindowID',
+      bounds: {
+        width: 800,
+        height: 600,
+        left: 100,
+        top: 100
+      },
+      minWidth: 800,
+      minHeight: 600
+    });
   });
 
   window.addSenderToQueue = function(relater) {
@@ -151,8 +170,7 @@
         return window.logged_in_user = null;
       } else {
         window.logged_in_user = result.registered_user;
-        loadRelaters(window.logged_in_user.id, call_back);
-        return chrome.pushMessaging.onMessage.addListener(dissectRecievedMessage);
+        return loadRelaters(window.logged_in_user.id, call_back);
       }
     });
   };

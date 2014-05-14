@@ -34,14 +34,42 @@ window.popup_params = {}
 
 
 
-chrome.browserAction.onClicked.addListener((tab)->
-    chrome.windows.create(
-        url:'../popup.html' 
-        width:1300
-        height:300
-        type:"popup"
-        ,null
-    ))
+# chrome.browserAction.onClicked.addListener((tab)->
+#     chrome.windows.create(
+#         url:'../popup.html' 
+#         width:1300
+#         height:300
+#         type:"popup"
+#         ,null
+#     ))
+
+chrome.app.runtime.onLaunched.addListener(()-> 
+  chrome.app.window.create('../popup.html', {
+    id: 'MyWindowID',
+    bounds: {
+      width: 800,
+      height: 600,
+      left: 100,
+      top: 100
+    },
+    minWidth: 800,
+    minHeight: 600
+  });
+);
+
+chrome.pushMessaging.onMessage.addListener((message)->
+                                        chrome.app.window.create('../popup.html', {
+                                            id: 'MyWindowID',
+                                            bounds: {
+                                              width: 800,
+                                              height: 600,
+                                              left: 100,
+                                              top: 100
+                                            },
+                                            minWidth: 800,
+                                            minHeight: 600
+                                          });
+  )
 
 window.addSenderToQueue = (relater)->
   window.relater_send_queue.push(relater)
@@ -133,7 +161,6 @@ window.initialize_extension = (call_back)->
         else
             window.logged_in_user = result.registered_user
             loadRelaters(window.logged_in_user.id,call_back)
-            chrome.pushMessaging.onMessage.addListener(dissectRecievedMessage);
   
 
 loadRelaters = (user_id,call_back) ->

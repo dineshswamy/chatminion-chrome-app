@@ -45,13 +45,13 @@
             new_user.set({
               "id": model.get("user_id")
             });
-            chrome.extension.getBackgroundPage().logged_in_user = new_user;
+            window.bpage.logged_in_user = new_user;
             $(".status").html("Registered successfully");
             chrome.storage.local.set({
               "registered": true,
               "registered_user": model
             }, null);
-            chrome.extension.getBackgroundPage().initialize_extension(window.loadRelaters);
+            window.bpageinitialize_extension(window.loadRelaters);
             return call_back(model.get("user_id"));
           } else if (model.get("status") === "failure") {
             $(".status").html("For some reasons registration failed.Please try again later");

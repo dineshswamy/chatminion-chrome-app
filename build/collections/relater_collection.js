@@ -13,10 +13,8 @@
 
     RelaterCollection.prototype.model = User;
 
-    RelaterCollection.prototype.url = chrome.extension.getBackgroundPage().base_url;
-
     RelaterCollection.prototype.initialize = function(attributes) {
-      return this.url = chrome.extension.getBackgroundPage().base_url + "/user/" + attributes.user_id + "/contacts";
+      return this.url = "http://lit-refuge-2289.herokuapp.com" + "/user/" + attributes.user_id + "/contacts";
     };
 
     return RelaterCollection;

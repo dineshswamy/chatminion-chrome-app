@@ -24,20 +24,7 @@
       return this;
     };
 
-    RelaterView.prototype.sendRelaterModel = function(event) {
-      var getUserMedia;
-      getUserMedia = navigator.getUserMedia || navigator.webkitGetUserMedia || navigator.mozGetUserMedia;
-      return getUserMedia({
-        video: true,
-        audio: true
-      }, function(stream) {
-        var call;
-        call = window.peer.call('another-peers-id', stream);
-        return call.on('stream', function(remoteStream) {
-          return $("#chat_video").src(remoteStream);
-        });
-      }, null);
-    };
+    RelaterView.prototype.sendRelaterModel = function(event) {};
 
     return RelaterView;
 

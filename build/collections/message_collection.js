@@ -13,10 +13,8 @@
 
     MessageCollection.prototype.model = Message;
 
-    MessageCollection.prototype.url = chrome.extension.getBackgroundPage().base_url;
-
     MessageCollection.prototype.initialize = function(attributes) {
-      return this.url = this.url + "/messages.json";
+      return this.url = "http://lit-refuge-2289.herokuapp.com" + "/messages.json";
     };
 
     return MessageCollection;

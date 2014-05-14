@@ -1,5 +1,5 @@
 class @MessageCollection extends Backbone.Collection
 	model:Message
-	url:chrome.extension.getBackgroundPage().base_url
+	#url:chrome.extension.getBackgroundPage().base_url
 	initialize : (attributes)->
-		@url=@url+"/messages.json"
+		@url="http://lit-refuge-2289.herokuapp.com"+"/messages.json"
