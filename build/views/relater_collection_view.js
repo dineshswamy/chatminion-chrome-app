@@ -38,6 +38,8 @@
       return this.collection.add(relater);
     };
 
+    RelatersCollectionView.prototype.find_and_set_checked = function(relater_id) {};
+
     return RelatersCollectionView;
 
   })(Backbone.View);

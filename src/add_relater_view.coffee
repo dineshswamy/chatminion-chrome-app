@@ -12,8 +12,8 @@ class @addRelatersView  extends Backbone.View
     check_and_addRelator = (add_relater) ->
                     data =
                         relater_email:add_relater
-                        user_id: chrome.extension.getBackgroundPage().logged_in_user.id
-                    url = chrome.extension.getBackgroundPage().base_url+"/calltheteam/addcontact"
+                        user_id: window.logged_in_user.id
+                    url = window.base_url+"/calltheteam/addcontact"
                     $.post(url,data,callback_check_and_addRelator);
 
     callback_check_and_addRelator = (response_json)->
@@ -27,11 +27,10 @@ class @addRelatersView  extends Backbone.View
 	        when "user_not_registered" then openGmailForRequest($("#new_contact_email").val())
 
     add_new_relater_and_render = (relater)->
-            chrome.extension.getBackgroundPage().addRelaterToCollection(relater,window.loadRelaters)
+            window.addRelaterToCollection(relater,window.loadRelaters)
             console.log "refreshing views"
-            
-            #relater_collection_view = new RelatersCollectionView({"collection":chrome.extension.getBackgroundPage().relater_collection})
-            #$("#contacts_container").html relater_collection_view.render().el
+            relater_collection_view = new RelatersCollectionView({"collection":window.relater_collection})
+            $("#relaters_of_the_user").html relater_collection_view.render().el
             
 
     openGmailForRequest = (email)->

@@ -8,11 +8,8 @@
       this.database = null;
       this.transaction = null;
       this.base_url = "http://lit-refuge-2289.herokuapp.com";
-      chrome.runtime.getBackgroundPage(function(page) {
-        this.messages_url = page.base_url(+"/messages.json");
-        this.message_options_url = page.base_url + "/message_options.json";
-        return console.log(this.messages_url);
-      });
+      this.messages_url = this.base_url + "/messages.json";
+      this.message_options_url = this.base_url + "/message_options.json";
       this.db_name = "calltheteam";
     }
 
@@ -121,9 +118,7 @@
             return cursor["continue"]();
           };
         } else {
-          return chrome.runtime.getBackgroundPage(function(page) {
-            return page.messages_with_options = new MessageCollection(arr_messages_with_options);
-          });
+          return window.messages_with_options = new MessageCollection(arr_messages_with_options);
         }
       };
     };
@@ -141,6 +136,38 @@
           if (cursor) {
             console.log(cursor.value);
             return callback(cursor.value);
+          }
+        };
+      };
+    };
+
+    Messages.prototype.loadOptionsforMessage = function(message_id, callback) {
+      window.options_for_message = [];
+      this.request = indexedDB.open(this.db_name, this.version);
+      return this.request.onsuccess = function(event) {
+        var message_transactions, messages_objectstore, objectstore;
+        this.database = event.target.result;
+        message_transactions = this.database.transaction(["message_options", "messages"]);
+        objectstore = message_transactions.objectStore("message_options");
+        messages_objectstore = message_transactions.objectStore("messages");
+        return objectstore.openCursor().onsuccess = function(event) {
+          var cursor, msg_id, options, _i, _len;
+          cursor = event.target.result;
+          if (cursor) {
+            if (cursor.value.message_id === message_id) {
+              options = cursor.value.options_id.split(";");
+              for (_i = 0, _len = options.length; _i < _len; _i++) {
+                msg_id = options[_i];
+                messages_objectstore.openCursor(Number(msg_id)).onsuccess = function(event) {
+                  var messages_cursor;
+                  messages_cursor = event.target.result;
+                  return window.options_for_message.push(messages_cursor.value);
+                };
+              }
+            }
+            return cursor["continue"]();
+          } else if (callback !== null && callback !== void 0) {
+            return callback();
           }
         };
       };

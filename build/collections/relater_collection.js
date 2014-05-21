@@ -14,7 +14,8 @@
     RelaterCollection.prototype.model = User;
 
     RelaterCollection.prototype.initialize = function(attributes) {
-      return this.url = "http://lit-refuge-2289.herokuapp.com" + "/user/" + attributes.user_id + "/contacts";
+      this.url = window.base_url + "/user/" + attributes.user_id + "/contacts";
+      return console.log(this.url);
     };
 
     return RelaterCollection;

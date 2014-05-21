@@ -37,7 +37,7 @@
     return (function() {
       var $o;
       $o = [];
-      $o.push("<div class='row'>\n  <form class='form-inline' role='form'>\n    <input class='form-group form-control' id='new_contact_email' placeholder='enter email id' type='email'>\n    <button class='btn btn-default' id='submit_new_contact'>Add</button>\n  </form>\n</div>\n<div class='row' id='relater_request_join' style='display:none'>\n  <p class='text-primary'>It seems , your friend is not using Chatminion\n    <button class='btn-square btn-success' id='send_relater_request' type='submit'>ask him</button>\n  </p>\n</div>");
+      $o.push("<footer>\n  <div class='row'>\n    <div class='input-group'>\n      <input class='form-control' id='new_contact_email' placeholder='enter email id' type='email'>\n      <span class='input-group-btn'>\n        <button class='btn btn-default' id='submit_new_contact'>Add</button>\n        <div class='row' id='relater_request_join' style='display:none'></div>\n        <p class='text-primary'>It seems , your friend is not using Chatminion\n          <button class='btn-square btn-success' id='send_relater_request' type='submit'>ask him</button>\n        </p>\n      </span>\n    </div>\n  </div>\n</footer>");
       return $o.join("\n").replace(/\s(?:id|class)=(['"])(\1)/mg, "");
     }).call(context);
   };
@@ -52,7 +52,7 @@
     return (function() {
       var $o;
       $o = [];
-      $o.push("<div class='row custom_message_container'>\n  <form class='form-inline' role='form'>\n    <textarea class='form-group form-control' id='custom_message' placeholder='Your message ....' type='text' rows='2' cols='10'></textarea>\n    <button class='btn btn-default' id='submit_custom_message'>Send</button>\n    <button class='btn btn-default' id='call_button'>Call</button>\n  </form>\n</div>");
+      $o.push("<div class='custom_message_container'>\n  <form class='form-horiz' role='form'>\n    <textarea class='form-group form-control' id='custom_message' placeholder='Your message ....' type='text' rows='2'></textarea>\n  </form>\n</div>\n<button class='btn btn-default' id='submit_custom_message'>Send</button>");
       return $o.join("\n").replace(/\s(?:id|class)=(['"])(\1)/mg, "");
     }).call(context);
   };
@@ -174,7 +174,7 @@
         }
       };
       $o = [];
-      $o.push("<label>\n  <input id='relaters_to_send_message' type='checkbox' name='relaters'>");
+      $o.push("<label>\n  <input id='relaters_to_send_message' type='checkbox' name='relaters' data-relater-id='" + ($c(this.user_model.get("id"))) + "'>");
       $o.push("  " + $e($c(this.user_model.get("name"))));
       $o.push("</label>");
       return $o.join("\n").replace(/\s([\w-]+)='true'/mg, ' $1').replace(/\s([\w-]+)='false'/mg, '').replace(/\s(?:id|class)=(['"])(\1)/mg, "");

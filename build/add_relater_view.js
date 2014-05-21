@@ -32,9 +32,9 @@
       var data, url;
       data = {
         relater_email: add_relater,
-        user_id: chrome.extension.getBackgroundPage().logged_in_user.id
+        user_id: window.logged_in_user.id
       };
-      url = chrome.extension.getBackgroundPage().base_url + "/calltheteam/addcontact";
+      url = window.base_url + "/calltheteam/addcontact";
       return $.post(url, data, callback_check_and_addRelator);
     };
 
@@ -55,8 +55,13 @@
     };
 
     add_new_relater_and_render = function(relater) {
-      chrome.extension.getBackgroundPage().addRelaterToCollection(relater, window.loadRelaters);
-      return console.log("refreshing views");
+      var relater_collection_view;
+      window.addRelaterToCollection(relater, window.loadRelaters);
+      console.log("refreshing views");
+      relater_collection_view = new RelatersCollectionView({
+        "collection": window.relater_collection
+      });
+      return $("#relaters_of_the_user").html(relater_collection_view.render().el);
     };
 
     openGmailForRequest = function(email) {

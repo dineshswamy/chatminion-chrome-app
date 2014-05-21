@@ -16,4 +16,4 @@ class @MessageCollectionView extends Backbone.View
 			@$el.append custom_message.render().$el
 			@
 	remove_selection:(event)->
-		
+		 

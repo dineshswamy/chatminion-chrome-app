@@ -11,25 +11,50 @@
     </head>
     <body>
         <div class="container">
-            <div class="row">
-                <div class="col-md-3 chat_animation" id="chatminion-space">
+            <div class="row blocks-container">
+                <div class="col-sm-3 chat_animation" id="chatminion-space">
                     <button id="start_call">startcall</button>
                     <video autoplay id="chat_video">
 
                     </video>
                 </div>
-                <div class="col-md-3 chat_contacts" id="relaters_of_the_user">
+                <div class="col-sm-3 chat_contacts" id="relaters_of_the_user">
                     <h1>
                         Space to be filled by contacts
                     </h1>
                 </div>
-                <div class="col-md-6 chat_messages" id="thread_and_messages">
+                <div class="col-sm-6 chat_messages" id="thread_and_messages">
                     <h1>
                         Space to be filled by messages
                     </h1>
                 </div>
+                
             </div>
-        </div>
+            <!-- Modal-->
+            <div class="modal fade" tabindex="-1" id="sign_up_view_modal" role="dialog" aria-labelledby="Sign up view" aria-hidden="true" data-keyboard="false">
+                <div class="modal-dialog modal-sm">
+                    <div class="modal-content" id="sign_up_view">
+                        
+                    </div>
+                </div>
+            </div>
+            <!-- Modal end-->
+            <footer>
+                    <div class="row">
+                        <div class="input-group">
+                            <input class="form-control" id="new_contact_email" placeholder="enter email id" type="email">
+                            <span class="input-group-btn">
+                                <button class="btn btn-default" id="submit_new_contact">Add</button>
+                            </span>
+                        </div>
+                    </div>
+                    <div class="row" id="relater_request_join" style="display:none">
+                        <p class="text-primary">It seems , your friend is not using Chatminion
+                        <button class="btn-square btn-success" id="send_relater_request" type="submit">ask him</button>
+                        </p>
+                    </div>
+            </footer> <!--Footer close -->
+        </div> <!--container close -->
     </body>
         <script type="text/javascript" src="libs/peer.min.js"></script>            
         <script type="text/javascript" src="libs/jquery-2.1.0.min.js"></script>
@@ -38,6 +63,7 @@
         <script type="text/javascript" src="bootstrap/js/bootstrap.min.js"></script>
         <script type="text/javascript" src="build/templates.js"></script>
         <script type="text/javascript" src="build/models/messages_db_helper.js"></script>
+        <script type="text/javascript" src="build/models/message_transform_helper.js"></script>
         <!-- Models -->
         <script type="text/javascript" src="build/models/user_model.js"></script>
         <script type="text/javascript" src="build/models/message_model.js"></script>

@@ -12,3 +12,6 @@ class @RelatersCollectionView extends Backbone.View
 	add : (relater)->
 		console.log "relater added"
 		@collection.add(relater)
+
+	find_and_set_checked : (relater_id)->
+		
