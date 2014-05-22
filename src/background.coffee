@@ -102,6 +102,4 @@ window.openOptionsPopupwindow =  (sender) ->
 window.sendBroadcastMessage = ()->
   chrome.runtime.sendMessage(window.broadcast_message,null)
 
-window.speakMessage = (transformed_message)->
-  chrome.tts.speak(String(window.transformed_message))
     

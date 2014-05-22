@@ -1,4 +1,4 @@
-'use-strict';
+-'use-strict';
 window.base_url = "http://lit-refuge-2289.herokuapp.com"
 #window.base_url = "http://localhost:3000"
 window.relater_send_queue = []
@@ -42,14 +42,15 @@ window.loadViews = ()->
                             call.on('stream',success_stream)
                         ,(err)->console.log('Failed to get local stream' ,err)))
         
-        #add_relaters_view = new addRelatersView()    
+        add_relaters_view = new addRelatersView()    
+        
         window.relater_collection_view = new RelatersCollectionView({"collection":window.relater_collection})
         if window.relater_collection.models.length > 0
             $("#relaters_of_the_user").html window.relater_collection_view.render().el
         else
             $("#relaters_of_the_user").html new InfoView().render("You have no contacts!").$el
         
-        #$("#relaters_of_the_user").append add_relaters_view.render().$el
+        $("#relaters_of_the_user").append add_relaters_view.render().$el
         
         message_collection_view = new MessageCollectionView({"collection":window.messages_with_options})
         $("#thread_and_messages").html message_collection_view.render().$el
@@ -62,19 +63,19 @@ window.loadViews = ()->
 success_stream = (remoteStream)->
                 $("#chat_video").attr("src",window.URL.createObjectURL(remoteStream))
 
-window.dissectRecievedMessage = (recieved_message)->
+window.dissectRecievedMessage = (message)->
   ## initialize values 
+  recieved_message = message.recieved_message
   if window.relater_collection != null
     payload = JSON.parse(recieved_message.payload)
     sender = window.relater_collection.findWhere({"id":Number(payload.user_id)})
     $("input[data-relater-id='#{sender.id}']").prop("checked",true)
     #Nested call backs
-    console.log payload.is_custom_message                                     
     if payload.is_custom_message == "false"
       window.messages.getMessageInfo(Number(payload.message_id),(payload_message)->
         window.messages.loadOptionsforMessage(Number(payload.message_id),
         ()->
-          window.getTransformedMessage(sender,window.logged_in_user.name,payload_message.transform_pattern)
+          window.getTransformedMessage(sender,window.logged_in_user.name,payload_message.transform_pattern,payload.message_id)
         ))
     else
        window.transformed_message = payload.custom_message
@@ -105,13 +106,13 @@ window.initialize_extension = (call_back)->
             window.logged_in_user = result.registered_user
             loadRelaters(window.logged_in_user.id,call_back)
                 
-window.getTransformedMessage = (sender,reciever_name,transform_pattern)->
+window.getTransformedMessage = (sender,reciever_name,transform_pattern,message_id)->
   message_transform_helper = new MessageTransformation()
   message_transform_helper.init(transform_pattern,sender.name,reciever_name)
   message_transform_helper.applyTransformation()
   transformed_message = message_transform_helper.getMessage()
-  window.putMessageinThread(relater,message,message_id,sent_by_relater)  
-  #openOptionsPopupwindow(sender)
+  window.speakMessage(transformed_message)
+  window.putMessageinThread(sender,transformed_message,message_id,true)  
 
 window.initializeValues = ()->
   window.user_to_send = null
@@ -141,23 +142,20 @@ window.sendMessage = (message,is_custom_message,custom_message)->
 
     if !is_custom_message 
       data["message_id"] = message.msg_id
-      #window.putMessageinThread(relater_to_send,message.user_message,,message.msg_id)
+      window.putMessageinThread(relater_to_send,message.user_message,true,message.msg_id)
     else
-      #window.putMessageinThread(relater_to_send,custom_message,false)
+      window.putMessageinThread(relater_to_send,custom_message,false)
       data["message_id"] = " "
     $.post(base_url+"/calltheteam/sendmessage",data,null)
 
 window.putMessageinThread = (relater,message,message_id,sent_by_relater)->  
-  
   thread_params =
-    "relater_id":sent_by.id
+    "relater_id":relater.id
     "transformed_message":message
     "message_id":message_id
     "sent_by_relater":sent_by_relater
-  
   thread = new Thread(thread_params)
   relater_thread_key = String(relater.id)
-
   chrome.storage.local.set({relater_thread_key:thread},()->console.log "thread message saved")
 
 
@@ -174,5 +172,9 @@ window.addRelaterToCollection = (relater,call_back)->
 
 window.getRelaterThread = (sender_id)->
   window.relater_threads[sender_id]
+
+
+window.speakMessage = (transformed_message)->
+  chrome.tts.speak(String(transformed_message))
 
 document.addEventListener("DOMContentLoaded",initialize_extension);

@@ -91,8 +91,4 @@
     return chrome.runtime.sendMessage(window.broadcast_message, null);
   };
 
-  window.speakMessage = function(transformed_message) {
-    return chrome.tts.speak(String(window.transformed_message));
-  };
-
 }).call(this);
