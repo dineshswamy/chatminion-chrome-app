@@ -4,12 +4,22 @@
         <title>Chat Minion</title>
          <link href="bootstrap/css/bootstrap.min.css" rel="stylesheet" media="screen"/>
          <link href="bootstrap/css/bootcards-desktop.css" rel="stylesheet" media="screen"/>
+         <link href="css/jquery.jscrollpane.css" rel="stylesheet" media="screen"/>
+         <link href="css/animate.css" rel="stylesheet" media="screen"/>
          <link rel="stylesheet" type="text/css" href="css/main.css" />
     </head>
     <body>
         <div class="transparent-background">
+            <div class="row">
+                <div class="col-sm-12" id="message_background">
+
+
+                </div>
+
+            </div>
+
             <div class="row fill">
-<!--                 <div class="col-sm-3 chat_animation fill bootcards-cards" id="chatminion-space">
+<!--              <div class="col-sm-3 chat_animation fill bootcards-cards" id="chatminion-space">
 
                     <video autoplay id="chat_video">
 
@@ -21,7 +31,7 @@
 
                     
                 </div> -->
-                <div class="col-sm-6 chat_contacts fill bootcards-list">
+                <div class="col-sm-6 chat_contacts bootcards-list">
                     
                         <div class="panel panel-default">
                             <div class="list-group relaters-list" id="relaters_of_the_user">
@@ -32,20 +42,32 @@
                     
                     
                 </div>
-                <div class="col-sm-6 chat_messages fill bootcards-cards">
+                <div class="col-sm-6 chat_messages bootcards-cards">
                     
-                    <div id="thread_messages">
+                    <div id="text_messages">
+                        <div id="thread_messages">
 
+                        </div>
+
+                        <div id="messages">
+
+                        </div>
+
+                        <div id="option_messages">
+                                
+                        </div>
+                        <div class="row">
+                            <button class="btn btn-default col-sm-5 offset-sm-2" id="video_call_btn">Launch video call </button>
+                            <button class="btn btn-default col-sm-5" id="all_messages_btn">All messages </button>
+                        </div>
                     </div>
+                    <div id="video_container">
+                        <video autoplay id="chat_video">
 
-                    <div id="messages">
-
+                        </video>
+                        <button class="btn btn-default" id="video_call_stop_btn">Stop video call</button>
                     </div>
-
-                    <div id="option_messages">
-                            
-                    </div>
-                    <button id="message_show_or_hide">show/hide</button>
+                    <button class="btn btn-default" id="switch-messages">switch-views</button>
                 </div>
                 
             </div>
@@ -60,10 +82,12 @@
             <!-- Modal end-->
         </div> <!--container close -->
     </body>
-        <script type="text/javascript" src="libs/peer.min.js"></script>            
+        <script type="text/javascript" src="libs/peer.min.js"></script>     
         <script type="text/javascript" src="libs/jquery-2.1.0.min.js"></script>
         <script type="text/javascript" src="libs/underscore-min.js"></script>
         <script type="text/javascript" src="libs/backbone-min.js"></script>
+        <script type="text/javascript" src="libs/jquery.mousewheel.js"></script>
+        <script type="text/javascript" src="libs/jquery.jscrollpane.min.js"></script>
         <script type="text/javascript" src="bootstrap/js/bootstrap.min.js"></script>
         <script type="text/javascript" src="bootstrap/js/bootcards.min.js"></script>
 

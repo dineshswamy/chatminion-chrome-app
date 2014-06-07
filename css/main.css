@@ -62,7 +62,8 @@ body {
 
 #chat_video
 {
-	
+	width: 100%;
+	height: 100%;
 	
 }
 
@@ -126,3 +127,31 @@ body {
 	background-color:green;		
 }
 
+#relaters_of_the_user{
+
+	height: 500px;
+	overflow-y: scroll;
+	overflow-x:hidden;
+
+}
+
+
+/*******************Message background section ****************/
+
+#message_background{
+
+	height: 70px;
+	background-color: #095d82;
+
+}
+
+#messages,#option_messages{
+
+	margin: 30px;
+	width: 50%;
+	background: white;
+	padding: 10px;
+	color: #095d82;
+
+
+}

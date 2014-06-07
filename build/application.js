@@ -6,7 +6,7 @@
 
   -'use-strict';
 
-  window.base_url = "http://localhost:3000";
+  window.base_url = "http://192.168.1.25:3000";
 
   window.relater_send_queue = [];
 
@@ -32,6 +32,8 @@
 
   window.messages_with_options = null;
 
+  window.bool = true;
+
   window.peer_js_selected_relater = null;
 
   this.InfoView = (function(_super) {
@@ -54,7 +56,7 @@
   })(Backbone.View);
 
   window.loadViews = function() {
-    var message_collection_view;
+    var add_relaters_view;
     peerJSInit();
     chrome.runtime.onMessage.addListener(function(message, sender, sendResponse) {
       return window.dissectRecievedMessage(message);
@@ -63,6 +65,7 @@
       event.preventDefault();
       return window.launchVideoCall(relater);
     });
+    add_relaters_view = new addRelatersView();
     window.relater_collection_view = new RelatersCollectionView({
       "collection": window.relater_collection
     });
@@ -71,15 +74,29 @@
     } else {
       $("#relaters_of_the_user").html(new InfoView().render("You have no contacts!").$el);
     }
-    message_collection_view = new MessageCollectionView({
-      "collection": window.messages_with_options
+    $("#relaters_of_the_user").prepend(add_relaters_view.render().$el);
+    window.messages = new Messages();
+    window.messages.init(function() {
+      var message_collection_view;
+      message_collection_view = new MessageCollectionView({
+        "collection": window.messages_with_options
+      });
+      return $("#messages").html(message_collection_view.render().$el);
     });
-    $("#messages").html(message_collection_view.render().$el);
-    $(".scroll_bar_container").tinyscrollbar();
+    $("#video_call_btn").click(launchVideoCall);
+    $("#video_call_stop_btn").click(stopVideoCall);
+    $("#all_messages_btn").click(function(event) {
+      event.preventDefault();
+      console.log("messages btn pressed");
+      return flipMessageCards(false);
+    });
+    $("#relaters_of_the_user").jScrollPane();
     return initializeValues();
   };
 
   success_stream = function(remoteStream) {
+    $("#text_messages").hide();
+    $("#video_container").show();
     return $("#chat_video").attr("src", window.URL.createObjectURL(remoteStream));
   };
 
@@ -88,36 +105,49 @@
     return $("#chat_video_relater").attr("src", window.URL.createObjectURL(remoteStream));
   };
 
-  window.launchVideoCall = function() {
+  window.stopVideoCall = function(event) {
+    event.preventDefault();
+    if (window.call !== null || window.call !== void 0) {
+      window.call.close();
+    }
+    $("#video_container").hide();
+    return $("#text_messages").show();
+  };
+
+  window.launchVideoCall = function(event) {
     var relater_peer_js_id;
+    event.preventDefault();
+    $("#text_messages").hide();
+    $("#video_container").show();
+    console.log("Trying to launch video");
     navigator.getUserMedia = navigator.getUserMedia || navigator.webkitGetUserMedia || navigator.mozGetUserMedia;
-    relater_peer_js_id = window.peer_js_selected_relater.id + "_peerjs";
+    relater_peer_js_id = window.peer_js_selected_relater.id + "_peervendor";
+    console.log(relater_peer_js_id);
     return navigator.getUserMedia({
       video: true,
       audio: true
     }, function(stream) {
-      var call;
-      call = window.peer.call(relater_peer_js_id, stream);
-      return call.on('stream', success_stream);
+      window.call = window.peer.call(relater_peer_js_id, stream);
+      return window.call.on('stream', success_stream);
     }, function(err) {
       return console.log('Failed to get local stream', err);
     });
   };
 
   window.peerJSInit = function() {
-    window.peer_js_id = logged_in_user.id + "_peerjs";
-    window.peer = new Peer(peer_js_id, {
+    window.peer_js_id = logged_in_user.id + "_peervendor";
+    window.peer = new Peer(window.peer_js_id, {
       key: '2n9conp4vga2a9k9'
     });
     return window.peer.on('call', function(call) {
+      console.log("You have a video call");
       navigator.getUserMedia = navigator.getUserMedia || navigator.webkitGetUserMedia || navigator.mozGetUserMedia;
       return navigator.getUserMedia({
         video: true,
         audio: true
       }, function(stream) {
         call.answer(stream);
-        call.on('stream', success_stream);
-        return show_or_hide_video_stream(null);
+        return call.on('stream', success_stream);
       }, function(err) {
         return console.log('Failed to get local stream', err);
       });
@@ -182,14 +212,7 @@
   };
 
   window.initialize_extension = function(call_back) {
-    window.messages = new Messages();
-    window.messages.init();
     $("#option_messages").hide();
-    $("#video_call_btn").click(launchVideoCall);
-    $("#message_show_or_hide").click(function(event) {
-      event.preventDefault();
-      return $("#messages").toggle();
-    });
     return chrome.storage.local.get(["registered", "registered_user"], function(result) {
       var sign_up_view;
       if (result.registered === void 0 || result.registered_user === void 0) {
@@ -229,6 +252,18 @@
     window.is_custom_message = false;
     window.custom_message = "";
     return window.options_for_message = [];
+  };
+
+  window.flipMessageCards = function(show_options_messages) {
+    if (show_options_messages) {
+      $("#messages").addClass("animated flipOutY");
+      $("#option_messages").show();
+      return $("#option_messages").removeClass("animated flipOutY");
+    } else {
+      $("#option_messages").addClass("animated flipOutY");
+      $("#messages").show();
+      return $("#messages").removeClass("animated flipOutY");
+    }
   };
 
   window.setMessageOptions = function(sender_window, sender) {
@@ -289,9 +324,8 @@
     option_messages = new MessageCollectionView({
       "collection": option_messages_collection
     });
-    $("#messages").hide();
-    $("#option_messages").show();
-    return $("#option_messages").html(option_messages.render().$el);
+    $("#option_messages").html(option_messages.render().$el);
+    return flipMessageCards(true);
   };
 
   window.loadMessagesofRelater = function(relater_id) {

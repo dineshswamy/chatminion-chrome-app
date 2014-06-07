@@ -1,6 +1,6 @@
 -'use-strict';
 #window.base_url = "http://lit-refuge-2289.herokuapp.com"
-window.base_url = "http://localhost:3000"
+window.base_url = "http://192.168.1.25:3000"
 window.relater_send_queue = []
 window.message_to_send = null
 window.relater_collection = null
@@ -13,7 +13,7 @@ window.popup_window_opened = false
 window.is_custom_message = false
 window.custom_message = ""
 window.messages_with_options = null
-
+window.bool = true
 #peer js relater selected
 window.peer_js_selected_relater = null
 
@@ -39,7 +39,7 @@ window.loadViews = ()->
             window.launchVideoCall(relater)
             )
         
-        #add_relaters_view = new addRelatersView()    
+        add_relaters_view = new addRelatersView()    
         
         window.relater_collection_view = new RelatersCollectionView({"collection":window.relater_collection})
         if window.relater_collection.models.length > 0
@@ -47,42 +47,67 @@ window.loadViews = ()->
         else
             $("#relaters_of_the_user").html new InfoView().render("You have no contacts!").$el
         
-        #$("#relaters_of_the_user").append add_relaters_view.render().$el
+        $("#relaters_of_the_user").prepend add_relaters_view.render().$el
         
-        message_collection_view = new MessageCollectionView({"collection":window.messages_with_options})
-        $("#messages").html message_collection_view.render().$el
+        window.messages = new Messages()
+        window.messages.init(()->
+                  message_collection_view = new MessageCollectionView({"collection":window.messages_with_options})
+                  $("#messages").html message_collection_view.render().$el
+                  )
 
+        $("#video_call_btn").click(launchVideoCall)
+        $("#video_call_stop_btn").click(stopVideoCall)
+        $("#all_messages_btn").click((event)->
+          event.preventDefault()
+          console.log "messages btn pressed"
+          flipMessageCards(false)
+          )
         #$("#submit_custom_message").click(sendMessage)
-        $(".scroll_bar_container").tinyscrollbar();
+            
+        $("#relaters_of_the_user").jScrollPane();
         initializeValues()
 
 
 success_stream = (remoteStream)->
+                $("#text_messages").hide()
+                $("#video_container").show()
                 $("#chat_video").attr("src",window.URL.createObjectURL(remoteStream))
 
 success_relater_stream = (remoteStream)->
                 console.log "success relater stream"
                 $("#chat_video_relater").attr("src",window.URL.createObjectURL(remoteStream))
 
-window.launchVideoCall = ()->
+window.stopVideoCall = (event)->
+  event.preventDefault()
+  if(window.call!=null or window.call!=undefined)
+    window.call.close();
+  $("#video_container").hide()
+  $("#text_messages").show()
+
+window.launchVideoCall = (event)->
+  event.preventDefault()
+  $("#text_messages").hide()
+  $("#video_container").show()
+  console.log "Trying to launch video"
   navigator.getUserMedia = navigator.getUserMedia || navigator.webkitGetUserMedia || navigator.mozGetUserMedia
-  relater_peer_js_id = window.peer_js_selected_relater.id+"_peerjs"
+  relater_peer_js_id = window.peer_js_selected_relater.id+"_peervendor"
+  console.log relater_peer_js_id
   navigator.getUserMedia(video: true,audio: true,(stream)->
-                            call = window.peer.call(relater_peer_js_id,stream)
-                            call.on('stream',success_stream)
+                            window.call = window.peer.call(relater_peer_js_id,stream)
+                            window.call.on('stream',success_stream)
                         ,(err)->console.log('Failed to get local stream' ,err))
 
 
 window.peerJSInit = () ->
   #peer-js id
-  window.peer_js_id = logged_in_user.id+"_peerjs"
-  window.peer =  new Peer(peer_js_id, {key: '2n9conp4vga2a9k9'})
+  window.peer_js_id = logged_in_user.id+"_peervendor"
+  window.peer =  new Peer(window.peer_js_id,key:'2n9conp4vga2a9k9')
   window.peer.on('call', (call)->
+                    console.log "You have a video call"
                     navigator.getUserMedia = navigator.getUserMedia || navigator.webkitGetUserMedia || navigator.mozGetUserMedia;
                     navigator.getUserMedia(video: true, audio: true, (stream)->
                         call.answer(stream)
                         call.on('stream',success_stream)
-                        show_or_hide_video_stream(null)
                     , (err)->console.log('Failed to get local stream' ,err)
                     )
         )
@@ -141,17 +166,7 @@ sendVideoStreampermission = (data_to_send)->
   
 
 window.initialize_extension = (call_back)->
-    window.messages = new Messages()
-    window.messages.init()
-    
     $("#option_messages").hide()
-    
-    $("#video_call_btn").click(launchVideoCall)
-    
-    $("#message_show_or_hide").click((event)->
-        event.preventDefault()
-        $("#messages").toggle())
-
     chrome.storage.local.get ["registered","registered_user"],(result)->
         if result.registered is undefined or result.registered_user is undefined
                 sign_up_view = new SignupView(loadRelaters)
@@ -185,6 +200,17 @@ window.initializeValues = ()->
   window.custom_message = ""
   window.options_for_message = []
 
+window.flipMessageCards = (show_options_messages)->
+  if(show_options_messages)
+      $("#messages").addClass("animated flipOutY")
+      $("#option_messages").show()
+      $("#option_messages").removeClass("animated flipOutY")
+      
+  else
+      $("#option_messages").addClass("animated flipOutY")
+      $("#messages").show()
+      $("#messages").removeClass("animated flipOutY")
+      
 
 
 
@@ -234,9 +260,8 @@ window.putMessageinThread = (relater,message,message_id,sent_by_relater)->
 window.openOptionsPopup = (collection)->
   option_messages_collection = new MessageCollection(collection)
   option_messages = new MessageCollectionView({"collection":option_messages_collection})
-  $("#messages").hide()
-  $("#option_messages").show()
   $("#option_messages").html option_messages.render().$el
+  flipMessageCards(true)
   
 
 window.loadMessagesofRelater = (relater_id)->

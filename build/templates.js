@@ -37,7 +37,7 @@
     return (function() {
       var $o;
       $o = [];
-      $o.push("<footer>\n  <div class='row'>\n    <div class='input-group'>\n      <input class='form-control' id='new_contact_email' placeholder='enter email id' type='email'>\n      <span class='input-group-btn'>\n        <button class='btn btn-default' id='submit_new_contact'>Add</button>\n        <div class='row' id='relater_request_join' style='display:none'>\n          <p class='text-primary'>It seems , your friend is not using Chatminion</p>\n          <button class='btn-square btn-success' id='send_relater_request' type='submit'>ask him</button>\n        </div>\n      </span>\n    </div>\n  </div>\n</footer>");
+      $o.push("<div class='panel-body'>\n  <div class='search-form'>\n    <div class='row'>\n      <div class='col-xs-9'>\n        <div class='form-group'>\n          <input class='form-control' id='new_contact_email' placeholder='Add your relater ...' type='email'>\n        </div>\n      </div>\n      <div class='col-xs-3'>\n        <a class='btn btn-block btn-primary' id='submit_new_contact'>\n          <i class='fa fa-plus'></i>\n          <span>Add</span>\n        </a>\n      </div>\n    </div>\n    <div class='row' id='relater_request_join' style='display:none'>\n      <div class='col-xs-9'>\n        <p class='text-primary'>It seems , your friend is not using Chatminion</p>\n      </div>\n      <div class='col-xs-3'>\n        <button class='btn-square btn-success' id='send_relater_request' type='submit'>ask him</button>\n      </div>\n    </div>\n  </div>\n</div>");
       return $o.join("\n").replace(/\s(?:id|class)=(['"])(\1)/mg, "");
     }).call(context);
   };
@@ -131,6 +131,21 @@
       $o = [];
       $o.push("" + $e($c(this.message_view_model.user_message)));
       return $o.join("\n").replace(/\s([\w-]+)='true'/mg, ' $1').replace(/\s([\w-]+)='false'/mg, '');
+    }).call(context);
+  };
+
+}).call(this);
+(function() {
+  if (window.HAML == null) {
+    window.HAML = {};
+  }
+
+  window.HAML['messages_container_view'] = function(context) {
+    return (function() {
+      var $o;
+      $o = [];
+      $o.push("<div class='container'>\n  <div class='row'>\n    <div >\n      <h1 id='message_head'>Message</h1>\n    </div>\n  </div>\n  <div class='row'>\n    <div id='threads_container'></div>\n    <div id='messages_container'></div>\n  </div>\n  <footer>\n    <div class='row custom_message_container'>\n      <form class='form-inline' role='form'>\n        <input class='form-group form-control' id='custom_message' placeholder='Your message ....' type='text'>\n        <button class='btn btn-default' id='submit_custom_message'>Send</button>\n        <button class='btn btn-default' id='call_button'>Call</button>\n      </form>\n    </div>\n  </footer>\n</div>");
+      return $o.join("\n").replace(/\s(?:id|class)=(['"])(\1)/mg, "");
     }).call(context);
   };
 

@@ -7,13 +7,13 @@
       this.version = 3;
       this.database = null;
       this.transaction = null;
-      this.base_url = "http://localhost:3000";
+      this.base_url = "http://192.168.1.25:3000";
       this.messages_url = this.base_url + "/messages.json";
       this.message_options_url = this.base_url + "/message_options.json";
       this.db_name = "calltheteam";
     }
 
-    Messages.prototype.init = function() {
+    Messages.prototype.init = function(callback) {
       var _this = this;
       this.request = indexedDB.open(this.db_name, this.version);
       this.request.onupgradeneeded = function(event) {
@@ -36,7 +36,7 @@
       this.request.onsuccess = function(event) {
         _this.database = event.target.result;
         _this.fetch();
-        return _this.getAllMessages();
+        return _this.getAllMessages(callback);
       };
       return this.request.onerror = function(event) {
         return console.log("database_logging_error" + event.value);
@@ -101,7 +101,7 @@
       });
     };
 
-    Messages.prototype.getAllMessages = function() {
+    Messages.prototype.getAllMessages = function(callback) {
       var arr_messages_with_options, message_transactions, messages_objectstore, objectstore;
       arr_messages_with_options = [];
       message_transactions = this.database.transaction(["message_options", "messages"]);
@@ -118,7 +118,10 @@
             return cursor["continue"]();
           };
         } else {
-          return window.messages_with_options = new MessageCollection(arr_messages_with_options);
+          window.messages_with_options = new MessageCollection(arr_messages_with_options);
+          if (callback !== null && callback !== void 0) {
+            return callback();
+          }
         }
       };
     };

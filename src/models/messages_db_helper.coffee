@@ -5,7 +5,7 @@ class @Messages
 		@database=null
 		@transaction=null
 		#@base_url = "http://lit-refuge-2289.herokuapp.com"
-		@base_url = "http://localhost:3000"
+		@base_url = "http://192.168.1.25:3000"
 		# chrome.runtime.getBackgroundPage((page)->
 		# 		console.log @messages_url
 		# 	)
@@ -13,7 +13,7 @@ class @Messages
 		@message_options_url = @base_url+"/message_options.json"
 		@db_name = "calltheteam"
 
-	init : ->
+	init : (callback)->
 		@request = indexedDB.open(@db_name,@version)
 		@request.onupgradeneeded = (event)->
 			db = event.target.result
@@ -27,7 +27,7 @@ class @Messages
 		@request.onsuccess = (event) =>
 			@database=event.target.result
 			@.fetch()
-			@.getAllMessages()
+			@.getAllMessages(callback)
 			#chrome.runtime.sendMessage({"messages_loaded":true},null)
 		@request.onerror = (event)->
 			console.log "database_logging_error" +event.value
@@ -64,7 +64,7 @@ class @Messages
 	           @.getAllMessages())
 		)
 
-	getAllMessages:()->
+	getAllMessages:(callback)->
         arr_messages_with_options = []
         message_transactions = @database.transaction(["message_options","messages"])
         objectstore = message_transactions.objectStore("message_options")
@@ -78,6 +78,8 @@ class @Messages
         			cursor.continue()
         	else
         		window.messages_with_options = new MessageCollection(arr_messages_with_options)
+        		if callback!=null and callback != undefined
+        			callback()
                 
     getMessageInfo:(message_id,callback)->
 	    @request = indexedDB.open(@db_name,@version)

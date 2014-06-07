@@ -13,7 +13,7 @@
     }
 
     addRelatersView.prototype.events = {
-      "click button#submit_new_contact": "addcontact"
+      "click a#submit_new_contact": "addcontact"
     };
 
     addRelatersView.prototype.render = function() {

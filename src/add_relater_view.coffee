@@ -1,6 +1,6 @@
 class @addRelatersView  extends Backbone.View
     events:
-        "click button#submit_new_contact":"addcontact"
+        "click a#submit_new_contact":"addcontact"
     render: ->
         @$el.html HAML["contacts_view"] 
         @
