@@ -3,31 +3,77 @@
     <head>
         <title>Chat Minion</title>
          <link href="bootstrap/css/bootstrap.min.css" rel="stylesheet" media="screen"/>
-         <link href="bootstrap/css/font-awesome.min.css" rel="stylesheet" media="screen"/>
-         <link href="bootstrap/css/bootflat.css" rel="stylesheet" media="screen"/>
-         <link href="bootstrap/css/bootflat-extensions.css" rel="stylesheet" media="screen"/>
-         <link href="bootstrap/css/bootflat-square.css" rel="stylesheet" media="screen"/>
+         <link href="bootstrap/css/bootcards-desktop.css" rel="stylesheet" media="screen"/>
          <link rel="stylesheet" type="text/css" href="css/main.css" />
     </head>
     <body>
-        <div class="container">
-            <div >
+        <div class="transparent-background">
+            <div class="row fill">
+<!--                 <div class="col-sm-3 chat_animation fill bootcards-cards" id="chatminion-space">
+
+                    <video autoplay id="chat_video">
+
+                    </video>
+
+                    <h1 id="video_call_relater_name"></h1>
+
+                    <button id="video_call_btn">Video call</button>
+
+                    
+                </div> -->
+                <div class="col-sm-6 chat_contacts fill bootcards-list">
+                    
+                        <div class="panel panel-default">
+                            <div class="list-group relaters-list" id="relaters_of_the_user">
+                                
+
+                            </div>
+                        </div>
+                    
+                    
+                </div>
+                <div class="col-sm-6 chat_messages fill bootcards-cards">
+                    
+                    <div id="thread_messages">
+
+                    </div>
+
+                    <div id="messages">
+
+                    </div>
+
+                    <div id="option_messages">
+                            
+                    </div>
+                    <button id="message_show_or_hide">show/hide</button>
+                </div>
+                
             </div>
-            
-            <div>
+            <!-- Modal-->
+            <div class="modal fade" tabindex="-1" id="sign_up_view_modal" role="dialog" aria-labelledby="Sign up view" aria-hidden="true" data-keyboard="false">
+                <div class="modal-dialog modal-sm">
+                    <div class="modal-content" id="sign_up_view">
+                        
+                    </div>
+                </div>
             </div>
-        </div>
+            <!-- Modal end-->
+        </div> <!--container close -->
     </body>
         <script type="text/javascript" src="libs/peer.min.js"></script>            
         <script type="text/javascript" src="libs/jquery-2.1.0.min.js"></script>
         <script type="text/javascript" src="libs/underscore-min.js"></script>
         <script type="text/javascript" src="libs/backbone-min.js"></script>
         <script type="text/javascript" src="bootstrap/js/bootstrap.min.js"></script>
+        <script type="text/javascript" src="bootstrap/js/bootcards.min.js"></script>
+
         <script type="text/javascript" src="build/templates.js"></script>
         <script type="text/javascript" src="build/models/messages_db_helper.js"></script>
+        <script type="text/javascript" src="build/models/message_transform_helper.js"></script>
         <!-- Models -->
         <script type="text/javascript" src="build/models/user_model.js"></script>
         <script type="text/javascript" src="build/models/message_model.js"></script>
+        <script type="text/javascript" src="build/models/thread_model.js"></script>
         <!-- Collections -->
         <script type="text/javascript" src="build/collections/relater_collection.js"></script>
         <script type="text/javascript" src="build/collections/message_collection.js"></script>
@@ -37,10 +83,9 @@
         <script type="text/javascript" src="build/views/message_collection_view.js"></script>
         <script type="text/javascript" src="build/views/relater_view.js"></script>
         <script type="text/javascript" src="build/views/relater_collection_view.js"></script>
-
+        <script type="text/javascript" src="build/views/thread_message_view.js"></script>
         
         <script type="text/javascript" src="build/views/signup_view.js"></script>
-        <script type="text/javascript" src="build/views/messages_view_container.js"></script>
-        <script type="text/javascript" src="build/relater_package.js"></script>
+        <script type="text/javascript" src="build/add_relater_view.js"></script>
         <script type="text/javascript" src="build/application.js"></script>
 </html>

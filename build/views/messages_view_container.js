@@ -3,35 +3,35 @@
   var __hasProp = {}.hasOwnProperty,
     __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; };
 
-  this.MessagesViewContainer = (function(_super) {
+  this.CustomMessageView = (function(_super) {
 
-    __extends(MessagesViewContainer, _super);
+    __extends(CustomMessageView, _super);
 
-    function MessagesViewContainer() {
-      return MessagesViewContainer.__super__.constructor.apply(this, arguments);
+    function CustomMessageView() {
+      return CustomMessageView.__super__.constructor.apply(this, arguments);
     }
 
-    MessagesViewContainer.prototype.events = {
+    CustomMessageView.prototype.events = {
       "click button#submit_custom_message": "send_message",
       "click button#call_button": "call_relater"
     };
 
-    MessagesViewContainer.prototype.render = function() {
+    CustomMessageView.prototype.render = function() {
       this.$el.html(HAML["messages_container_view"]);
       return this;
     };
 
-    MessagesViewContainer.prototype.send_message = function(event) {
+    CustomMessageView.prototype.send_message = function(event) {
       var custom_message;
       event.preventDefault();
       custom_message = $("#custom_message").val();
       if (custom_message.length > 0) {
-        chrome.extension.getBackgroundPage().sendMessage(window.relater_to_send.channel_id, "", true, custom_message);
+        chrome.extension.getBackgroundPage().sendMessage("", true, custom_message);
         return window.close();
       }
     };
 
-    return MessagesViewContainer;
+    return CustomMessageView;
 
   })(Backbone.View);
 

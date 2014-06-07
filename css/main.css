@@ -1,37 +1,27 @@
 /* Will be compiled down to a single stylesheet with your sass files */
-
-body{
-    /* Defaults css for cssmin process */
-    min-width: 300px;
-    min-height: 600px;
-}
-.strip-lines {
-	background-image: url("../images/jarviz_background.png");
+html,body
+{
+	width: 100%;
+	height: 100%;
 }
 
-
-.strip-lines div{
-	width: 10px;
-	height: 70%;
-	float: left;
-	margin: 5px;
-	background-color:#4b9532;
-	animation:up_and_down 3s infinite;
-	-webkit-animation:up_and_down 3s infinite;
+.fill
+{
+	height: 100%;
 }
 
-@keyframes up_and_down {
-	0%{width: 10px; height: 25%;}
-	30%{width: 10px; height: 50%;}
-	70%{width: 10px; height: 65%;}
-	100%{width: 10px; height: 70%;}
+
+body {
+	
+	  background: #e74c3c;
 }
 
-@-webkit-keyframes up_and_down {
-	0%{width: 10px; height: 25%;}
-	30%{width: 10px; height: 50%;}
-	70%{width: 10px; height: 65%;}
-	100%{width: 10px; height: 70%;}
+
+
+
+.transparent-background{
+	
+  
 }
 
 
@@ -50,6 +40,42 @@ body{
 {
 	color:#ffffff;
 	background-color:#095d82;
+
+}
+
+.chat_animation{	
+	
+
+
+}
+
+.chat_contacts{
+
+	
+}
+
+
+.blocks-container
+{
+	
+}
+
+#chat_video
+{
+	
+	
+}
+
+/* Messages section */
+
+.chat_messages{
+	
+
+}
+
+#submit_custom_message
+{
+	width: 100%;
 
 }
 
@@ -77,3 +103,26 @@ body{
 	color:#ffffff;
 	background-color:#095d82;
 }
+.message_selected
+{
+	color:#ffffff;
+	background-color:green;	
+}
+
+/** Relater section **/
+.relater 
+{
+	padding: 10px;
+	color:#000000;
+}
+
+.relater:hover{
+	color:#ffffff;
+	background-color:#095d82;
+}
+
+.relater_selected{
+	color:#ffffff;
+	background-color:green;		
+}
+

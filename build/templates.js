@@ -37,7 +37,7 @@
     return (function() {
       var $o;
       $o = [];
-      $o.push("<div class='container'>\n  <div class='row'>\n    <div >\n      <h1 class='contacts_header'>Contacts</h1>\n    </div>\n  </div>\n  <div class='row'>\n    <div id='contacts_container'></div>\n  </div>\n  <footer>\n    <div class='row add_contact'>\n      <form class='form-inline' role='form'>\n        <input class='form-group form-control' id='new_contact_email' placeholder='enter email id' type='email'>\n        <button class='btn btn-default' id='submit_new_contact'>Add</button>\n      </form>\n    </div>\n    <div class='row' id='relater_request_join' style='display:none'>\n      <p class='text-primary'>It seems , your friend is not using Chatminion\n        <button class='btn-square btn-success' id='send_relater_request' type='submit'>ask him</button>\n      </p>\n    </div>\n  </footer>\n</div>");
+      $o.push("<footer>\n  <div class='row'>\n    <div class='input-group'>\n      <input class='form-control' id='new_contact_email' placeholder='enter email id' type='email'>\n      <span class='input-group-btn'>\n        <button class='btn btn-default' id='submit_new_contact'>Add</button>\n        <div class='row' id='relater_request_join' style='display:none'>\n          <p class='text-primary'>It seems , your friend is not using Chatminion</p>\n          <button class='btn-square btn-success' id='send_relater_request' type='submit'>ask him</button>\n        </div>\n      </span>\n    </div>\n  </div>\n</footer>");
       return $o.join("\n").replace(/\s(?:id|class)=(['"])(\1)/mg, "");
     }).call(context);
   };
@@ -52,7 +52,7 @@
     return (function() {
       var $o;
       $o = [];
-      $o.push("<div class='form-group'>\n  <textarea class='form-control' id='custom_message' rows='5' cols='5'></textarea>\n  <button class='btn btn-default' id='custom_message_submit_btn'></button>\n</div>");
+      $o.push("<div class='custom_message_container'>\n  <form class='form-horiz' role='form'>\n    <textarea class='form-group form-control' id='custom_message' placeholder='Your message ....' type='text' rows='2'></textarea>\n  </form>\n</div>\n<button class='btn btn-default' id='submit_custom_message'>Send</button>");
       return $o.join("\n").replace(/\s(?:id|class)=(['"])(\1)/mg, "");
     }).call(context);
   };
@@ -129,25 +129,8 @@
         }
       };
       $o = [];
-      $o.push("<h3 class='messages_list'>");
-      $o.push("  " + $e($c(this.message_view_model.user_message)));
-      $o.push("</h3>");
-      return $o.join("\n").replace(/\s([\w-]+)='true'/mg, ' $1').replace(/\s([\w-]+)='false'/mg, '').replace(/\s(?:id|class)=(['"])(\1)/mg, "");
-    }).call(context);
-  };
-
-}).call(this);
-(function() {
-  if (window.HAML == null) {
-    window.HAML = {};
-  }
-
-  window.HAML['messages_container_view'] = function(context) {
-    return (function() {
-      var $o;
-      $o = [];
-      $o.push("<div class='container'>\n  <div class='row'>\n    <div >\n      <h1 id='message_head'>Message</h1>\n    </div>\n  </div>\n  <div class='row'>\n    <div id='threads_container'></div>\n    <div id='messages_container'></div>\n  </div>\n  <footer>\n    <div class='row custom_message_container'>\n      <form class='form-inline' role='form'>\n        <input class='form-group form-control' id='custom_message' placeholder='Your message ....' type='text'>\n        <button class='btn btn-default' id='submit_custom_message'>Send</button>\n        <button class='btn btn-default' id='call_button'>Call</button>\n      </form>\n    </div>\n  </footer>\n</div>");
-      return $o.join("\n").replace(/\s(?:id|class)=(['"])(\1)/mg, "");
+      $o.push("" + $e($c(this.message_view_model.user_message)));
+      return $o.join("\n").replace(/\s([\w-]+)='true'/mg, ' $1').replace(/\s([\w-]+)='false'/mg, '');
     }).call(context);
   };
 
@@ -191,9 +174,7 @@
         }
       };
       $o = [];
-      $o.push("<h3 class='contact_names'>");
-      $o.push("  " + $e($c(this.user_model.get("name"))));
-      $o.push("</h3>");
+      $o.push("<h4 class='list-group-item-heading'>" + ($e($c(this.user_model.get("name")))) + "</h4>\n<p class='list-group-item-text'>Status</p>");
       return $o.join("\n").replace(/\s([\w-]+)='true'/mg, ' $1').replace(/\s([\w-]+)='false'/mg, '').replace(/\s(?:id|class)=(['"])(\1)/mg, "");
     }).call(context);
   };
@@ -238,10 +219,25 @@
         }
       };
       $o = [];
-      $o.push("<h3 class='thread_message'>");
-      $o.push("  " + $e($c(this.message)));
-      $o.push("</h3>");
+      $o.push("<div class='threads'>");
+      $o.push("  " + $e($c(this.thread_message.transformed_message)));
+      $o.push("</div>");
       return $o.join("\n").replace(/\s([\w-]+)='true'/mg, ' $1').replace(/\s([\w-]+)='false'/mg, '').replace(/\s(?:id|class)=(['"])(\1)/mg, "");
+    }).call(context);
+  };
+
+}).call(this);
+(function() {
+  if (window.HAML == null) {
+    window.HAML = {};
+  }
+
+  window.HAML['video_call_view'] = function(context) {
+    return (function() {
+      var $o;
+      $o = [];
+      $o.push("<video id='chat_video' autoplay=''></video>\n<button id='show_face'>show</button>");
+      return $o.join("\n").replace(/\s(?:id|class)=(['"])(\1)/mg, "");
     }).call(context);
   };
 

@@ -12,10 +12,8 @@
     }
 
     CustomMessageView.prototype.events = {
-      "click #custom_message_submit_btn": "send_message"
+      "click button#submit_custom_message": "send_message"
     };
-
-    CustomMessageView.prototype.initialize = function(attributes) {};
 
     CustomMessageView.prototype.render = function() {
       this.$el.html(HAML["custom_message"]());
@@ -23,14 +21,8 @@
     };
 
     CustomMessageView.prototype.send_message = function(event) {
-      var custom_message;
-      custom_message = new Message({
-        "msg_id": 3537,
-        "user_message": $("#custom_message").val(),
-        "transform_pattern": ""
-      });
-      chrome.extension.getBackgroundPage().message_to_send = custom_message;
-      return chrome.extension.getBackgroundPage().sendMessage();
+      event.preventDefault();
+      return window.sendMessage(event);
     };
 
     return CustomMessageView;

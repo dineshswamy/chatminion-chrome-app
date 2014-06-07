@@ -1,6 +1,6 @@
 class @User extends Backbone.Model
 	initialize :(attributes) ->
-		@url = chrome.extension.getBackgroundPage().base_url+"/calltheteam/register"
+		@url = window.base_url+"/calltheteam/register"
 		if attributes.email_id
 			@email_id=attributes.email_id
 		if attributes.channel_id

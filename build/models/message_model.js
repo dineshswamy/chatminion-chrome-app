@@ -12,7 +12,7 @@
     }
 
     Message.prototype.initialize = function(attributes) {
-      this.msg_id = attributes.msg_id;
+      this.message_id = attributes.message_id;
       this.user_message = attributes.user_message;
       return this.transform_pattern = attributes.transform_pattern;
     };

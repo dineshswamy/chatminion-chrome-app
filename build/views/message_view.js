@@ -15,6 +15,10 @@
       "click": "send_message"
     };
 
+    MessageView.prototype.tagName = "div";
+
+    MessageView.prototype.className = "messages_list";
+
     MessageView.prototype.initialize = function(attributes) {};
 
     MessageView.prototype.render = function() {
@@ -25,8 +29,16 @@
     };
 
     MessageView.prototype.send_message = function(event) {
-      chrome.extension.getBackgroundPage().sendMessage(window.relater_to_send, this.model, false, "");
-      return window.close();
+      this.$el.siblings().removeClass("message_selected");
+      if (this.$el.hasClass("message_selected")) {
+        this.$el.removeClass("message_selected");
+        $("#custom_message").prop("disabled", false);
+        return window.message_to_send = null;
+      } else {
+        this.$el.addClass("message_selected");
+        window.message_to_send = this.model;
+        return $("#custom_message").prop("disabled", true);
+      }
     };
 
     return MessageView;

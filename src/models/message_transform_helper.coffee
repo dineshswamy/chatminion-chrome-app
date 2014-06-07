@@ -3,6 +3,9 @@ class @MessageTransformation
 		@pattern=transform_pattern
 		@options=options
 
+	setCustomMessage : (message)->
+		@custom_message = message
+
 	applyTransformation : ()->
 		if @pattern != null
 			for option,index in @options
@@ -11,7 +14,7 @@ class @MessageTransformation
 				str_to_search = new RegExp("@@#{index}",'g')
 				@pattern=@pattern.replace str_to_search,option
 		else
-			@pattern = @options[0]+" says "+chrome.extension.getBackgroundPage().transformed_message
+			@pattern = @options[0]+" says "+@custom_message
 
 	getMessage : ()->
 		@pattern

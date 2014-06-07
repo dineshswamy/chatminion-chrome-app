@@ -1,18 +1,27 @@
 class @RelaterView extends Backbone.View
 	events : {
-		'click' : 	'sendRelaterModel'
+		"click" : "loadMessages"
 	}
+	tagName : "a"
+	className : "list-group-item"
 	initialize:(attributes) ->
+		@listenTo Backbone,'loadMessages',@loadMessages 
 
 	render: ->
 		@$el.html HAML["relater"](user_model:@model)
 		@
 
-	sendRelaterModel:(event) ->
-		$("body").animate({"background-position-x":"90%",10000,'linear'})
-		window.relater_to_send = @model
-		message_collection = chrome.extension.getBackgroundPage().messages_with_options
-		messages_container_view =  new MessagesViewContainer()
-		$(".container").html messages_container_view.render().$el
-		message_collection_view = new MessageCollectionView({"collection":message_collection})
-		$("#messages_container").html message_collection_view.render().el
+	loadMessages:(event) ->
+   @$el.siblings().removeClass("active")
+   @$el.addClass("active")
+   
+   $("#video_call_relater_name").html(@model.get("name"))
+   
+   window.peer_js_selected_relater = @model
+   
+   window.loadMessagesofRelater(@model.id)
+   
+		
+
+		
+    

@@ -1,3 +1,4 @@
-%div{:class=>"form-group"}
- %textarea{:rows=>"5",:cols=>"5",:class=>"form-control",:id=>"custom_message"}
- %button{:class=>"btn btn-default",:id=>"custom_message_submit_btn"}
+%div{:class=>"custom_message_container"}
+  %form{:class=>"form-horiz" , :role=>"form"}
+    %textarea{:id=>"custom_message", :placeholder=>"Your message ....",:type=>"text",:rows=>"2",:class=>"form-group form-control"}
+%button{:id=>"submit_custom_message" , :class=>"btn btn-default"}Send

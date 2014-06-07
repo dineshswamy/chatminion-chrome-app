@@ -22,6 +22,7 @@
 
     RelatersCollectionView.prototype.render = function() {
       var relater, users_model, _i, _len, _ref;
+      console.log("called once");
       _ref = this.collection.models;
       for (_i = 0, _len = _ref.length; _i < _len; _i++) {
         users_model = _ref[_i];
@@ -37,6 +38,8 @@
       console.log("relater added");
       return this.collection.add(relater);
     };
+
+    RelatersCollectionView.prototype.find_and_set_checked = function(relater_id) {};
 
     return RelatersCollectionView;
 

@@ -12,10 +12,16 @@
     }
 
     RelaterView.prototype.events = {
-      'click': 'sendRelaterModel'
+      "click": "loadMessages"
     };
 
-    RelaterView.prototype.initialize = function(attributes) {};
+    RelaterView.prototype.tagName = "a";
+
+    RelaterView.prototype.className = "list-group-item";
+
+    RelaterView.prototype.initialize = function(attributes) {
+      return this.listenTo(Backbone, 'loadMessages', this.loadMessages);
+    };
 
     RelaterView.prototype.render = function() {
       this.$el.html(HAML["relater"]({
@@ -24,21 +30,12 @@
       return this;
     };
 
-    RelaterView.prototype.sendRelaterModel = function(event) {
-      var message_collection, message_collection_view, messages_container_view;
-      $("body").animate({
-        "background-position-x": "90%",
-        10000: 10000,
-        'linear': 'linear'
-      });
-      window.relater_to_send = this.model;
-      message_collection = chrome.extension.getBackgroundPage().messages_with_options;
-      messages_container_view = new MessagesViewContainer();
-      $(".container").html(messages_container_view.render().$el);
-      message_collection_view = new MessageCollectionView({
-        "collection": message_collection
-      });
-      return $("#messages_container").html(message_collection_view.render().el);
+    RelaterView.prototype.loadMessages = function(event) {
+      this.$el.siblings().removeClass("active");
+      this.$el.addClass("active");
+      $("#video_call_relater_name").html(this.model.get("name"));
+      window.peer_js_selected_relater = this.model;
+      return window.loadMessagesofRelater(this.model.id);
     };
 
     return RelaterView;

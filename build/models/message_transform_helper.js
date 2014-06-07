@@ -13,6 +13,10 @@
       return this.options = options;
     };
 
+    MessageTransformation.prototype.setCustomMessage = function(message) {
+      return this.custom_message = message;
+    };
+
     MessageTransformation.prototype.applyTransformation = function() {
       var index, option, str_to_search, _i, _len, _ref, _results;
       if (this.pattern !== null) {
@@ -26,7 +30,7 @@
         }
         return _results;
       } else {
-        return this.pattern = this.options[0] + " says " + chrome.extension.getBackgroundPage().transformed_message;
+        return this.pattern = this.options[0] + " says " + this.custom_message;
       }
     };
 

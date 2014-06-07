@@ -12,14 +12,12 @@
     }
 
     ThreadMessageView.prototype.initialize = function(attributes) {
-      if (attributes !== null && attributes !== void 0) {
-        return this.message = attributes.message;
-      }
+      return this.model = attributes.model;
     };
 
     ThreadMessageView.prototype.render = function() {
       this.$el.html(HAML["thread_message"]({
-        "message": this.message.message
+        "thread_message": this.model
       }));
       return this;
     };

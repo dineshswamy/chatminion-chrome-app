@@ -7,8 +7,9 @@
       this.version = 3;
       this.database = null;
       this.transaction = null;
-      this.messages_url = chrome.extension.getBackgroundPage().base_url + "/messages.json";
-      this.message_options_url = chrome.extension.getBackgroundPage().base_url + "/message_options.json";
+      this.base_url = "http://localhost:3000";
+      this.messages_url = this.base_url + "/messages.json";
+      this.message_options_url = this.base_url + "/message_options.json";
       this.db_name = "calltheteam";
     }
 
@@ -76,6 +77,7 @@
       var _this = this;
       return $.get(this.messages_url, function(data) {
         var messages, _i, _len;
+        console.log(data);
         for (_i = 0, _len = data.length; _i < _len; _i++) {
           messages = data[_i];
           _this.addMessage({
@@ -116,7 +118,7 @@
             return cursor["continue"]();
           };
         } else {
-          return chrome.extension.getBackgroundPage().messages_with_options = new MessageCollection(arr_messages_with_options);
+          return window.messages_with_options = new MessageCollection(arr_messages_with_options);
         }
       };
     };
@@ -140,7 +142,8 @@
     };
 
     Messages.prototype.loadOptionsforMessage = function(message_id, callback) {
-      chrome.extension.getBackgroundPage().options_for_message = [];
+      var options_for_message;
+      options_for_message = [];
       this.request = indexedDB.open(this.db_name, this.version);
       return this.request.onsuccess = function(event) {
         var message_transactions, messages_objectstore, objectstore;
@@ -159,13 +162,13 @@
                 messages_objectstore.openCursor(Number(msg_id)).onsuccess = function(event) {
                   var messages_cursor;
                   messages_cursor = event.target.result;
-                  return chrome.extension.getBackgroundPage().options_for_message.push(messages_cursor.value);
+                  return options_for_message.push(messages_cursor.value);
                 };
               }
             }
             return cursor["continue"]();
           } else if (callback !== null && callback !== void 0) {
-            return callback();
+            return callback(options_for_message);
           }
         };
       };

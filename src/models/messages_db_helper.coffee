@@ -4,9 +4,14 @@ class @Messages
 		@version = 3
 		@database=null
 		@transaction=null
-		@messages_url=chrome.extension.getBackgroundPage().base_url+"/messages.json"
-		@message_options_url=chrome.extension.getBackgroundPage().base_url+"/message_options.json"
-		@db_name="calltheteam"
+		#@base_url = "http://lit-refuge-2289.herokuapp.com"
+		@base_url = "http://localhost:3000"
+		# chrome.runtime.getBackgroundPage((page)->
+		# 		console.log @messages_url
+		# 	)
+		@messages_url = @base_url+"/messages.json"
+		@message_options_url = @base_url+"/message_options.json"
+		@db_name = "calltheteam"
 
 	init : ->
 		@request = indexedDB.open(@db_name,@version)
@@ -49,6 +54,7 @@ class @Messages
 	fetch:() ->
 		$.get(@messages_url,
         (data) =>
+        	console.log data
 	        for messages in data
 	        	@.addMessage {"id":messages.msg_id,"user_message":messages.user_message,"transform_pattern":messages.transform_pattern}
 	        $.get(@message_options_url,
@@ -71,7 +77,7 @@ class @Messages
         			arr_messages_with_options.push(messages_cursor.value)	
         			cursor.continue()
         	else
-        		chrome.extension.getBackgroundPage().messages_with_options = new MessageCollection(arr_messages_with_options)
+        		window.messages_with_options = new MessageCollection(arr_messages_with_options)
                 
     getMessageInfo:(message_id,callback)->
 	    @request = indexedDB.open(@db_name,@version)
@@ -87,7 +93,7 @@ class @Messages
 	            
 
    loadOptionsforMessage:(message_id,callback)->
-    chrome.extension.getBackgroundPage().options_for_message = []
+    options_for_message = []
     @request = indexedDB.open(@db_name,@version)
     @request.onsuccess = (event)->
         @database=event.target.result
@@ -102,7 +108,8 @@ class @Messages
                     for msg_id in options
                      messages_objectstore.openCursor(Number(msg_id)).onsuccess = (event)->
                                     messages_cursor = event.target.result
-                                    chrome.extension.getBackgroundPage().options_for_message.push(messages_cursor.value)
+                                    options_for_message.push(messages_cursor.value)
                 cursor.continue()                	
-            else if callback != null and callback != undefined then callback()	
+            else if callback != null and callback != undefined
+          				callback(options_for_message)	
                         

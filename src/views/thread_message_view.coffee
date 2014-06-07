@@ -1,6 +1,7 @@
 class @ThreadMessageView extends Backbone.View
 	initialize :(attributes)->
-		@message = attributes.message if attributes isnt null and attributes isnt undefined
+		@model = attributes.model
+	
 	render : ->
-		@$el.html HAML["thread_message"]({"message":@message.message})
+		@$el.html HAML["thread_message"]({"thread_message":@model})
 		@

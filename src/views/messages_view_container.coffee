@@ -1,4 +1,4 @@
-class @MessagesViewContainer  extends Backbone.View
+class @CustomMessageView  extends Backbone.View
     events:
         "click button#submit_custom_message":"send_message"
         "click button#call_button":"call_relater"
@@ -9,7 +9,7 @@ class @MessagesViewContainer  extends Backbone.View
         event.preventDefault()
         custom_message = $("#custom_message").val()
         if custom_message.length > 0
-            chrome.extension.getBackgroundPage().sendMessage(window.relater_to_send.channel_id,"",true,custom_message)
+            chrome.extension.getBackgroundPage().sendMessage("",true,custom_message)
             window.close()
     # call_relater:(event)->
     #     event.preventDefault()
