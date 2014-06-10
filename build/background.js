@@ -20,8 +20,6 @@
 
   window.transformed_message = null;
 
-  window.popup_window_opened = false;
-
   window.is_custom_message = false;
 
   window.custom_message = "";
@@ -36,7 +34,7 @@
 
   window.popup_params = {};
 
-  chrome.app.runtime.onLaunched.addListener(function() {
+  window.openWindow = function() {
     return chrome.app.window.create('../popup.html', {
       id: 'app-window',
       bounds: {
@@ -48,7 +46,11 @@
       minWidth: 800,
       minHeight: 600
     });
-  });
+  };
+
+  chrome.app.runtime.onLaunched.addListener(window.openWindow);
+
+  chrome.app.window.onClosed.addListener = function() {};
 
   chrome.pushMessaging.getChannelId(false, function(google_chrome_channel_id) {
     return console.log(google_chrome_channel_id.channelId);

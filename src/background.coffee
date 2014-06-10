@@ -21,10 +21,8 @@ window.logged_in_user = null
 sender_message = null
 window.messages = null
 window.transformed_message = null
-window.popup_window_opened = false
 window.is_custom_message = false
 window.custom_message = ""
-
 window.opened_windows = {}
 window.relater_threads = {}
  
@@ -44,7 +42,10 @@ window.popup_params = {}
 #         ,null
 #     ))
 
-chrome.app.runtime.onLaunched.addListener(()-> 
+
+
+
+window.openWindow = ()->
   chrome.app.window.create('../popup.html', {
     id: 'app-window',
     bounds: {
@@ -55,12 +56,20 @@ chrome.app.runtime.onLaunched.addListener(()->
     },
     minWidth: 800,
     minHeight: 600
-  });
-);
+  })
 
-chrome.pushMessaging.getChannelId(false,(google_chrome_channel_id)-> console.log google_chrome_channel_id.channelId )
+chrome.app.runtime.onLaunched.addListener(window.openWindow)
 
-chrome.pushMessaging.onMessage.addListener((recieved_message)->chrome.runtime.sendMessage({"recieved_message":recieved_message}))
+chrome.app.window.onClosed.addListener = ()->
+  
+
+
+chrome.pushMessaging.getChannelId(false,(google_chrome_channel_id)-> console.log google_chrome_channel_id.channelId)
+
+chrome.pushMessaging.onMessage.addListener((recieved_message)-> 
+                                                            chrome.runtime.sendMessage({"recieved_message":recieved_message})
+
+                                                            )
 
 # (message)->
 #                                         chrome.app.window.create('../popup.html', {

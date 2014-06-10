@@ -6,7 +6,7 @@
 
   -'use-strict';
 
-  window.base_url = "http://192.168.1.25:3000";
+  window.base_url = "http://localhost:3000";
 
   window.relater_send_queue = [];
 
@@ -77,11 +77,7 @@
     $("#relaters_of_the_user").prepend(add_relaters_view.render().$el);
     window.messages = new Messages();
     window.messages.init(function() {
-      var message_collection_view;
-      message_collection_view = new MessageCollectionView({
-        "collection": window.messages_with_options
-      });
-      return $("#messages").html(message_collection_view.render().$el);
+      return window.openMessages(window.messages_with_options, true);
     });
     $("#video_call_btn").click(launchVideoCall);
     $("#video_call_stop_btn").click(stopVideoCall);
@@ -169,6 +165,7 @@
     recieved_message = message.recieved_message;
     if (window.relater_collection !== null) {
       payload = JSON.parse(recieved_message.payload);
+      console.log(payload);
       sender = window.relater_collection.findWhere({
         "id": Number(payload.user_id)
       });
@@ -176,7 +173,9 @@
       if (payload.is_custom_message === "false") {
         return window.messages.getMessageInfo(Number(payload.message_id), function(payload_message) {
           return window.messages.loadOptionsforMessage(Number(payload.message_id), function(options_for_message) {
-            window.openOptionsPopup(options_for_message);
+            var messages_collection;
+            messages_collection = new MessageCollection(options_for_message);
+            window.openMessages(messages_collection, true);
             return window.getTransformedMessage(sender, window.logged_in_user.name, payload_message.transform_pattern, payload.message_id);
           });
         });
@@ -256,13 +255,13 @@
 
   window.flipMessageCards = function(show_options_messages) {
     if (show_options_messages) {
-      $("#messages").addClass("animated flipOutY");
-      $("#option_messages").show();
-      return $("#option_messages").removeClass("animated flipOutY");
+      $("#messages").hide();
+      $("#messages").empty();
+      return $("#option_messages").show();
     } else {
-      $("#option_messages").addClass("animated flipOutY");
-      $("#messages").show();
-      return $("#messages").removeClass("animated flipOutY");
+      $("#option_messages").hide();
+      $("#option_messages").empty();
+      return $("#messages").show();
     }
   };
 
@@ -282,7 +281,7 @@
     relater_to_send = window.peer_js_selected_relater;
     message = window.message_to_send;
     data = {
-      "sender_id": window.logged_in_user.id,
+      "sender_id": relater_to_send.id,
       "channel_id": relater_to_send.channel_id,
       "is_custom_message": is_custom_message,
       "custom_message": custom_message
@@ -301,44 +300,52 @@
   };
 
   window.putMessageinThread = function(relater, message, message_id, sent_by_relater) {
-    var obj, relater_thread_key, thread, thread_params;
+    var new_thread, relater_thread_key, thread_params;
     thread_params = {
       relater_id: relater.id,
       transformed_message: message,
       message_id: message_id,
       sent_by_relater: sent_by_relater
     };
-    console.log(thread_params);
-    thread = new Thread(thread_params);
+    new_thread = new Thread(thread_params);
     relater_thread_key = String("thread_" + String(relater.id));
-    obj = {};
-    obj[relater_thread_key] = thread;
-    return chrome.storage.local.set(obj, function() {
-      return console.log("thread message saved");
+    return chrome.storage.local.get(relater_thread_key, function(result) {
+      var thread;
+      thread = result[relater_thread_key];
+      if (thread === null || thread === void 0 || thread.length > 2) {
+        thread = [];
+      }
+      thread.push(new_thread);
+      result[relater_thread_key] = thread;
+      return chrome.storage.local.set(result, function() {
+        return console.log("thread message saved");
+      });
     });
   };
 
-  window.openOptionsPopup = function(collection) {
-    var option_messages, option_messages_collection;
-    option_messages_collection = new MessageCollection(collection);
-    option_messages = new MessageCollectionView({
-      "collection": option_messages_collection
+  window.openMessages = function(message_collection, is_option_message) {
+    var messages_collection_view;
+    messages_collection_view = new MessageCollectionView({
+      "collection": message_collection
     });
-    $("#option_messages").html(option_messages.render().$el);
-    return flipMessageCards(true);
+    if (is_option_message) {
+      $("#option_messages").html(messages_collection_view.render().$el);
+    } else {
+      $("#messages").html(messages_collection_view.render().$el);
+    }
+    return flipMessageCards(is_option_message);
   };
 
   window.loadMessagesofRelater = function(relater_id) {
     var relater_thread_key, thread;
     relater_thread_key = String("thread_" + String(relater_id));
-    console.log("relater get key " + relater_thread_key);
     thread = null;
     return chrome.storage.local.get(relater_thread_key, function(result) {
       var thread_message_view;
       thread = result[relater_thread_key];
       if (thread !== null && thread !== void 0) {
         thread_message_view = new ThreadMessageView({
-          model: thread
+          collection: thread
         });
         return $("#thread_messages").html(thread_message_view.render().$el);
       }

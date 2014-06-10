@@ -1,6 +1,7 @@
 -'use-strict';
 #window.base_url = "http://lit-refuge-2289.herokuapp.com"
-window.base_url = "http://192.168.1.25:3000"
+#window.base_url = "http://10.0.0.6:3000"
+window.base_url = "http://localhost:3000"
 window.relater_send_queue = []
 window.message_to_send = null
 window.relater_collection = null
@@ -51,8 +52,7 @@ window.loadViews = ()->
         
         window.messages = new Messages()
         window.messages.init(()->
-                  message_collection_view = new MessageCollectionView({"collection":window.messages_with_options})
-                  $("#messages").html message_collection_view.render().$el
+                  window.openMessages(window.messages_with_options,true)
                   )
 
         $("#video_call_btn").click(launchVideoCall)
@@ -79,8 +79,8 @@ success_relater_stream = (remoteStream)->
 
 window.stopVideoCall = (event)->
   event.preventDefault()
-  if(window.call!=null or window.call!=undefined)
-    window.call.close();
+  if window.call!=null or window.call!=undefined 
+     window.call.close()
   $("#video_container").hide()
   $("#text_messages").show()
 
@@ -131,6 +131,7 @@ window.dissectRecievedMessage = (message)->
   recieved_message = message.recieved_message
   if window.relater_collection != null
     payload = JSON.parse(recieved_message.payload)
+    console.log payload
     sender = window.relater_collection.findWhere({"id":Number(payload.user_id)})
     $("div[data-relater-id='#{sender.id}']").trigger("click")
     #Nested call backs
@@ -138,7 +139,8 @@ window.dissectRecievedMessage = (message)->
       window.messages.getMessageInfo(Number(payload.message_id),(payload_message)->
         window.messages.loadOptionsforMessage(Number(payload.message_id),
         (options_for_message)->
-          window.openOptionsPopup(options_for_message)
+          messages_collection = new MessageCollection(options_for_message)
+          window.openMessages(messages_collection,true)
           window.getTransformedMessage(sender,window.logged_in_user.name,payload_message.transform_pattern,payload.message_id)
         ))
     else
@@ -202,14 +204,15 @@ window.initializeValues = ()->
 
 window.flipMessageCards = (show_options_messages)->
   if(show_options_messages)
-      $("#messages").addClass("animated flipOutY")
+      $("#messages").hide()
+      $("#messages").empty()
       $("#option_messages").show()
-      $("#option_messages").removeClass("animated flipOutY")
-      
   else
-      $("#option_messages").addClass("animated flipOutY")
+      $("#option_messages").hide()
+      $("#option_messages").empty()
       $("#messages").show()
-      $("#messages").removeClass("animated flipOutY")
+
+      
       
 
 
@@ -228,7 +231,7 @@ window.sendMessage = ()->
     relater_to_send = window.peer_js_selected_relater
     message = window.message_to_send
     data =
-      "sender_id":window.logged_in_user.id
+      "sender_id":relater_to_send.id
       "channel_id":relater_to_send.channel_id
       "is_custom_message":is_custom_message
       "custom_message": custom_message 
@@ -249,30 +252,35 @@ window.putMessageinThread = (relater,message,message_id,sent_by_relater)->
     transformed_message:message
     message_id:message_id
     sent_by_relater:sent_by_relater
-  console.log thread_params
-  thread = new Thread(thread_params)
+  new_thread = new Thread(thread_params)
   relater_thread_key = String("thread_"+String(relater.id))
-  obj = {}
-  obj[relater_thread_key] = thread
-  chrome.storage.local.set(obj,()->console.log "thread message saved")
+  chrome.storage.local.get(relater_thread_key , (result)->
+    thread = result[relater_thread_key]
+    if thread == null or thread ==undefined or thread.length > 2 
+      thread = []
+    thread.push(new_thread)
+    result[relater_thread_key] = thread
+    chrome.storage.local.set(result,()->console.log "thread message saved")
+    )
 
 
-window.openOptionsPopup = (collection)->
-  option_messages_collection = new MessageCollection(collection)
-  option_messages = new MessageCollectionView({"collection":option_messages_collection})
-  $("#option_messages").html option_messages.render().$el
-  flipMessageCards(true)
+
+window.openMessages = (message_collection,is_option_message)->
+  messages_collection_view = new MessageCollectionView({"collection":message_collection})
+  if(is_option_message)
+    $("#option_messages").html messages_collection_view.render().$el
+  else
+    $("#messages").html messages_collection_view.render().$el
+  flipMessageCards(is_option_message)
   
 
 window.loadMessagesofRelater = (relater_id)->
   relater_thread_key = String("thread_"+String(relater_id))
-  
-  console.log "relater get key "+relater_thread_key
   thread = null
   chrome.storage.local.get(relater_thread_key,(result)->
       thread = result[relater_thread_key]
       if thread != null and thread != undefined 
-        thread_message_view = new ThreadMessageView({model:thread})
+        thread_message_view = new ThreadMessageView({collection:thread})
         $("#thread_messages").html thread_message_view.render().$el
 
     )

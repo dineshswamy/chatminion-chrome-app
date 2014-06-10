@@ -217,7 +217,7 @@
 
   window.HAML['thread_message'] = function(context) {
     return (function() {
-      var $c, $e, $o;
+      var $c, $e, $o, thread_message, _i, _len, _ref;
       $e = function(text, escape) {
         return ("" + text).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/'/g, '&#39;').replace(/\//g, '&#47;').replace(/"/g, '&quot;');
       };
@@ -234,9 +234,13 @@
         }
       };
       $o = [];
-      $o.push("<div class='threads'>");
-      $o.push("  " + $e($c(this.thread_message.transformed_message)));
-      $o.push("</div>");
+      _ref = this.thread_messages;
+      for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+        thread_message = _ref[_i];
+        $o.push("<div class='threads'>");
+        $o.push("  " + $e($c(thread_message.transformed_message)));
+        $o.push("</div>");
+      }
       return $o.join("\n").replace(/\s([\w-]+)='true'/mg, ' $1').replace(/\s([\w-]+)='false'/mg, '').replace(/\s(?:id|class)=(['"])(\1)/mg, "");
     }).call(context);
   };

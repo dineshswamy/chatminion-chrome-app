@@ -5,7 +5,8 @@ class @Messages
 		@database=null
 		@transaction=null
 		#@base_url = "http://lit-refuge-2289.herokuapp.com"
-		@base_url = "http://192.168.1.25:3000"
+		#@base_url = "http://10.0.0.6:3000"
+		@base_url = window.base_url
 		# chrome.runtime.getBackgroundPage((page)->
 		# 		console.log @messages_url
 		# 	)

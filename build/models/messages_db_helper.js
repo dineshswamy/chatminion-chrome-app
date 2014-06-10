@@ -7,7 +7,7 @@
       this.version = 3;
       this.database = null;
       this.transaction = null;
-      this.base_url = "http://192.168.1.25:3000";
+      this.base_url = window.base_url;
       this.messages_url = this.base_url + "/messages.json";
       this.message_options_url = this.base_url + "/message_options.json";
       this.db_name = "calltheteam";

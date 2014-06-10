@@ -19,8 +19,6 @@
       "click": "remove_selection"
     };
 
-    MessageCollectionView.prototype.initialize = function(attributes) {};
-
     MessageCollectionView.prototype.render = function() {
       var custom_message, message_models, relater, _i, _len, _ref;
       _ref = this.collection.models;

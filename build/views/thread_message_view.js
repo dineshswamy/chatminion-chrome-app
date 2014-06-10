@@ -17,7 +17,7 @@
 
     ThreadMessageView.prototype.render = function() {
       this.$el.html(HAML["thread_message"]({
-        "thread_message": this.model
+        "thread_messages": this.collection
       }));
       return this;
     };
