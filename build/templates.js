@@ -237,9 +237,15 @@
       _ref = this.thread_messages;
       for (_i = 0, _len = _ref.length; _i < _len; _i++) {
         thread_message = _ref[_i];
-        $o.push("<div class='threads'>");
-        $o.push("  " + $e($c(thread_message.transformed_message)));
-        $o.push("</div>");
+        if (thread_message.sent_by_relater) {
+          $o.push("<div class='right thread'>\n  <img src='../images/dinesh40x40.jpg'>");
+          $o.push("  " + $e($c(thread_message.transformed_message)));
+          $o.push("  <abbr class='timeago' title='" + ($c(thread_message.msg_time)) + "'></abbr>\n</div>");
+        } else {
+          $o.push("<div class='left thread'>\n  <img src='../images/dinesh40x40.jpg'>	</img>");
+          $o.push("  " + $e($c(thread_message.transformed_message)));
+          $o.push("  <abbr class='timeago' title='" + ($c(thread_message.msg_time)) + "'>				</abbr>\n</div>");
+        }
       }
       return $o.join("\n").replace(/\s([\w-]+)='true'/mg, ' $1').replace(/\s([\w-]+)='false'/mg, '').replace(/\s(?:id|class)=(['"])(\1)/mg, "");
     }).call(context);

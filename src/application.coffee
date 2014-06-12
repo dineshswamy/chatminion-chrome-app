@@ -1,7 +1,8 @@
 -'use-strict';
 #window.base_url = "http://lit-refuge-2289.herokuapp.com"
 #window.base_url = "http://10.0.0.6:3000"
-window.base_url = "http://localhost:3000"
+window.base_url = "http://192.168.1.25:3000"
+#window.base_url = "http://localhost:3000"
 window.relater_send_queue = []
 window.message_to_send = null
 window.relater_collection = null
@@ -141,10 +142,10 @@ window.dissectRecievedMessage = (message)->
         (options_for_message)->
           messages_collection = new MessageCollection(options_for_message)
           window.openMessages(messages_collection,true)
-          window.getTransformedMessage(sender,window.logged_in_user.name,payload_message.transform_pattern,payload.message_id)
+          window.getTransformedMessage(sender,window.logged_in_user.name,payload_message.transform_pattern,payload.message_id,payload.time)
         ))
     else
-       window.getTransformedMessage(sender,window.logged_in_user.name,payload.custom_message,null)
+       window.getTransformedMessage(sender,window.logged_in_user.name,payload.custom_message,null,payload.time)
 
 loadRelaters = (user_id,call_back) ->
     window.relater_collection = new RelaterCollection({"user_id":user_id})
@@ -179,7 +180,7 @@ window.initialize_extension = (call_back)->
             window.logged_in_user = result.registered_user
             loadRelaters(window.logged_in_user.id,call_back)
                 
-window.getTransformedMessage = (sender,reciever_name,transform_pattern,message_id)->
+window.getTransformedMessage = (sender,reciever_name,transform_pattern,message_id,time)->
   message_transform_helper = new MessageTransformation()
   message_transform_helper.init(transform_pattern,sender.name,reciever_name)
   
@@ -192,7 +193,7 @@ window.getTransformedMessage = (sender,reciever_name,transform_pattern,message_i
 
   transformed_message = message_transform_helper.getMessage()
   window.speakMessage(transformed_message)
-  window.putMessageinThread(sender,transformed_message,message_id,true)  
+  window.putMessageinThread(sender,transformed_message,message_id,true,time)  
 
 window.initializeValues = ()->
   window.user_to_send = null
@@ -219,7 +220,7 @@ window.flipMessageCards = (show_options_messages)->
 
 window.setMessageOptions = (sender_window,sender)->
     window.broadcast_message =
-        "relater_id":sender.id
+        "relater_id":window.logged_in_user.id
         "relater_to_send":sender.toJSON()
         "transformed_message":window.transformed_message
     window.sendBroadcastMessage()
@@ -230,28 +231,33 @@ window.sendMessage = ()->
     custom_message = $("#custom_message").val()
     relater_to_send = window.peer_js_selected_relater
     message = window.message_to_send
+    time = String(new Date())
     data =
-      "sender_id":relater_to_send.id
+      "sender_id":window.logged_in_user.id
       "channel_id":relater_to_send.channel_id
       "is_custom_message":is_custom_message
       "custom_message": custom_message 
+      "time": time
 
     if !is_custom_message 
       data["message_id"] = message.get("id")
       console.log data["message_id"]
-      window.putMessageinThread(relater_to_send,message.user_message,true,message.msg_id)
+      window.putMessageinThread(relater_to_send,message.user_message,true,message.msg_id,time)
     else
-      window.putMessageinThread(relater_to_send,custom_message,false)
+      window.putMessageinThread(relater_to_send,custom_message,false,time)
       data["message_id"] = " "
 
     $.post(base_url+"/calltheteam/sendmessage",data,()->console.log "call the team")
 
-window.putMessageinThread = (relater,message,message_id,sent_by_relater)->  
+window.putMessageinThread = (relater,message,message_id,sent_by_relater,time)->  
+  console.log "Message at"
+  console.log time
   thread_params =
     relater_id:relater.id
     transformed_message:message
     message_id:message_id
     sent_by_relater:sent_by_relater
+    msg_time:time
   new_thread = new Thread(thread_params)
   relater_thread_key = String("thread_"+String(relater.id))
   chrome.storage.local.get(relater_thread_key , (result)->
@@ -282,6 +288,7 @@ window.loadMessagesofRelater = (relater_id)->
       if thread != null and thread != undefined 
         thread_message_view = new ThreadMessageView({collection:thread})
         $("#thread_messages").html thread_message_view.render().$el
+        $("abbr.timeago").timeago()
 
     )
 

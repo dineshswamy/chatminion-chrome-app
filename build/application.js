@@ -6,7 +6,7 @@
 
   -'use-strict';
 
-  window.base_url = "http://localhost:3000";
+  window.base_url = "http://192.168.1.25:3000";
 
   window.relater_send_queue = [];
 
@@ -176,11 +176,11 @@
             var messages_collection;
             messages_collection = new MessageCollection(options_for_message);
             window.openMessages(messages_collection, true);
-            return window.getTransformedMessage(sender, window.logged_in_user.name, payload_message.transform_pattern, payload.message_id);
+            return window.getTransformedMessage(sender, window.logged_in_user.name, payload_message.transform_pattern, payload.message_id, payload.time);
           });
         });
       } else {
-        return window.getTransformedMessage(sender, window.logged_in_user.name, payload.custom_message, null);
+        return window.getTransformedMessage(sender, window.logged_in_user.name, payload.custom_message, null, payload.time);
       }
     }
   };
@@ -228,7 +228,7 @@
     });
   };
 
-  window.getTransformedMessage = function(sender, reciever_name, transform_pattern, message_id) {
+  window.getTransformedMessage = function(sender, reciever_name, transform_pattern, message_id, time) {
     var message_transform_helper, transformed_message;
     message_transform_helper = new MessageTransformation();
     message_transform_helper.init(transform_pattern, sender.name, reciever_name);
@@ -241,7 +241,7 @@
     }
     transformed_message = message_transform_helper.getMessage();
     window.speakMessage(transformed_message);
-    return window.putMessageinThread(sender, transformed_message, message_id, true);
+    return window.putMessageinThread(sender, transformed_message, message_id, true, time);
   };
 
   window.initializeValues = function() {
@@ -267,7 +267,7 @@
 
   window.setMessageOptions = function(sender_window, sender) {
     window.broadcast_message = {
-      "relater_id": sender.id,
+      "relater_id": window.logged_in_user.id,
       "relater_to_send": sender.toJSON(),
       "transformed_message": window.transformed_message
     };
@@ -275,23 +275,25 @@
   };
 
   window.sendMessage = function() {
-    var custom_message, data, is_custom_message, message, relater_to_send;
+    var custom_message, data, is_custom_message, message, relater_to_send, time;
     is_custom_message = !$("#custom_message").prop("disabled");
     custom_message = $("#custom_message").val();
     relater_to_send = window.peer_js_selected_relater;
     message = window.message_to_send;
+    time = String(new Date());
     data = {
-      "sender_id": relater_to_send.id,
+      "sender_id": window.logged_in_user.id,
       "channel_id": relater_to_send.channel_id,
       "is_custom_message": is_custom_message,
-      "custom_message": custom_message
+      "custom_message": custom_message,
+      "time": time
     };
     if (!is_custom_message) {
       data["message_id"] = message.get("id");
       console.log(data["message_id"]);
-      window.putMessageinThread(relater_to_send, message.user_message, true, message.msg_id);
+      window.putMessageinThread(relater_to_send, message.user_message, true, message.msg_id, time);
     } else {
-      window.putMessageinThread(relater_to_send, custom_message, false);
+      window.putMessageinThread(relater_to_send, custom_message, false, time);
       data["message_id"] = " ";
     }
     return $.post(base_url + "/calltheteam/sendmessage", data, function() {
@@ -299,13 +301,16 @@
     });
   };
 
-  window.putMessageinThread = function(relater, message, message_id, sent_by_relater) {
+  window.putMessageinThread = function(relater, message, message_id, sent_by_relater, time) {
     var new_thread, relater_thread_key, thread_params;
+    console.log("Message at");
+    console.log(time);
     thread_params = {
       relater_id: relater.id,
       transformed_message: message,
       message_id: message_id,
-      sent_by_relater: sent_by_relater
+      sent_by_relater: sent_by_relater,
+      msg_time: time
     };
     new_thread = new Thread(thread_params);
     relater_thread_key = String("thread_" + String(relater.id));
@@ -347,7 +352,8 @@
         thread_message_view = new ThreadMessageView({
           collection: thread
         });
-        return $("#thread_messages").html(thread_message_view.render().$el);
+        $("#thread_messages").html(thread_message_view.render().$el);
+        return $("abbr.timeago").timeago();
       }
     });
   };

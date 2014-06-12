@@ -1,3 +1,11 @@
-- for thread_message in @thread_messages
-		%div{:class => "threads"}
-  		= thread_message.transformed_message
+-	for thread_message in @thread_messages
+-		if thread_message.sent_by_relater
+				.thread.right
+								%img{src: "../images/dinesh40x40.jpg"} 
+								= thread_message.transformed_message
+								%abbr(class= "timeago" title= "#{thread_message.msg_time}")
+-		else
+				.thread.left
+								%img{src: "../images/dinesh40x40.jpg"}	
+								= thread_message.transformed_message
+								%abbr{class: "timeago",title: "#{thread_message.msg_time}" }				
