@@ -1,4 +1,6 @@
 %div{:class=>"custom_message_container"}
   %form{:class=>"form-horiz" , :role=>"form"}
     %textarea{:id=>"custom_message", :placeholder=>"Your message ....",:type=>"text",:rows=>"2",:class=>"form-group form-control"}
+    %input{:id=>"expect_reply",:type=>"checkbox",:checked =>"checked"}Expect a reply
+    %input{:id=>"read_out",:type=>"checkbox",:checked =>"checked"}Read out
 %button{:id=>"submit_custom_message" , :class=>"btn btn-default"}Send

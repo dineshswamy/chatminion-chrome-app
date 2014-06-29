@@ -175,8 +175,10 @@
           return window.messages.loadOptionsforMessage(Number(payload.message_id), function(options_for_message) {
             var messages_collection;
             messages_collection = new MessageCollection(options_for_message);
-            window.openMessages(messages_collection, true);
-            return window.getTransformedMessage(sender, window.logged_in_user.name, payload_message.transform_pattern, payload.message_id, payload.time);
+            if (payload.expect_reply) {
+              window.openMessages(messages_collection, true);
+            }
+            return window.getTransformedMessage(sender, window.logged_in_user.name, payload_message.transform_pattern, payload.message_id, payload.time, payload.read_out);
           });
         });
       } else {
@@ -221,20 +223,38 @@
     return loadRelaters(window.logged_in_user.id, call_back);
   };
 
-  window.getTransformedMessage = function(sender, reciever_name, transform_pattern, message_id, time) {
-    var message_transform_helper, transformed_message;
+  window.getTransformedMessage = function(sender, reciever_name, transform_pattern, message_id, time, read_out) {
+    var helper_transformed_message, message_transform_helper, thread_params;
     message_transform_helper = new MessageTransformation();
     message_transform_helper.init(transform_pattern, sender.name, reciever_name);
     if (message_id !== null || message_id !== void 0) {
       message_transform_helper.applyTransformation();
+      helper_transformed_message = message_transform_helper.getMessage();
+      thread_params = {
+        relater: sender,
+        is_custom_message: false,
+        transformed_message: helper_transformed_message,
+        message_id: message_id,
+        sent_by_relater: true,
+        msg_time: time
+      };
     } else {
       message_transform_helper.pattern = null;
       message_transform_helper.setCustomMessage(transform_pattern);
       message_transform_helper.applyTransformation();
+      thread_params = {
+        "relater": sender,
+        "is_custom_message": true,
+        "transformed_message": helper_transformed_message,
+        "message_id": message_id,
+        "sent_by_relater": true,
+        "msg_time": time
+      };
     }
-    transformed_message = message_transform_helper.getMessage();
-    window.speakMessage(transformed_message);
-    return window.putMessageinThread(sender, transformed_message, message_id, true, time);
+    if (read_out) {
+      window.speakMessage(helper_transformed_message);
+    }
+    return window.putMessageinThread(thread_params);
   };
 
   window.initializeValues = function() {
@@ -268,53 +288,81 @@
   };
 
   window.sendMessage = function() {
-    var custom_message, data, is_custom_message, message, relater_to_send, time;
+    var custom_message, data, expect_reply, is_custom_message, message, read_out, relater_to_send, thread_params, time;
     is_custom_message = !$("#custom_message").prop("disabled");
     custom_message = $("#custom_message").val();
     relater_to_send = window.peer_js_selected_relater;
     message = window.message_to_send;
     time = String(new Date());
+    expect_reply = $("#expect_reply").prop("checked");
+    read_out = $("#read_out").prop("checked");
     data = {
       "sender_id": window.logged_in_user.id,
       "channel_id": relater_to_send.channel_id,
       "is_custom_message": is_custom_message,
       "custom_message": custom_message,
-      "time": time
+      "expect_reply": expect_reply,
+      "read_out": read_out,
+      "time": timeread_out
     };
     if (!is_custom_message) {
       data["message_id"] = message.get("id");
-      console.log(data["message_id"]);
-      window.putMessageinThread(relater_to_send, message.user_message, true, message.msg_id, time);
+      thread_params = {
+        "relater": relater_to_send,
+        "transformed_message": message.user_message,
+        "message_id": message.msg_id,
+        "sent_by_relater": false,
+        "is_custom_message": false,
+        "msg_time": time
+      };
     } else {
-      window.putMessageinThread(relater_to_send, custom_message, false, time);
+      thread_params = {
+        "relater": relater_to_send,
+        "transformed_message": custom_message,
+        "message_id": -970,
+        "sent_by_relater": false,
+        "is_custom_message": true,
+        "msg_time": time
+      };
       data["message_id"] = " ";
     }
+    window.putMessageinThread(thread_params);
     return $.post(base_url + "/calltheteam/sendmessage", data, function() {
       return console.log("call the team");
     });
   };
 
-  window.putMessageinThread = function(relater, message, message_id, sent_by_relater, time) {
-    var new_thread, relater_thread_key, thread_params;
-    console.log("Message at");
-    console.log(time);
-    thread_params = {
-      relater_id: relater.id,
-      transformed_message: message,
-      message_id: message_id,
-      sent_by_relater: sent_by_relater,
-      msg_time: time
-    };
+  window.putMessageinThread = function(thread_params) {
+    var new_thread, relater_thread_key;
     new_thread = new Thread(thread_params);
-    relater_thread_key = String("thread_" + String(relater.id));
+    relater_thread_key = String("thread_" + String(thread_params["relater"].id));
     return chrome.storage.local.get(relater_thread_key, function(result) {
-      var thread;
+      var thread, thread_message_view;
       thread = result[relater_thread_key];
       if (thread === null || thread === void 0 || thread.length > 2) {
         thread = [];
       }
-      thread.push(new_thread);
-      result[relater_thread_key] = thread;
+      if (!new_thread.sent_by_relater) {
+        $("#transformed_message").fadeOut(500);
+        $("#thread_messages").fadeOut(500);
+        thread.push(new_thread);
+        result[relater_thread_key] = thread;
+        thread_message_view = new ThreadMessageView({
+          collection: thread
+        });
+        $("#thread_messages").html(thread_message_view.render().$el);
+        $("abbr.timeago").timeago();
+        $("#thread_messages").fadeIn(500);
+      } else {
+        thread_message_view = new ThreadMessageView({
+          collection: thread
+        });
+        $("#thread_messages").html(thread_message_view.render().$el);
+        $("abbr.timeago").timeago();
+        $("#transformed_message").html(new_thread.transformed_message);
+        thread.push(new_thread);
+        result[relater_thread_key] = thread;
+      }
       return chrome.storage.local.set(result, function() {
         return console.log("thread message saved");
       });
@@ -348,23 +396,41 @@
         });
         $("#thread_messages").html(thread_message_view.render().$el);
         $("abbr.timeago").timeago();
-        return animateMessages();
+        return setMessageOptionsFromThread(thread[thread.length - 1]);
       }
     });
   };
 
+  window.setMessageOptionsFromThread = function(last_thread_message) {
+    return openMessages(window.messages_with_options, false);
+  };
+
   window.animateMessages = function() {
-    return $("#option_messages").animate({
-      bottom: -320
-    }, {
-      duration: 'fast',
-      easing: 'easeOutBack'
-    }).animate({
-      bottom: 0
-    }, {
-      duration: 'fast',
-      easing: 'easeOutBack'
-    });
+    if ($("#option_messages").is(':visible')) {
+      return $("#option_messages").animate({
+        bottom: -320
+      }, {
+        duration: 'fast',
+        easing: 'easeOutBack'
+      }).animate({
+        bottom: 0
+      }, {
+        duration: 'fast',
+        easing: 'easeOutBack'
+      });
+    } else if ($("#messages").is(':visible')) {
+      return $("#messages").animate({
+        bottom: -320
+      }, {
+        duration: 'fast',
+        easing: 'easeOutBack'
+      }).animate({
+        bottom: 0
+      }, {
+        duration: 'fast',
+        easing: 'easeOutBack'
+      });
+    }
   };
 
   window.addRelaterToCollection = function(relater, call_back) {

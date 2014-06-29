@@ -63,8 +63,7 @@ window.loadViews = ()->
           console.log "messages btn pressed"
           flipMessageCards(false)
           )
-        #$("#submit_custom_message").click(sendMessage)
-            
+        #$("#submit_custom_message").click(sendMessage)            
         $("#relaters_of_the_user").jScrollPane();
         initializeValues()
 
@@ -141,8 +140,11 @@ window.dissectRecievedMessage = (message)->
         window.messages.loadOptionsforMessage(Number(payload.message_id),
         (options_for_message)->
           messages_collection = new MessageCollection(options_for_message)
-          window.openMessages(messages_collection,true)
-          window.getTransformedMessage(sender,window.logged_in_user.name,payload_message.transform_pattern,payload.message_id,payload.time)
+
+          if payload.expect_reply
+            window.openMessages(messages_collection,true)
+            
+          window.getTransformedMessage(sender,window.logged_in_user.name,payload_message.transform_pattern,payload.message_id,payload.time,payload.read_out)
         ))
     else
        window.getTransformedMessage(sender,window.logged_in_user.name,payload.custom_message,null,payload.time)
@@ -182,20 +184,34 @@ window.initialize_extension = (call_back)->
     #         window.logged_in_user = result.registered_user
             
                 
-window.getTransformedMessage = (sender,reciever_name,transform_pattern,message_id,time)->
+window.getTransformedMessage = (sender,reciever_name,transform_pattern,message_id,time,read_out)->
   message_transform_helper = new MessageTransformation()
   message_transform_helper.init(transform_pattern,sender.name,reciever_name)
   
   if message_id != null or message_id != undefined
     message_transform_helper.applyTransformation()
+    helper_transformed_message = message_transform_helper.getMessage()
+    thread_params =
+        relater:sender
+        is_custom_message:false
+        transformed_message:helper_transformed_message
+        message_id:message_id
+        sent_by_relater:true
+        msg_time:time
   else
     message_transform_helper.pattern = null
     message_transform_helper.setCustomMessage(transform_pattern)
     message_transform_helper.applyTransformation()
+    thread_params =
+        "relater":sender
+        "is_custom_message":true
+        "transformed_message":helper_transformed_message
+        "message_id":message_id
+        "sent_by_relater":true
+        "msg_time":time
 
-  transformed_message = message_transform_helper.getMessage()
-  window.speakMessage(transformed_message)
-  window.putMessageinThread(sender,transformed_message,message_id,true,time)  
+  window.speakMessage(helper_transformed_message) if read_out
+  window.putMessageinThread(thread_params)
 
 window.initializeValues = ()->
   window.user_to_send = null
@@ -215,11 +231,6 @@ window.flipMessageCards = (show_options_messages)->
       $("#option_messages").empty()
       $("#messages").show()
 
-      
-      
-
-
-
 window.setMessageOptions = (sender_window,sender)->
     window.broadcast_message =
         "relater_id":window.logged_in_user.id
@@ -234,40 +245,65 @@ window.sendMessage = ()->
     relater_to_send = window.peer_js_selected_relater
     message = window.message_to_send
     time = String(new Date())
+    expect_reply = $("#expect_reply").prop("checked")
+    read_out = $("#read_out").prop("checked")
+
     data =
       "sender_id":window.logged_in_user.id
       "channel_id":relater_to_send.channel_id
       "is_custom_message":is_custom_message
-      "custom_message": custom_message 
-      "time": time
+      "custom_message":custom_message 
+      "expect_reply":expect_reply
+      "read_out":read_out
+      "time": timeread_out
+
 
     if !is_custom_message 
       data["message_id"] = message.get("id")
-      console.log data["message_id"]
-      window.putMessageinThread(relater_to_send,message.user_message,true,message.msg_id,time)
+      thread_params =
+        "relater":relater_to_send
+        "transformed_message":message.user_message
+        "message_id":message.msg_id
+        "sent_by_relater":false
+        "is_custom_message":false
+        "msg_time":time      
     else
-      window.putMessageinThread(relater_to_send,custom_message,false,time)
+      thread_params =
+        "relater":relater_to_send
+        "transformed_message":custom_message
+        "message_id":-970
+        "sent_by_relater":false
+        "is_custom_message":true
+        "msg_time":time
       data["message_id"] = " "
 
+    window.putMessageinThread(thread_params)
     $.post(base_url+"/calltheteam/sendmessage",data,()->console.log "call the team")
 
-window.putMessageinThread = (relater,message,message_id,sent_by_relater,time)->  
-  console.log "Message at"
-  console.log time
-  thread_params =
-    relater_id:relater.id
-    transformed_message:message
-    message_id:message_id
-    sent_by_relater:sent_by_relater
-    msg_time:time
+window.putMessageinThread = (thread_params)->  
   new_thread = new Thread(thread_params)
-  relater_thread_key = String("thread_"+String(relater.id))
+  relater_thread_key = String("thread_"+String(thread_params["relater"].id))
   chrome.storage.local.get(relater_thread_key , (result)->
     thread = result[relater_thread_key]
     if thread == null or thread ==undefined or thread.length > 2 
       thread = []
-    thread.push(new_thread)
-    result[relater_thread_key] = thread
+    #The ordering of the instructions differs
+    if !new_thread.sent_by_relater  
+      $("#transformed_message").fadeOut(500)
+      $("#thread_messages").fadeOut(500)
+      thread.push(new_thread)
+      result[relater_thread_key] = thread
+      thread_message_view = new ThreadMessageView({collection:thread})
+      $("#thread_messages").html thread_message_view.render().$el
+      $("abbr.timeago").timeago()
+      $("#thread_messages").fadeIn(500)    
+    else
+      thread_message_view = new ThreadMessageView({collection:thread})
+      $("#thread_messages").html thread_message_view.render().$el
+      $("abbr.timeago").timeago()
+      $("#transformed_message").html(new_thread.transformed_message)
+      thread.push(new_thread)
+      result[relater_thread_key] = thread
     chrome.storage.local.set(result,()->console.log "thread message saved")
     )
 
@@ -292,11 +328,29 @@ window.loadMessagesofRelater = (relater_id)->
         thread_message_view = new ThreadMessageView({collection:thread})
         $("#thread_messages").html thread_message_view.render().$el
         $("abbr.timeago").timeago()
-        animateMessages();
+        setMessageOptionsFromThread(thread[thread.length-1]);        
     )
 
+window.setMessageOptionsFromThread = (last_thread_message)->
+  openMessages(window.messages_with_options,false)
+  # if last_thread_message == null || last_thread_message.is_custom_message
+  #   openMessages(window.messages_with_options,false)
+  # else 
+  #   if !last_thread_message.is_custom_message and last_thread_message.message_id!=null
+  #     window.messages.getMessageInfo(Number(last_thread_message.message_id),(payload_message)->
+  #       window.messages.loadOptionsforMessage(Number(last_thread_message.message_id),
+  #       (options_for_message)->
+  #         messages_collection = new MessageCollection(options_for_message)
+  #         window.openMessages(messages_collection,true)))
+  #   else
+      
+
+
 window.animateMessages= ()->
-  $("#option_messages").animate({bottom:-320},{duration:'fast',easing:'easeOutBack'}).animate( {bottom:0},{duration:'fast',easing:'easeOutBack'});
+  if $("#option_messages").is(':visible')
+      $("#option_messages").animate({bottom:-320},{duration:'fast',easing:'easeOutBack'}).animate({bottom:0},{duration:'fast',easing:'easeOutBack'});
+  else if $("#messages").is(':visible') 
+      $("#messages").animate({bottom:-320},{duration:'fast',easing:'easeOutBack'}).animate({bottom:0},{duration:'fast',easing:'easeOutBack'});
 
 window.addRelaterToCollection = (relater,call_back)->
   window.relater_collection.add(relater)

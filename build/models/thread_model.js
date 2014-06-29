@@ -4,11 +4,12 @@
   this.Thread = (function() {
 
     function Thread(attributes) {
-      this.relater_id = attributes.relater_id;
+      this.relater = attributes.relater;
       this.transformed_message = attributes.transformed_message;
       this.message_id = attributes.message_id;
       this.sent_by_relater = attributes.sent_by_relater;
       this.msg_time = attributes.msg_time;
+      this.is_custom_message = attributes.is_custom_message;
     }
 
     return Thread;

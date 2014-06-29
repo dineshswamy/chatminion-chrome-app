@@ -52,7 +52,7 @@
     return (function() {
       var $o;
       $o = [];
-      $o.push("<div class='custom_message_container'>\n  <form class='form-horiz' role='form'>\n    <textarea class='form-group form-control' id='custom_message' placeholder='Your message ....' type='text' rows='2'></textarea>\n  </form>\n</div>\n<button class='btn btn-default' id='submit_custom_message'>Send</button>");
+      $o.push("<div class='custom_message_container'>\n  <form class='form-horiz' role='form'>\n    <textarea class='form-group form-control' id='custom_message' placeholder='Your message ....' type='text' rows='2'></textarea>\n    <input id='expect_reply' type='checkbox' checked='checked'>Expect a reply</input>\n    <input id='read_out' type='checkbox' checked='checked'>Read out</input>\n  </form>\n</div>\n<button class='btn btn-default' id='submit_custom_message'>Send</button>");
       return $o.join("\n").replace(/\s(?:id|class)=(['"])(\1)/mg, "");
     }).call(context);
   };
@@ -247,6 +247,7 @@
           $o.push("  <abbr class='timeago' title='" + ($c(thread_message.msg_time)) + "'>				</abbr>\n</div>");
         }
       }
+      $o.push("<h2 class='current_message' id='transformed_message'></h2>");
       return $o.join("\n").replace(/\s([\w-]+)='true'/mg, ' $1').replace(/\s([\w-]+)='false'/mg, '').replace(/\s(?:id|class)=(['"])(\1)/mg, "");
     }).call(context);
   };

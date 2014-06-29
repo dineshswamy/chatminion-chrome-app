@@ -1,6 +1,7 @@
 class @Thread
 	constructor:(attributes)->
-		@relater_id = attributes.relater_id 
+
+		@relater = attributes.relater
 		
 		@transformed_message = attributes.transformed_message 
 
@@ -9,3 +10,5 @@ class @Thread
 		@sent_by_relater = attributes.sent_by_relater 
 
 		@msg_time = attributes.msg_time
+
+		@is_custom_message = attributes.is_custom_message
