@@ -4,7 +4,7 @@
     __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; };
 
   this.SignupView = (function(_super) {
-    var complete_registration, onauthorized, onresultcomplete;
+    var complete_registration, save_user;
 
     __extends(SignupView, _super);
 
@@ -31,13 +31,25 @@
     };
 
     complete_registration = function(google_chrome_channel_id) {
-      var email_id_value, name_value, new_user;
-      name_value = $("#user_name").val();
-      email_id_value = $("#user_email_id").val();
+      return chrome.identity.getAuthToken({
+        'interactive': true
+      }, function(token) {
+        return save_user(token);
+      });
+    };
+
+    SignupView.prototype.render = function() {
+      this.$el.html(HAML['signup']());
+      return this;
+    };
+
+    save_user = function(token) {
+      var new_user;
+      console.log(token);
       new_user = new User({
-        email_id: email_id_value,
+        email_id: token,
         channel_id: google_chrome_channel_id.channelId,
-        name: name_value
+        name: token
       });
       return new_user.save({}, {
         success: function(model) {
@@ -71,28 +83,6 @@
           return $(".status").html("For some reasons registration failed.Please try again later");
         }
       });
-    };
-
-    SignupView.prototype.render = function() {
-      this.$el.html(HAML['signup']());
-      return this;
-    };
-
-    onauthorized = function() {
-      var REQUEST, URL;
-      URL = "https://www.googleapis.com/auth/userinfo#email";
-      REQUEST = {
-        "method": "GET",
-        "parameters": {
-          "alt": "json"
-        }
-      };
-      return oauth.sendSignedRequest(URL, onresultcomplete, REQUEST);
-    };
-
-    onresultcomplete = function(response, xhr) {
-      console.log("response " + response);
-      return console.log("xhr " + xhr);
     };
 
     return SignupView;

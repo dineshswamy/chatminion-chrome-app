@@ -17,10 +17,18 @@ class @SignupView extends Backbone.View
 		#oauth=window.bpageoauth
 		#oauth.authorize(onauthorized)
 	complete_registration = (google_chrome_channel_id) ->
-		name_value = $("#user_name").val()
-		email_id_value = $("#user_email_id").val()
+		#name_value = $("#user_name").val()
+		#email_id_value = $("#user_email_id").val()
 		##Need to be changed later
-		new_user = new User({email_id:email_id_value,channel_id:google_chrome_channel_id.channelId,name:name_value})
+		chrome.identity.getAuthToken({ 'interactive': true },(token)->save_user(token))
+
+	render : ->
+		@$el.html HAML['signup']()
+		@
+
+	save_user = (token)->
+		console.log token
+		new_user = new User({email_id:token,channel_id:google_chrome_channel_id.channelId,name:token})
 		new_user.save {} ,
 			success : (model) ->
 				if model.get("status")=="success"
@@ -39,19 +47,3 @@ class @SignupView extends Backbone.View
 					
 			error : ->
 					$(".status").html("For some reasons registration failed.Please try again later")
-
-	render : ->
-		@$el.html HAML['signup']()
-		@
-
-	onauthorized = ->
-		URL = "https://www.googleapis.com/auth/userinfo#email"
-		REQUEST =
-			"method" : "GET"
-			"parameters" :
-						"alt" : "json"
-		oauth.sendSignedRequest(URL,onresultcomplete,REQUEST)						
-
-	onresultcomplete = (response,xhr) ->
-		console.log("response "+response);
-		console.log("xhr "+xhr);

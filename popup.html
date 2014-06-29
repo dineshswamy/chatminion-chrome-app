@@ -13,7 +13,11 @@
             <div class="row">
                 <div class="col-sm-12" id="message_background">
 
+                    <div class="col-sm-3" id="settings">
+                        
+                        <button id="logger_button"> </button>
 
+                    </div>
                 </div>
 
             </div>
@@ -56,12 +60,12 @@
                         <div id="option_messages">
                                 
                         </div>
-                        <div class="row">
+                       <!--  <div class="row">
                             <button class="btn btn-default col-sm-5 offset-sm-2" id="video_call_btn">Launch video call </button>
                             <button class="btn btn-default col-sm-5" id="all_messages_btn">All messages </button>
-                        </div>
+                        </div> -->
                     </div>
-                    <div id="video_container">
+                    <div id="video_container" style="display:none">
                         <video autoplay id="chat_video">
 
                         </video>
@@ -84,6 +88,7 @@
     </body>
         <script type="text/javascript" src="libs/peer.min.js"></script>     
         <script type="text/javascript" src="libs/jquery-2.1.0.min.js"></script>
+        <script type="text/javascript" src="libs/jquery.easing.1.3.js"></script>
         <script type="text/javascript" src="libs/underscore-min.js"></script>
         <script type="text/javascript" src="libs/backbone-min.js"></script>
         <script type="text/javascript" src="libs/jquery.mousewheel.js"></script>

@@ -6,7 +6,7 @@
 
   -'use-strict';
 
-  window.base_url = "http://192.168.1.25:3000";
+  window.base_url = "http://localhost:3000";
 
   window.relater_send_queue = [];
 
@@ -212,20 +212,13 @@
 
   window.initialize_extension = function(call_back) {
     $("#option_messages").hide();
-    return chrome.storage.local.get(["registered", "registered_user"], function(result) {
-      var sign_up_view;
-      if (result.registered === void 0 || result.registered_user === void 0) {
-        sign_up_view = new SignupView(loadRelaters);
-        $("#sign_up_view").html(sign_up_view.render().$el);
-        $("#sign_up_view_modal").modal({
-          keyboard: false
-        });
-        return $("#sign_up_view_modal").modal('show');
-      } else {
-        window.logged_in_user = result.registered_user;
-        return loadRelaters(window.logged_in_user.id, call_back);
-      }
+    window.logged_in_user = new User({
+      id: 50,
+      email_id: "dinesh@jekyll.com",
+      channel_id: "10479555667324687884/lglphigimhjobmiebamlihaadifjdcck",
+      name: "dineshswamy"
     });
+    return loadRelaters(window.logged_in_user.id, call_back);
   };
 
   window.getTransformedMessage = function(sender, reciever_name, transform_pattern, message_id, time) {
@@ -338,7 +331,8 @@
     } else {
       $("#messages").html(messages_collection_view.render().$el);
     }
-    return flipMessageCards(is_option_message);
+    flipMessageCards(is_option_message);
+    return animateMessages();
   };
 
   window.loadMessagesofRelater = function(relater_id) {
@@ -353,8 +347,23 @@
           collection: thread
         });
         $("#thread_messages").html(thread_message_view.render().$el);
-        return $("abbr.timeago").timeago();
+        $("abbr.timeago").timeago();
+        return animateMessages();
       }
+    });
+  };
+
+  window.animateMessages = function() {
+    return $("#option_messages").animate({
+      bottom: -320
+    }, {
+      duration: 'fast',
+      easing: 'easeOutBack'
+    }).animate({
+      bottom: 0
+    }, {
+      duration: 'fast',
+      easing: 'easeOutBack'
     });
   };
 

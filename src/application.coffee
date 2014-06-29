@@ -1,8 +1,8 @@
 -'use-strict';
 #window.base_url = "http://lit-refuge-2289.herokuapp.com"
 #window.base_url = "http://10.0.0.6:3000"
-window.base_url = "http://192.168.1.25:3000"
-#window.base_url = "http://localhost:3000"
+#window.base_url = "http://192.168.1.53:3000"
+window.base_url = "http://localhost:3000"
 window.relater_send_queue = []
 window.message_to_send = null
 window.relater_collection = null
@@ -170,15 +170,17 @@ sendVideoStreampermission = (data_to_send)->
 
 window.initialize_extension = (call_back)->
     $("#option_messages").hide()
-    chrome.storage.local.get ["registered","registered_user"],(result)->
-        if result.registered is undefined or result.registered_user is undefined
-                sign_up_view = new SignupView(loadRelaters)
-                $("#sign_up_view").html(sign_up_view.render().$el)
-                $("#sign_up_view_modal").modal({keyboard:false})
-                $("#sign_up_view_modal").modal('show')
-        else
-            window.logged_in_user = result.registered_user
-            loadRelaters(window.logged_in_user.id,call_back)
+    window.logged_in_user = new User({id:50,email_id:"dinesh@jekyll.com",channel_id:"10479555667324687884/lglphigimhjobmiebamlihaadifjdcck",name:"dineshswamy"})
+    loadRelaters(window.logged_in_user.id,call_back)
+    # chrome.storage.local.get ["registered","registered_user"],(result)->
+    #     if result.registered is undefined or result.registered_user is undefined
+    #             sign_up_view = new SignupView(loadRelaters)
+    #             $("#sign_up_view").html(sign_up_view.render().$el)
+    #             $("#sign_up_view_modal").modal({keyboard:false})
+    #             $("#sign_up_view_modal").modal('show')
+    #     else
+    #         window.logged_in_user = result.registered_user
+            
                 
 window.getTransformedMessage = (sender,reciever_name,transform_pattern,message_id,time)->
   message_transform_helper = new MessageTransformation()
@@ -278,6 +280,7 @@ window.openMessages = (message_collection,is_option_message)->
   else
     $("#messages").html messages_collection_view.render().$el
   flipMessageCards(is_option_message)
+  animateMessages()
   
 
 window.loadMessagesofRelater = (relater_id)->
@@ -289,9 +292,11 @@ window.loadMessagesofRelater = (relater_id)->
         thread_message_view = new ThreadMessageView({collection:thread})
         $("#thread_messages").html thread_message_view.render().$el
         $("abbr.timeago").timeago()
-
+        animateMessages();
     )
 
+window.animateMessages= ()->
+  $("#option_messages").animate({bottom:-320},{duration:'fast',easing:'easeOutBack'}).animate( {bottom:0},{duration:'fast',easing:'easeOutBack'});
 
 window.addRelaterToCollection = (relater,call_back)->
   window.relater_collection.add(relater)

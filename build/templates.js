@@ -204,7 +204,7 @@
     return (function() {
       var $o;
       $o = [];
-      $o.push("<center>\n  <div class='status'></div>\n  <br>\n  <br>\n  <br>\n  <div id='email_sending_template'></div>\n  <input class='form-control form-group' id='user_email_id' placeholder='email ...'>\n  <input class='form-control form-group' id='user_name' placeholder='name ...'>\n  <button class='btn btn-default' id='google_sign_in'>Count me in</button>\n</center>");
+      $o.push("<button class='btn btn-default' id='google_sign_in'>Google+ signIn</button>");
       return $o.join("\n").replace(/\s(?:id|class)=(['"])(\1)/mg, "");
     }).call(context);
   };
