@@ -178,11 +178,12 @@
             if (payload.expect_reply) {
               window.openMessages(messages_collection, true);
             }
+            console.log(payload.read_out);
             return window.getTransformedMessage(sender, window.logged_in_user.name, payload_message.transform_pattern, payload.message_id, payload.time, payload.read_out);
           });
         });
       } else {
-        return window.getTransformedMessage(sender, window.logged_in_user.name, payload.custom_message, null, payload.time);
+        return window.getTransformedMessage(sender, window.logged_in_user.name, payload.custom_message, null, payload.time, payload.read_out);
       }
     }
   };
@@ -303,7 +304,7 @@
       "custom_message": custom_message,
       "expect_reply": expect_reply,
       "read_out": read_out,
-      "time": timeread_out
+      "time": time
     };
     if (!is_custom_message) {
       data["message_id"] = message.get("id");
@@ -403,6 +404,34 @@
 
   window.setMessageOptionsFromThread = function(last_thread_message) {
     return openMessages(window.messages_with_options, false);
+  };
+
+  window.animateMessagesForSending = function(send_status) {
+    if ($("#option_messages").is(':visible')) {
+      return $("#option_messages").animate({
+        bottom: -320
+      }, {
+        duration: 'fast',
+        easing: 'easeOutBack'
+      }).animate({
+        bottom: 0
+      }, {
+        duration: 'fast',
+        easing: 'easeOutBack'
+      });
+    } else if ($("#messages").is(':visible')) {
+      return $("#messages").animate({
+        bottom: -320
+      }, {
+        duration: 'fast',
+        easing: 'easeOutBack'
+      }).animate({
+        bottom: 0
+      }, {
+        duration: 'fast',
+        easing: 'easeOutBack'
+      });
+    }
   };
 
   window.animateMessages = function() {

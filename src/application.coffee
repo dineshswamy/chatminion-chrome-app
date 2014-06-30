@@ -143,11 +143,11 @@ window.dissectRecievedMessage = (message)->
 
           if payload.expect_reply
             window.openMessages(messages_collection,true)
-            
+          console.log payload.read_out
           window.getTransformedMessage(sender,window.logged_in_user.name,payload_message.transform_pattern,payload.message_id,payload.time,payload.read_out)
         ))
     else
-       window.getTransformedMessage(sender,window.logged_in_user.name,payload.custom_message,null,payload.time)
+       window.getTransformedMessage(sender,window.logged_in_user.name,payload.custom_message,null,payload.time,payload.read_out)
 
 loadRelaters = (user_id,call_back) ->
     window.relater_collection = new RelaterCollection({"user_id":user_id})
@@ -248,6 +248,7 @@ window.sendMessage = ()->
     expect_reply = $("#expect_reply").prop("checked")
     read_out = $("#read_out").prop("checked")
 
+
     data =
       "sender_id":window.logged_in_user.id
       "channel_id":relater_to_send.channel_id
@@ -255,7 +256,7 @@ window.sendMessage = ()->
       "custom_message":custom_message 
       "expect_reply":expect_reply
       "read_out":read_out
-      "time": timeread_out
+      "time": time
 
 
     if !is_custom_message 
@@ -343,10 +344,15 @@ window.setMessageOptionsFromThread = (last_thread_message)->
   #         messages_collection = new MessageCollection(options_for_message)
   #         window.openMessages(messages_collection,true)))
   #   else
+
+window.animateMessagesForSending = (send_status)->
+  if $("#option_messages").is(':visible')
+      $("#option_messages").animate({bottom:-320},{duration:'fast',easing:'easeOutBack'}).animate({bottom:0},{duration:'fast',easing:'easeOutBack'});
+  else if $("#messages").is(':visible') 
+      $("#messages").animate({bottom:-320},{duration:'fast',easing:'easeOutBack'}).animate({bottom:0},{duration:'fast',easing:'easeOutBack'});
       
 
-
-window.animateMessages= ()->
+window.animateMessages = ()->
   if $("#option_messages").is(':visible')
       $("#option_messages").animate({bottom:-320},{duration:'fast',easing:'easeOutBack'}).animate({bottom:0},{duration:'fast',easing:'easeOutBack'});
   else if $("#messages").is(':visible') 
