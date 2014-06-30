@@ -15,10 +15,10 @@
       "48": "images/jarviz_background-48.png"
    },
    "oauth2": {
-    "client_id": "445760815141-leibbulehp71k4mh25ro0ngengol7ucu.apps.googleusercontent.com",
-    "scopes": [ "https://www.googleapis.com/auth/plus.login"]
+    "client_id": "445760815141-2tl83vbi2v5ehfmre5c77our11v3ttsp.apps.googleusercontent.com",
+    "scopes": [ "https://www.googleapis.com/auth/userinfo.email","https://www.googleapis.com/auth/userinfo.profile"]
   },
-   "key": "MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAoFDTmK/oSQ0k+0gNIj6VYUH19N74PlTNyeyUbyVAgh07Vpayb2u6XN4lnvEXqCgtkbxW/8XWB08qzXJmxPfhOf0re2iThT++TyZVdeygdY8c5xYP8UztI7iQ1TcsbJ467mGewbufagq2mOAcW2Kprnf/+P/BB/Zt3PgMUbcPFSzSU3tvSCrSbY8GtB2NzpVV0LPOHZdWiH9nNCW8UGE3FFqrXAr16VAlKfPx0bYFwM6ct6U10a1dX9MuCX+EIX3MNm0eaTaX5yHKmT+Xdg+3aB6SHiTNIjGVqqN5HO8wuzk71qzYqqgn/M+XuPTcRVjUw4KLvLNreu3+U4KJ2KMRuwIDAQAB",
+  "key": "MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAmC+5/E+jG1KK3l70/dJYQ/BFH2BNKJlocPcpTRPnkQ6H7f3TDDpHv5c5d01mRleYgyw/p/l4RxsfTOB+nnjJrdxw4wl2Wroui/D1LpLrcxuderEQ0jbtS24MxhzG6beKCGo64voEc3sajrcEjHWGU6y8DIxNMD+7oL6I1Pta+VLa/WMOgCnAwIbfaNcCP7aUuziqrm+m0K7V137i4LUw5ZEikmguixvSOGEKsst1ctXgBjHEmwehJ8WMXE8Kn80lHs8dJ0+Tc83wSpJW2/3zAExX0572mWx1SUx9YH21fqoGDeHMXz7TB+JjBfNzuzCKhqONipSnm28FSUW4P4lHQwIDAQAB",
    "manifest_version": 2,
    "minimum_chrome_version": "23",
    "name": "Chat minion",

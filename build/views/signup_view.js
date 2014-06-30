@@ -4,7 +4,7 @@
     __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; };
 
   this.SignupView = (function(_super) {
-    var complete_registration, save_user;
+    var complete_registration, save_user, set_profile_image;
 
     __extends(SignupView, _super);
 
@@ -17,7 +17,7 @@
     SignupView.prototype.className = 'sign_up form-group';
 
     SignupView.prototype.events = {
-      'click button#google_sign_in': 'register'
+      'click a#google_sign_in': 'register'
     };
 
     SignupView.prototype.initialize = function(attributes) {
@@ -27,14 +27,16 @@
 
     SignupView.prototype.register = function(event) {
       event.preventDefault();
+      console.log("register clicked");
       return chrome.pushMessaging.getChannelId(false, complete_registration);
     };
 
     complete_registration = function(google_chrome_channel_id) {
+      console.log(google_chrome_channel_id);
       return chrome.identity.getAuthToken({
         'interactive': true
       }, function(token) {
-        return save_user(token);
+        return save_user(token, google_chrome_channel_id.channelId);
       });
     };
 
@@ -43,28 +45,28 @@
       return this;
     };
 
-    save_user = function(token) {
+    save_user = function(token, google_chrome_channel_id) {
       var new_user;
-      console.log(token);
       new_user = new User({
-        email_id: token,
-        channel_id: google_chrome_channel_id.channelId,
-        name: token
+        channel_id: google_chrome_channel_id,
+        oauth_token: token
       });
       return new_user.save({}, {
         success: function(model) {
+          var user_attributes;
           if (model.get("status") === "success") {
-            new_user.set({
-              "id": model.get("user_id")
-            });
+            user_attributes = model.get("user");
+            console.log(model.get("user"));
+            new_user.set_attributes(user_attributes);
             window.logged_in_user = new_user;
+            set_profile_image(window.logged_in_user.picture);
+            $("#profile_name").html("<h2>" + window.logged_in_user.name + "</h2>");
             $(".status").html("Registered successfully");
             chrome.storage.local.set({
               "registered": true,
               "registered_user": model
             }, null);
-            $("#sign_up_view_modal").modal('hide');
-            return call_back(model.get("user_id"));
+            return $("#sign_up_view_modal").modal('hide');
           } else if (model.get("status") === "failure") {
             $(".status").html("For some reasons registration failed.Please try again later");
             return chrome.storage.local.set({
@@ -83,6 +85,23 @@
           return $(".status").html("For some reasons registration failed.Please try again later");
         }
       });
+    };
+
+    set_profile_image = function(image_url) {
+      var xhr;
+      xhr = new XMLHttpRequest();
+      xhr.onreadystatechange = function() {
+        var img, url;
+        if (this.readyState === 4 && this.status === 200) {
+          img = document.createElement('img')
+          url = window.URL || window.webkitURL
+          img.src = url.createObjectURL(this.response)
+          return $("#profile_image_container").html(img)
+        }
+      };
+      xhr.open('GET', image_url);
+      xhr.responseType = 'blob';
+      return xhr.send();
     };
 
     return SignupView;

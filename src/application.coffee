@@ -140,16 +140,14 @@ window.dissectRecievedMessage = (message)->
         window.messages.loadOptionsforMessage(Number(payload.message_id),
         (options_for_message)->
           messages_collection = new MessageCollection(options_for_message)
-
           if payload.expect_reply
             window.openMessages(messages_collection,true)
-          console.log payload.read_out
           window.getTransformedMessage(sender,window.logged_in_user.name,payload_message.transform_pattern,payload.message_id,payload.time,payload.read_out)
         ))
     else
        window.getTransformedMessage(sender,window.logged_in_user.name,payload.custom_message,null,payload.time,payload.read_out)
 
-loadRelaters = (user_id,call_back) ->
+window.loadRelaters = (user_id,call_back) ->
     window.relater_collection = new RelaterCollection({"user_id":user_id})
     window.relater_collection.fetch
                   success : ->  
@@ -172,16 +170,17 @@ sendVideoStreampermission = (data_to_send)->
 
 window.initialize_extension = (call_back)->
     $("#option_messages").hide()
-    window.logged_in_user = new User({id:50,email_id:"dinesh@jekyll.com",channel_id:"10479555667324687884/lglphigimhjobmiebamlihaadifjdcck",name:"dineshswamy"})
-    loadRelaters(window.logged_in_user.id,call_back)
-    # chrome.storage.local.get ["registered","registered_user"],(result)->
-    #     if result.registered is undefined or result.registered_user is undefined
-    #             sign_up_view = new SignupView(loadRelaters)
-    #             $("#sign_up_view").html(sign_up_view.render().$el)
-    #             $("#sign_up_view_modal").modal({keyboard:false})
-    #             $("#sign_up_view_modal").modal('show')
-    #     else
-    #         window.logged_in_user = result.registered_user
+    chrome.storage.local.get ["registered","registered_user"],(result)->
+        console.log result
+        #if result.registered is undefined or result.registered_user is undefined or result.registered is false or result.registered_user is null
+        sign_up_view = new SignupView(window.loadRelaters)
+        console.log "not registered"
+        $("#sign_up_view").html(sign_up_view.render().$el)
+        $("#sign_up_view_modal").modal({keyboard:false})
+        $("#sign_up_view_modal").modal('show')
+        # else
+        #     console.log "registered"
+        #     window.logged_in_user = result.registered_user
             
                 
 window.getTransformedMessage = (sender,reciever_name,transform_pattern,message_id,time,read_out)->
@@ -209,7 +208,6 @@ window.getTransformedMessage = (sender,reciever_name,transform_pattern,message_i
         "message_id":message_id
         "sent_by_relater":true
         "msg_time":time
-
   window.speakMessage(helper_transformed_message) if read_out
   window.putMessageinThread(thread_params)
 
@@ -279,7 +277,8 @@ window.sendMessage = ()->
       data["message_id"] = " "
 
     window.putMessageinThread(thread_params)
-    $.post(base_url+"/calltheteam/sendmessage",data,()->console.log "call the team")
+    window.animateMessagesForSending(true)
+    $.post(base_url+"/calltheteam/sendmessage",data,()-> window.animateMessagesForSending(false))
 
 window.putMessageinThread = (thread_params)->  
   new_thread = new Thread(thread_params)
@@ -346,10 +345,21 @@ window.setMessageOptionsFromThread = (last_thread_message)->
   #   else
 
 window.animateMessagesForSending = (send_status)->
-  if $("#option_messages").is(':visible')
-      $("#option_messages").animate({bottom:-320},{duration:'fast',easing:'easeOutBack'}).animate({bottom:0},{duration:'fast',easing:'easeOutBack'});
-  else if $("#messages").is(':visible') 
-      $("#messages").animate({bottom:-320},{duration:'fast',easing:'easeOutBack'}).animate({bottom:0},{duration:'fast',easing:'easeOutBack'});
+  if(send_status)
+    if $("#option_messages").is(':visible')
+        #slide down
+        $("#option_messages").animate({bottom:-320},{duration:'fast',easing:'easeOutBack'})
+        $("#option_messages").html("Sending ...")
+        #slide up
+        $("#option_messages").animate({bottom:0},{duration:'fast',easing:'easeOutBack'});
+    else if $("#messages").is(':visible') 
+        $("#messages").animate({bottom:-320},{duration:'fast',easing:'easeOutBack'})
+        $("#messages").html("Sending ...")
+        #slide up
+        $("#messages").animate({bottom:0},{duration:'fast',easing:'easeOutBack'});
+  else
+      window.openMessages(window.messages_with_options,false)
+
       
 
 window.animateMessages = ()->

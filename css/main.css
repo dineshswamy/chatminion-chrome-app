@@ -145,12 +145,23 @@ body {
 
 /*******************Message background section ****************/
 
-#message_background{
+#user_info_board{
 
 	height: 70px;
 	background-color: #095d82;
-
 }
+
+
+#profile_image_container img{
+	width: 100px;
+	height: 100px;
+	border-radius: 100px;
+}
+
+#profile_name{
+	
+}
+
 
 #messages,#option_messages{
 	background: white;
@@ -182,4 +193,19 @@ body {
 	text-align: left;
 	position: relative;
 	left: 30px;
+}
+
+#google_sign_in{
+	margin: 0px auto;
+}
+#google_sign_in a{
+	background: url("../images/gplus_login_normal.png");
+}
+
+#google_sign_in a:hover{
+	background: url("../images/gplus_login_hover.png");
+}
+
+#google_sign_in a:active{
+	background: url("../images/gplus_login_pressed.png");
 }

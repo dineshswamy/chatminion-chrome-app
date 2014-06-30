@@ -13,9 +13,6 @@
 
     User.prototype.initialize = function(attributes) {
       this.url = window.base_url + "/calltheteam/register";
-      if (attributes.email_id) {
-        this.email_id = attributes.email_id;
-      }
       if (attributes.channel_id) {
         this.channel_id = attributes.channel_id;
       }
@@ -30,6 +27,18 @@
     User.prototype.defaults = {
       email_id: "sample@email.com",
       channel_id: "channel_id_sample"
+    };
+
+    User.prototype.set_attributes = function(attributes) {
+      this.channel_id = attributes.channel_id;
+      this.email = attributes.email;
+      this.gender = attributes.gender;
+      this.given_name = attributes.given_name;
+      this.google_oauth_token = attributes.google_oauth_token;
+      this.gplus_link = attributes.gplus_link;
+      this.id = attributes.id;
+      this.name = attributes.name;
+      return this.picture = attributes.picture;
     };
 
     return User;
