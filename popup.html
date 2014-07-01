@@ -9,28 +9,34 @@
          <link rel="stylesheet" type="text/css" href="css/main.css" />
     </head>
     <body>
+        <div class="video_call_container">
+
+        </div>
         <div class="transparent-background">
             <div class="row">
                 <div class="col-sm-12" id="user_info_board">
 
-                    <div class="col-sm-3" id="settings">
-                        <div class="row">
+                        
                             
-                            <div id="profile_image_container">
+                            <div id="profile_image_container" class="col-sm-offset-1  col-sm-1">
 
                             </div>
                             
-                            <div id="profile_name">
+                            <div id="profile_name" class="col-sm-3">
 
                             </div>
 
-                        </div>
-                    </div>
+                            <div class="col-sm-offset-3  col-sm-3" >
+                                <div class="glyphicon glyphicon-log-out" id="logout_btn">
+                                    
+                                </div>
+                            </div>
+
                 </div>
 
             </div>
 
-            <div class="row fill">
+            <div class="row">
 <!--              <div class="col-sm-3 chat_animation fill bootcards-cards" id="chatminion-space">
 
                     <video autoplay id="chat_video">
@@ -43,9 +49,9 @@
 
                     
                 </div> -->
-                <div class="col-sm-6 chat_contacts bootcards-list">
+                <div class="col-sm-6  bootcards-list">
                     
-                        <div class="panel panel-default">
+                        <div class="panel panel-default chat_contacts">
                             <div class="list-group relaters-list" id="relaters_of_the_user">
                                 
 
@@ -54,7 +60,7 @@
                     
                     
                 </div>
-                <div class="col-sm-6 chat_messages bootcards-cards">
+                <div class="col-sm-6 chat_messages bootcards-cards" style="background:url('../images/bunting-flag.png');">
                     
                     <div id="text_messages">
                         <div id="thread_messages">
@@ -83,13 +89,14 @@
                 
             </div>
             <!-- Modal-->
-            <div class="modal fade" tabindex="-1" id="sign_up_view_modal" role="dialog" aria-labelledby="Sign up view" aria-hidden="true" data-keyboard="false">
-                <div class="modal-dialog modal-sm">
+            <div class="modal fade" tabindex="-1" id="sign_up_view_modal" role="dialog" aria-labelledby="Sign up view" data-backdrop="" aria-hidden="true" data-keyboard="false">
+                <div class="modal-dialog " id="modal_backdrop">
                     <div class="modal-content" id="sign_up_view">
                         
                     </div>
                 </div>
             </div>
+
             <!-- Modal end-->
         </div> <!--container close -->
     </body>
@@ -122,7 +129,7 @@
         <script type="text/javascript" src="build/views/relater_view.js"></script>
         <script type="text/javascript" src="build/views/relater_collection_view.js"></script>
         <script type="text/javascript" src="build/views/thread_message_view.js"></script>
-        
+        <script type="text/javascript" src="build/views/video_call_view.js"></script>    
         <script type="text/javascript" src="build/views/signup_view.js"></script>
         <script type="text/javascript" src="build/add_relater_view.js"></script>
         <script type="text/javascript" src="build/application.js"></script>

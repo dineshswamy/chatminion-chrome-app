@@ -10,7 +10,7 @@ html,body
 	src: local("oswald") , url("../fonts/Oswald-Light.otf");
 }
 
-.fill
+.fillsign_up_view
 {
 	height: 100%;
 }
@@ -21,6 +21,7 @@ body {
 	font-family: 'oswald';
 	font-size: 16px;
 	color: #333333;
+	background:url('../images/bunting-flag.png');	
 }
 
 
@@ -58,7 +59,19 @@ body {
 
 .chat_contacts{
 
-	
+	margin: 10px;
+	padding: 10px;
+}
+
+.video_call_icon{
+	float: right;
+	font-size: 25px;
+	width: 30px;
+	height: 30px;
+	border-radius: 100px;
+}
+
+.video_call_icon:hover{
 }
 
 
@@ -69,9 +82,17 @@ body {
 
 #chat_video
 {
-	width: 100%;
-	height: 100%;
-	
+	height: 60%;
+	margin-left: 75px;
+}
+
+#video_call_btn{
+	margin: 0px auto;
+	font-size: 30px;
+}
+
+.message_properties{
+	display: none;
 }
 
 /* Messages section */
@@ -83,8 +104,12 @@ body {
 
 #submit_custom_message
 {
-	width: 100%;
+	width: 60%;
 
+}
+
+#submit_custom_message{
+	
 }
 
 .messages_list 
@@ -104,19 +129,36 @@ body {
 .messages_list.active,.messages_list:active
 {
 	
-
 }
+
+.intro_screen{
+	width: 75%;
+	height: 40%;
+	padding: 10px;
+}
+
 .messages_list:hover
 {
-	
-	background-color:#095d82;
+	background-color: #9e9e9e;
+	color: white;
+
 }
 .message_selected
 {
-	
-	background-color:green;	
+	color: white;	
+	background:rgb(82, 100, 174);	
 }
 
+#sign_up_view_modal{
+
+	background:url('../images/bunting-flag.png');
+
+}
+
+#sign_up_view{
+	position: relative;
+	top: 100px;
+}
 /** Relater section **/
 .relater 
 {
@@ -142,36 +184,48 @@ body {
 
 }
 
+#relater_request_join{
+	margin-top:2px;
+}
 
 /*******************Message background section ****************/
 
 #user_info_board{
 
-	height: 70px;
-	background-color: #095d82;
+	height: 75px;
+	background:rgb(82, 100, 174);
+	color: ghostwhite;
 }
 
 
 #profile_image_container img{
-	width: 100px;
-	height: 100px;
+	width: 70px;
+	height: 70px;
 	border-radius: 100px;
+	margin: 2px;
 }
 
 #profile_name{
+
+	margin-left: 30px;
+	letter-spacing: 0px;
 	
 }
 
 
 #messages,#option_messages{
-	background: white;
-	margin: 0px 50px;
-	padding: 10px;
-	position: fixed;
-	bottom: -300px;
-	background-color: #fff;
-  	box-shadow: 0 1px 5px rgba(0,0,0,0.25), 0 0 50px rgba(0,0,0,0.1);
-  	border-radius: 1%     1%     1%     1% /     1%     1%     1%     1%;
+
+		background: white;
+		margin: 0px 50px;
+		padding-left: 36px;
+		padding-right: 36px;
+		position: fixed;
+		bottom: -300px;
+		background-color: #fff;
+		box-shadow: 0 1px 5px rgba(0,0,0,0.25), 0 0 50px rgba(0,0,0,0.1);
+		border-radius: 1% 1% 1% 1% / 1% 1% 1% 1%;
+		text-align: center;
+		cursor:pointer;
 }
 
 .thread 
@@ -197,15 +251,35 @@ body {
 
 #google_sign_in{
 	margin: 0px auto;
+	width: 250px;
+	height: 54px; 
 }
-#google_sign_in a{
+#google_sign_in {
 	background: url("../images/gplus_login_normal.png");
 }
 
-#google_sign_in a:hover{
+#google_sign_in:hover{
 	background: url("../images/gplus_login_hover.png");
 }
 
-#google_sign_in a:active{
+#google_sign_in:active{
 	background: url("../images/gplus_login_pressed.png");
+}
+
+#logout_btn {
+	width: 50px;
+	height: 50px;
+	font-size: 40px;
+	position: relative;
+	bottom: 0px;
+	top: 20px;
+	left: 120px;
+}
+
+/********************Video call *********************************/
+.video_call_container
+{
+	width: 100%;
+	height: 100%;
+	display: none;
 }

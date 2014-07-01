@@ -1,6 +1,7 @@
 class @RelaterView extends Backbone.View
 	events : {
-		"click" : "loadMessages"
+		"click" : "loadMessages",
+		"click .video_call_icon" :"start_video_call"
 	}
 	tagName : "a"
 	className : "list-group-item"
@@ -12,15 +13,14 @@ class @RelaterView extends Backbone.View
 		@
 
 	loadMessages:(event) ->
-   @$el.siblings().removeClass("active")
-   @$el.addClass("active")
-   
-   $("#video_call_relater_name").html(@model.get("name"))
-   
-   window.peer_js_selected_relater = @model
-   
-   window.loadMessagesofRelater(@model.id)
-   
+   		@$el.siblings().removeClass("active")
+   		@$el.addClass("active")   
+   		window.peer_js_selected_relater = @model
+   		window.loadMessagesofRelater(@model.id)
+   	
+   	start_video_call:(event)->
+   		if event.target and event.target.nodeName == "SPAN"
+   			window.launchVideoCall(event)
 		
 
 		

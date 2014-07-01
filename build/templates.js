@@ -37,7 +37,7 @@
     return (function() {
       var $o;
       $o = [];
-      $o.push("<div class='panel-body'>\n  <div class='search-form'>\n    <div class='row'>\n      <div class='col-xs-9'>\n        <div class='form-group'>\n          <input class='form-control' id='new_contact_email' placeholder='Add your relater ...' type='email'>\n        </div>\n      </div>\n      <div class='col-xs-3'>\n        <a class='btn btn-block btn-primary' id='submit_new_contact'>\n          <i class='fa fa-plus'></i>\n          <span>Add</span>\n        </a>\n      </div>\n    </div>\n    <div class='row' id='relater_request_join' style='display:none'>\n      <div class='col-xs-9'>\n        <p class='text-primary'>It seems , your friend is not using Chatminion</p>\n      </div>\n      <div class='col-xs-3'>\n        <button class='btn-square btn-success' id='send_relater_request' type='submit'>ask him</button>\n      </div>\n    </div>\n  </div>\n</div>");
+      $o.push("<div class='panel-body'>\n  <div class='search-form'>\n    <div class='row'>\n      <div class='col-sm-9'>\n        <div class='form-group'>\n          <input class='form-control' id='new_contact_email' placeholder='Add your relater ...' type='email'>\n        </div>\n      </div>\n      <div class='col-sm-3'>\n        <a class='btn btn-block btn-primary' id='submit_new_contact'>\n          <i class='fa fa-plus'></i>\n          <span>Add</span>\n        </a>\n      </div>\n    </div>\n    <div class='row' id='relater_request_join' style='display:none'>\n      <div class='col-sm-9'>\n        <p class='text-primary'>It seems , your friend is not using Chatminion</p>\n      </div>\n      <div class='col-sm-3'>\n        <button class='btn-square btn-success' id='send_relater_request' type='submit'>ask him</button>\n      </div>\n    </div>\n  </div>\n</div>");
       return $o.join("\n").replace(/\s(?:id|class)=(['"])(\1)/mg, "");
     }).call(context);
   };
@@ -52,7 +52,7 @@
     return (function() {
       var $o;
       $o = [];
-      $o.push("<div class='custom_message_container'>\n  <form class='form-horiz' role='form'>\n    <textarea class='form-group form-control' id='custom_message' placeholder='Your message ....' type='text' rows='2'></textarea>\n    <input id='expect_reply' type='checkbox' checked='checked'>Expect a reply</input>\n    <input id='read_out' type='checkbox' checked='checked'>Read out</input>\n  </form>\n</div>\n<button class='btn btn-default' id='submit_custom_message'>Send</button>");
+      $o.push("<div class='custom_message_container'>\n  <form class='form-horiz' role='form'>\n    <textarea class='form-group form-control' id='custom_message' placeholder='Your message ....' type='text' rows='2'></textarea>\n    <div class='message_properties'>\n      <input id='expect_reply' type='checkbox' checked='checked'>\n      <label for='expect_reply'>expect a reply</label>\n      <input id='read_out' type='checkbox' checked='checked'>\n      <label for='read_out'>read out</label>\n    </div>\n  </form>\n</div>\n<div class='row'>\n  <button class='btn btn-default' id='submit_custom_message'>Send</button>\n  <div class='glyphicon glyphicon-asterisk' id='reveal_message_properties'></div>\n</div>");
       return $o.join("\n").replace(/\s(?:id|class)=(['"])(\1)/mg, "");
     }).call(context);
   };
@@ -189,7 +189,7 @@
         }
       };
       $o = [];
-      $o.push("<h4 class='list-group-item-heading'>" + ($e($c(this.user_model.get("name")))) + "</h4>\n<p class='list-group-item-text'>Status</p>");
+      $o.push("<h4 class='list-group-item-heading'>" + ($e($c(this.user_model.get("name")))) + "\n  <span class='glyphicon glyphicon-facetime-video video_call_icon'></span>\n</h4>\n<p class='list-group-item-text'>Status</p>");
       return $o.join("\n").replace(/\s([\w-]+)='true'/mg, ' $1').replace(/\s([\w-]+)='false'/mg, '').replace(/\s(?:id|class)=(['"])(\1)/mg, "");
     }).call(context);
   };
@@ -204,7 +204,7 @@
     return (function() {
       var $o;
       $o = [];
-      $o.push("<a class='btn btn-default' id='google_sign_in'>Google+ signIn</a>");
+      $o.push("<div class='intro_screen'>\n  <h1 >Hi ! You need to sign in with your google account.</h1>\n  <div id='google_sign_in'></div>\n</div>");
       return $o.join("\n").replace(/\s(?:id|class)=(['"])(\1)/mg, "");
     }).call(context);
   };
@@ -238,17 +238,32 @@
       for (_i = 0, _len = _ref.length; _i < _len; _i++) {
         thread_message = _ref[_i];
         if (thread_message.sent_by_relater) {
-          $o.push("<div class='right thread'>\n  <img src='../images/dinesh40x40.jpg'>");
+          $o.push("<div class='right thread'>\n  <div class='glyphicon glyphicon-arrow-left'></div>");
           $o.push("  " + $e($c(thread_message.transformed_message)));
           $o.push("  <abbr class='timeago' title='" + ($c(thread_message.msg_time)) + "'></abbr>\n</div>");
         } else {
-          $o.push("<div class='left thread'>\n  <img src='../images/dinesh40x40.jpg'>	</img>");
+          $o.push("<div class='left thread'>\n  <div class='glyphicon glyphicon-arrow-left'></div>");
           $o.push("  " + $e($c(thread_message.transformed_message)));
           $o.push("  <abbr class='timeago' title='" + ($c(thread_message.msg_time)) + "'>				</abbr>\n</div>");
         }
       }
       $o.push("<h2 class='current_message' id='transformed_message'></h2>");
       return $o.join("\n").replace(/\s([\w-]+)='true'/mg, ' $1').replace(/\s([\w-]+)='false'/mg, '').replace(/\s(?:id|class)=(['"])(\1)/mg, "");
+    }).call(context);
+  };
+
+}).call(this);
+(function() {
+  if (window.HAML == null) {
+    window.HAML = {};
+  }
+
+  window.HAML['video_call'] = function(context) {
+    return (function() {
+      var $o;
+      $o = [];
+      $o.push("<div class='row'>\n  <div class='bootcards-cards chat_animation col-sm-12 fill' id='chatminion-space'>\n    <video id='chat_video' autoplay=''></video>\n  </div>\n</div>\n<div class='col-sm-12 row'>\n  <h1 id='video_call_relater_name'></h1>\n</div>\n<div class='col-sm-12 col-sm-offset-4 row'>\n  <button class='btn btn-default' id='video_call_btn'>Stop video call</button>\n</div>");
+      return $o.join("\n").replace(/\s(?:id|class)=(['"])(\1)/mg, "");
     }).call(context);
   };
 

@@ -27,10 +27,11 @@ class @addRelatersView  extends Backbone.View
 	        when "user_not_registered" then openGmailForRequest($("#new_contact_email").val())
 
     add_new_relater_and_render = (relater)->
-            window.addRelaterToCollection(relater,window.loadRelaters)
-            console.log "refreshing views"
+            window.addRelaterToCollection(relater)
+            add_relaters_view = new addRelatersView()
             relater_collection_view = new RelatersCollectionView({"collection":window.relater_collection})
             $("#relaters_of_the_user").html relater_collection_view.render().el
+            $("#relaters_of_the_user").prepend add_relaters_view.render().$el
             
 
     openGmailForRequest = (email)->
@@ -40,10 +41,11 @@ class @addRelatersView  extends Backbone.View
         mail_body = "Hi ! try this chrome extension , its totally cool to chat inside the office.Try this and add me as your contact.Please dont forget . bye"
         $("#send_relater_request").click((event)->
             event.preventDefault()
-            new_tab_options = 
-                "url":"https://mail.google.com/mail/?ui=2&view=cm&fs=1&tf=1&shva=2&to="+mail_to+"&su="+mail_subject+"&body="+mail_body
-            chrome.tabs.create(new_tab_options,(tab)->
-                $("#relater_request_join").hide()
-                $("#new_contact_email").val("")
-                )
+            #new_tab_options = 
+            url = "https://mail.google.com/mail/?ui=2&view=cm&fs=1&tf=1&shva=2&to=#{mail_to}&su=#{mail_subject}&body=#{mail_body}"
+            window.open(url)
+            #chrome.tabs.create(new_tab_options,(tab)->
+            $("#relater_request_join").hide()
+            $("#new_contact_email").val("")
+            #    )
             )

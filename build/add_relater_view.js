@@ -55,13 +55,14 @@
     };
 
     add_new_relater_and_render = function(relater) {
-      var relater_collection_view;
-      window.addRelaterToCollection(relater, window.loadRelaters);
-      console.log("refreshing views");
+      var add_relaters_view, relater_collection_view;
+      window.addRelaterToCollection(relater);
+      add_relaters_view = new addRelatersView();
       relater_collection_view = new RelatersCollectionView({
         "collection": window.relater_collection
       });
-      return $("#relaters_of_the_user").html(relater_collection_view.render().el);
+      $("#relaters_of_the_user").html(relater_collection_view.render().el);
+      return $("#relaters_of_the_user").prepend(add_relaters_view.render().$el);
     };
 
     openGmailForRequest = function(email) {
@@ -71,15 +72,12 @@
       mail_subject = "Try this chrome extension . it is really cool";
       mail_body = "Hi ! try this chrome extension , its totally cool to chat inside the office.Try this and add me as your contact.Please dont forget . bye";
       return $("#send_relater_request").click(function(event) {
-        var new_tab_options;
+        var url;
         event.preventDefault();
-        new_tab_options = {
-          "url": "https://mail.google.com/mail/?ui=2&view=cm&fs=1&tf=1&shva=2&to=" + mail_to + "&su=" + mail_subject + "&body=" + mail_body
-        };
-        return chrome.tabs.create(new_tab_options, function(tab) {
-          $("#relater_request_join").hide();
-          return $("#new_contact_email").val("");
-        });
+        url = "https://mail.google.com/mail/?ui=2&view=cm&fs=1&tf=1&shva=2&to=" + mail_to + "&su=" + mail_subject + "&body=" + mail_body;
+        window.open(url);
+        $("#relater_request_join").hide();
+        return $("#new_contact_email").val("");
       });
     };
 

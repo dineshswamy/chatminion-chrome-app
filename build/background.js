@@ -34,7 +34,8 @@
 
   window.popup_params = {};
 
-  window.openWindow = function() {
+  window.openWindow = function(callback) {
+    window.is_window_opened = true;
     return chrome.app.window.create('../popup.html', {
       id: 'app-window',
       bounds: {
@@ -45,20 +46,26 @@
       },
       minWidth: 800,
       minHeight: 600
-    });
+    }, callback);
   };
 
-  chrome.app.runtime.onLaunched.addListener(window.openWindow);
+  chrome.app.runtime.onLaunched.addListener(function() {
+    return window.openWindow(null);
+  });
 
-  chrome.app.window.onClosed.addListener = function() {};
+  chrome.app.window.onClosed.addListener = function() {
+    return window.is_window_opened = false;
+  };
 
   chrome.pushMessaging.getChannelId(false, function(google_chrome_channel_id) {
     return console.log(google_chrome_channel_id.channelId);
   });
 
   chrome.pushMessaging.onMessage.addListener(function(recieved_message) {
-    return chrome.runtime.sendMessage({
-      "recieved_message": recieved_message
+    return window.openWindow(function() {
+      return chrome.runtime.sendMessage({
+        "recieved_message": recieved_message
+      });
     });
   });
 

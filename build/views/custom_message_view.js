@@ -12,7 +12,8 @@
     }
 
     CustomMessageView.prototype.events = {
-      "click button#submit_custom_message": "send_message"
+      "click button#submit_custom_message": "send_message",
+      "click div#reveal_message_properties": "open_message_properties"
     };
 
     CustomMessageView.prototype.render = function() {
@@ -23,6 +24,10 @@
     CustomMessageView.prototype.send_message = function(event) {
       event.preventDefault();
       return window.sendMessage(event);
+    };
+
+    CustomMessageView.prototype.open_message_properties = function(event) {
+      return $(".message_properties").toggle();
     };
 
     return CustomMessageView;

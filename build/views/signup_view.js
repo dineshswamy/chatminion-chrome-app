@@ -4,7 +4,7 @@
     __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; };
 
   this.SignupView = (function(_super) {
-    var complete_registration, save_user, set_profile_image;
+    var complete_registration, save_user;
 
     __extends(SignupView, _super);
 
@@ -17,7 +17,7 @@
     SignupView.prototype.className = 'sign_up form-group';
 
     SignupView.prototype.events = {
-      'click a#google_sign_in': 'register'
+      'click #google_sign_in': 'register'
     };
 
     SignupView.prototype.initialize = function(attributes) {
@@ -27,12 +27,11 @@
 
     SignupView.prototype.register = function(event) {
       event.preventDefault();
-      console.log("register clicked");
       return chrome.pushMessaging.getChannelId(false, complete_registration);
     };
 
     complete_registration = function(google_chrome_channel_id) {
-      console.log(google_chrome_channel_id);
+      console.log("complete_registration");
       return chrome.identity.getAuthToken({
         'interactive': true
       }, function(token) {
@@ -59,14 +58,14 @@
             console.log(model.get("user"));
             new_user.set_attributes(user_attributes);
             window.logged_in_user = new_user;
-            set_profile_image(window.logged_in_user.picture);
-            $("#profile_name").html("<h2>" + window.logged_in_user.name + "</h2>");
+            window.setProfileAttributes(window.logged_in_user.picture, window.logged_in_user.name);
             $(".status").html("Registered successfully");
             chrome.storage.local.set({
               "registered": true,
-              "registered_user": model
+              "registered_user": window.logged_in_user
             }, null);
-            return $("#sign_up_view_modal").modal('hide');
+            $("#sign_up_view_modal").modal('hide');
+            return window.loadRelaters(window.logged_in_user.id, null);
           } else if (model.get("status") === "failure") {
             $(".status").html("For some reasons registration failed.Please try again later");
             return chrome.storage.local.set({
@@ -85,23 +84,6 @@
           return $(".status").html("For some reasons registration failed.Please try again later");
         }
       });
-    };
-
-    set_profile_image = function(image_url) {
-      var xhr;
-      xhr = new XMLHttpRequest();
-      xhr.onreadystatechange = function() {
-        var img, url;
-        if (this.readyState === 4 && this.status === 200) {
-          img = document.createElement('img')
-          url = window.URL || window.webkitURL
-          img.src = url.createObjectURL(this.response)
-          return $("#profile_image_container").html(img)
-        }
-      };
-      xhr.open('GET', image_url);
-      xhr.responseType = 'blob';
-      return xhr.send();
     };
 
     return SignupView;

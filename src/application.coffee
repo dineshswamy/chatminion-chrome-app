@@ -1,8 +1,8 @@
 -'use-strict';
 #window.base_url = "http://lit-refuge-2289.herokuapp.com"
-#window.base_url = "http://10.0.0.6:3000"
+window.base_url = "http://10.0.0.6:3000"
 #window.base_url = "http://192.168.1.53:3000"
-window.base_url = "http://localhost:3000"
+#window.base_url = "http://192.168.1.25:3000"
 window.relater_send_queue = []
 window.message_to_send = null
 window.relater_collection = null
@@ -30,17 +30,20 @@ class @InfoView extends Backbone.View
 window.loadViews = ()->
         #initialize scroll
 
-        
+          
         #initialize peer js
         peerJSInit()
 
         chrome.runtime.onMessage.addListener((message,sender,sendResponse)->window.dissectRecievedMessage(message))
-        
         $("#start_call").click((event)->
             event.preventDefault()
             window.launchVideoCall(relater)
             )
-        
+        $("#logout_btn").click((event)->
+            event.preventDefault()
+            window.logOutUser()
+            $(this).removeClass("glyphicon-log-out").addClass("glyphicon glyphicon-log-in")
+            )
         add_relaters_view = new addRelatersView()    
         
         window.relater_collection_view = new RelatersCollectionView({"collection":window.relater_collection})
@@ -60,7 +63,6 @@ window.loadViews = ()->
         $("#video_call_stop_btn").click(stopVideoCall)
         $("#all_messages_btn").click((event)->
           event.preventDefault()
-          console.log "messages btn pressed"
           flipMessageCards(false)
           )
         #$("#submit_custom_message").click(sendMessage)            
@@ -69,25 +71,31 @@ window.loadViews = ()->
 
 
 success_stream = (remoteStream)->
-                $("#text_messages").hide()
-                $("#video_container").show()
-                $("#chat_video").attr("src",window.URL.createObjectURL(remoteStream))
+          $(".transparent-background").hide(500)
+          video_call_view = new VideoCallView()
+          $(".video_call_container").html(video_call_view.render().$el)
+          $("#chat_video").attr("src",window.URL.createObjectURL(remoteStream))
+          $(".video_call_container").show()
+          #$("#video_call_modal").modal({keyboard:false})
+          #$("#video_call_modal").modal('show')
+          # $("#video_call_relater_name").html window.peer_js_selected_relater.name
+          
 
 success_relater_stream = (remoteStream)->
                 console.log "success relater stream"
                 $("#chat_video_relater").attr("src",window.URL.createObjectURL(remoteStream))
 
-window.stopVideoCall = (event)->
+window.stopVideoCall = ()->
   event.preventDefault()
   if window.call!=null or window.call!=undefined 
      window.call.close()
-  $("#video_container").hide()
-  $("#text_messages").show()
+  window.peer.disconnect()
+  $(".video_call_container").hide(500)
+  $(".transparent-background").show(500)
+  $(".video_call_container").html("")
 
 window.launchVideoCall = (event)->
   event.preventDefault()
-  $("#text_messages").hide()
-  $("#video_container").show()
   console.log "Trying to launch video"
   navigator.getUserMedia = navigator.getUserMedia || navigator.webkitGetUserMedia || navigator.mozGetUserMedia
   relater_peer_js_id = window.peer_js_selected_relater.id+"_peervendor"
@@ -111,6 +119,10 @@ window.peerJSInit = () ->
                     , (err)->console.log('Failed to get local stream' ,err)
                     )
         )
+  window.peer.on('close',()->
+    console.log "connection closed"
+    )
+  window.peer.on('error',(error)->console.log("error type"+error.type))
   # window.peer.on('connection', (conn)->conn.on('data',(data)->
   #                                                             console.log "data recieved" 
   #                                                             console.log data
@@ -142,10 +154,10 @@ window.dissectRecievedMessage = (message)->
           messages_collection = new MessageCollection(options_for_message)
           if payload.expect_reply
             window.openMessages(messages_collection,true)
-          window.getTransformedMessage(sender,window.logged_in_user.name,payload_message.transform_pattern,payload.message_id,payload.time,payload.read_out)
+          window.getTransformedMessage(sender,window.logged_in_user.name,payload_message.user_message,payload_message.transform_pattern,payload.message_id,payload.time,payload.read_out)
         ))
     else
-       window.getTransformedMessage(sender,window.logged_in_user.name,payload.custom_message,null,payload.time,payload.read_out)
+       window.getTransformedMessage(sender,window.logged_in_user.name,payload.custom_message,payload.custom_message,null,payload.time,payload.read_out)
 
 window.loadRelaters = (user_id,call_back) ->
     window.relater_collection = new RelaterCollection({"user_id":user_id})
@@ -172,18 +184,18 @@ window.initialize_extension = (call_back)->
     $("#option_messages").hide()
     chrome.storage.local.get ["registered","registered_user"],(result)->
         console.log result
-        #if result.registered is undefined or result.registered_user is undefined or result.registered is false or result.registered_user is null
-        sign_up_view = new SignupView(window.loadRelaters)
-        console.log "not registered"
-        $("#sign_up_view").html(sign_up_view.render().$el)
-        $("#sign_up_view_modal").modal({keyboard:false})
-        $("#sign_up_view_modal").modal('show')
-        # else
-        #     console.log "registered"
-        #     window.logged_in_user = result.registered_user
+        if result.registered is undefined or result.registered_user is undefined or result.registered is false or result.registered_user is null
+          sign_up_view = new SignupView(window.loadRelaters)
+          $("#sign_up_view").html(sign_up_view.render().$el)
+          $("#sign_up_view_modal").modal({keyboard:false})
+          $("#sign_up_view_modal").modal('show')
+        else
+            window.logged_in_user = result.registered_user
+            window.setProfileAttributes(window.logged_in_user.picture,window.logged_in_user.name)
+            window.loadRelaters(window.logged_in_user.id)
             
                 
-window.getTransformedMessage = (sender,reciever_name,transform_pattern,message_id,time,read_out)->
+window.getTransformedMessage = (sender,reciever_name,user_message,transform_pattern,message_id,time,read_out)->
   message_transform_helper = new MessageTransformation()
   message_transform_helper.init(transform_pattern,sender.name,reciever_name)
   
@@ -204,7 +216,7 @@ window.getTransformedMessage = (sender,reciever_name,transform_pattern,message_i
     thread_params =
         "relater":sender
         "is_custom_message":true
-        "transformed_message":helper_transformed_message
+        "transformed_message":user_message
         "message_id":message_id
         "sent_by_relater":true
         "msg_time":time
@@ -330,6 +342,14 @@ window.loadMessagesofRelater = (relater_id)->
         $("abbr.timeago").timeago()
         setMessageOptionsFromThread(thread[thread.length-1]);        
     )
+window.logOutUser = ()->
+        window.removeProfileAttributes()
+        sign_up_view = new SignupView(window.loadRelaters)
+        chrome.identity.getAuthToken({ 'interactive': true },(token)-> chrome.identity.removeCachedAuthToken({"token":token},()->))
+        chrome.storage.local.set({"registered":false,"registered_user":null},null)
+        $("#sign_up_view").html(sign_up_view.render().$el)
+        $("#sign_up_view_modal").modal({keyboard:false})
+        $("#sign_up_view_modal").modal('show')
 
 window.setMessageOptionsFromThread = (last_thread_message)->
   openMessages(window.messages_with_options,false)
@@ -343,6 +363,26 @@ window.setMessageOptionsFromThread = (last_thread_message)->
   #         messages_collection = new MessageCollection(options_for_message)
   #         window.openMessages(messages_collection,true)))
   #   else
+
+window.setProfileAttributes = (profile_picture,profile_name)->
+      #set profile name
+       $("#profile_name").html("<h2>#{profile_name}</h2>")
+       #set profile image
+       xhr = new XMLHttpRequest()
+       xhr.onreadystatechange = ()->
+          if (this.readyState == 4 && this.status == 200)
+              img = document.createElement('img')
+              url = window.URL || window.webkitURL
+              img.src = url.createObjectURL(this.response)
+              $("#profile_image_container").html(img)
+        xhr.open('GET', profile_picture)
+        xhr.responseType = 'blob'
+        xhr.send()
+
+window.removeProfileAttributes = ()->
+    $("#profile_name").html("")
+    $("#profile_image_container").html("")
+
 
 window.animateMessagesForSending = (send_status)->
   if(send_status)
@@ -368,10 +408,10 @@ window.animateMessages = ()->
   else if $("#messages").is(':visible') 
       $("#messages").animate({bottom:-320},{duration:'fast',easing:'easeOutBack'}).animate({bottom:0},{duration:'fast',easing:'easeOutBack'});
 
-window.addRelaterToCollection = (relater,call_back)->
+window.addRelaterToCollection = (relater)->
   window.relater_collection.add(relater)
-  if call_back != null and call_back != undefined
-    call_back(relater)
+  # if call_back != null and call_back != undefined
+  #   call_back(relater)
 
 window.getRelaterThread = (sender_id)->
   window.relater_threads[sender_id]

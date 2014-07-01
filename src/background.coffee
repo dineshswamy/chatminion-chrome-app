@@ -45,7 +45,8 @@ window.popup_params = {}
 
 
 
-window.openWindow = ()->
+window.openWindow = (callback)->
+  window.is_window_opened = true
   chrome.app.window.create('../popup.html', {
     id: 'app-window',
     bounds: {
@@ -56,19 +57,19 @@ window.openWindow = ()->
     },
     minWidth: 800,
     minHeight: 600
-  })
+  },callback)
 
-chrome.app.runtime.onLaunched.addListener(window.openWindow)
+chrome.app.runtime.onLaunched.addListener(()->window.openWindow(null))
 
-chrome.app.window.onClosed.addListener = ()->
+chrome.app.window.onClosed.addListener = ()-> window.is_window_opened = false
   
 
 
 chrome.pushMessaging.getChannelId(false,(google_chrome_channel_id)-> console.log google_chrome_channel_id.channelId)
 
 chrome.pushMessaging.onMessage.addListener((recieved_message)-> 
-                                                            chrome.runtime.sendMessage({"recieved_message":recieved_message})
-
+                                                            window.openWindow(()->chrome.runtime.sendMessage({"recieved_message":recieved_message}))
+                                                            
                                                             )
 
 # (message)->

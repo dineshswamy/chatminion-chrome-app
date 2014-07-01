@@ -6,7 +6,7 @@
 
   -'use-strict';
 
-  window.base_url = "http://localhost:3000";
+  window.base_url = "http://10.0.0.6:3000";
 
   window.relater_send_queue = [];
 
@@ -65,6 +65,11 @@
       event.preventDefault();
       return window.launchVideoCall(relater);
     });
+    $("#logout_btn").click(function(event) {
+      event.preventDefault();
+      window.logOutUser();
+      return $(this).removeClass("glyphicon-log-out").addClass("glyphicon glyphicon-log-in");
+    });
     add_relaters_view = new addRelatersView();
     window.relater_collection_view = new RelatersCollectionView({
       "collection": window.relater_collection
@@ -83,7 +88,6 @@
     $("#video_call_stop_btn").click(stopVideoCall);
     $("#all_messages_btn").click(function(event) {
       event.preventDefault();
-      console.log("messages btn pressed");
       return flipMessageCards(false);
     });
     $("#relaters_of_the_user").jScrollPane();
@@ -91,9 +95,12 @@
   };
 
   success_stream = function(remoteStream) {
-    $("#text_messages").hide();
-    $("#video_container").show();
-    return $("#chat_video").attr("src", window.URL.createObjectURL(remoteStream));
+    var video_call_view;
+    $(".transparent-background").hide(500);
+    video_call_view = new VideoCallView();
+    $(".video_call_container").html(video_call_view.render().$el);
+    $("#chat_video").attr("src", window.URL.createObjectURL(remoteStream));
+    return $(".video_call_container").show();
   };
 
   success_relater_stream = function(remoteStream) {
@@ -101,20 +108,20 @@
     return $("#chat_video_relater").attr("src", window.URL.createObjectURL(remoteStream));
   };
 
-  window.stopVideoCall = function(event) {
+  window.stopVideoCall = function() {
     event.preventDefault();
     if (window.call !== null || window.call !== void 0) {
       window.call.close();
     }
-    $("#video_container").hide();
-    return $("#text_messages").show();
+    window.peer.disconnect();
+    $(".video_call_container").hide(500);
+    $(".transparent-background").show(500);
+    return $(".video_call_container").html("");
   };
 
   window.launchVideoCall = function(event) {
     var relater_peer_js_id;
     event.preventDefault();
-    $("#text_messages").hide();
-    $("#video_container").show();
     console.log("Trying to launch video");
     navigator.getUserMedia = navigator.getUserMedia || navigator.webkitGetUserMedia || navigator.mozGetUserMedia;
     relater_peer_js_id = window.peer_js_selected_relater.id + "_peervendor";
@@ -135,7 +142,7 @@
     window.peer = new Peer(window.peer_js_id, {
       key: '2n9conp4vga2a9k9'
     });
-    return window.peer.on('call', function(call) {
+    window.peer.on('call', function(call) {
       console.log("You have a video call");
       navigator.getUserMedia = navigator.getUserMedia || navigator.webkitGetUserMedia || navigator.mozGetUserMedia;
       return navigator.getUserMedia({
@@ -147,6 +154,12 @@
       }, function(err) {
         return console.log('Failed to get local stream', err);
       });
+    });
+    window.peer.on('close', function() {
+      return console.log("connection closed");
+    });
+    return window.peer.on('error', function(error) {
+      return console.log("error type" + error.type);
     });
   };
 
@@ -178,11 +191,11 @@
             if (payload.expect_reply) {
               window.openMessages(messages_collection, true);
             }
-            return window.getTransformedMessage(sender, window.logged_in_user.name, payload_message.transform_pattern, payload.message_id, payload.time, payload.read_out);
+            return window.getTransformedMessage(sender, window.logged_in_user.name, payload_message.user_message, payload_message.transform_pattern, payload.message_id, payload.time, payload.read_out);
           });
         });
       } else {
-        return window.getTransformedMessage(sender, window.logged_in_user.name, payload.custom_message, null, payload.time, payload.read_out);
+        return window.getTransformedMessage(sender, window.logged_in_user.name, payload.custom_message, payload.custom_message, null, payload.time, payload.read_out);
       }
     }
   };
@@ -217,17 +230,22 @@
     return chrome.storage.local.get(["registered", "registered_user"], function(result) {
       var sign_up_view;
       console.log(result);
-      sign_up_view = new SignupView(window.loadRelaters);
-      console.log("not registered");
-      $("#sign_up_view").html(sign_up_view.render().$el);
-      $("#sign_up_view_modal").modal({
-        keyboard: false
-      });
-      return $("#sign_up_view_modal").modal('show');
+      if (result.registered === void 0 || result.registered_user === void 0 || result.registered === false || result.registered_user === null) {
+        sign_up_view = new SignupView(window.loadRelaters);
+        $("#sign_up_view").html(sign_up_view.render().$el);
+        $("#sign_up_view_modal").modal({
+          keyboard: false
+        });
+        return $("#sign_up_view_modal").modal('show');
+      } else {
+        window.logged_in_user = result.registered_user;
+        window.setProfileAttributes(window.logged_in_user.picture, window.logged_in_user.name);
+        return window.loadRelaters(window.logged_in_user.id);
+      }
     });
   };
 
-  window.getTransformedMessage = function(sender, reciever_name, transform_pattern, message_id, time, read_out) {
+  window.getTransformedMessage = function(sender, reciever_name, user_message, transform_pattern, message_id, time, read_out) {
     var helper_transformed_message, message_transform_helper, thread_params;
     message_transform_helper = new MessageTransformation();
     message_transform_helper.init(transform_pattern, sender.name, reciever_name);
@@ -249,7 +267,7 @@
       thread_params = {
         "relater": sender,
         "is_custom_message": true,
-        "transformed_message": helper_transformed_message,
+        "transformed_message": user_message,
         "message_id": message_id,
         "sent_by_relater": true,
         "msg_time": time
@@ -406,8 +424,53 @@
     });
   };
 
+  window.logOutUser = function() {
+    var sign_up_view;
+    window.removeProfileAttributes();
+    sign_up_view = new SignupView(window.loadRelaters);
+    chrome.identity.getAuthToken({
+      'interactive': true
+    }, function(token) {
+      return chrome.identity.removeCachedAuthToken({
+        "token": token
+      }, function() {});
+    });
+    chrome.storage.local.set({
+      "registered": false,
+      "registered_user": null
+    }, null);
+    $("#sign_up_view").html(sign_up_view.render().$el);
+    $("#sign_up_view_modal").modal({
+      keyboard: false
+    });
+    return $("#sign_up_view_modal").modal('show');
+  };
+
   window.setMessageOptionsFromThread = function(last_thread_message) {
     return openMessages(window.messages_with_options, false);
+  };
+
+  window.setProfileAttributes = function(profile_picture, profile_name) {
+    var xhr;
+    $("#profile_name").html("<h2>" + profile_name + "</h2>");
+    xhr = new XMLHttpRequest();
+    xhr.onreadystatechange = function() {
+      var img, url;
+      if (this.readyState === 4 && this.status === 200) {
+        img = document.createElement('img');
+        url = window.URL || window.webkitURL;
+        img.src = url.createObjectURL(this.response);
+        return $("#profile_image_container").html(img);
+      }
+    };
+    xhr.open('GET', profile_picture);
+    xhr.responseType = 'blob';
+    return xhr.send();
+  };
+
+  window.removeProfileAttributes = function() {
+    $("#profile_name").html("");
+    return $("#profile_image_container").html("");
   };
 
   window.animateMessagesForSending = function(send_status) {
@@ -474,11 +537,8 @@
     }
   };
 
-  window.addRelaterToCollection = function(relater, call_back) {
-    window.relater_collection.add(relater);
-    if (call_back !== null && call_back !== void 0) {
-      return call_back(relater);
-    }
+  window.addRelaterToCollection = function(relater) {
+    return window.relater_collection.add(relater);
   };
 
   window.getRelaterThread = function(sender_id) {

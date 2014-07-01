@@ -11,4 +11,3 @@ class @MessageCollectionView extends Backbone.View
 			custom_message = new CustomMessageView()
 			@$el.append custom_message.render()
 			@
-		

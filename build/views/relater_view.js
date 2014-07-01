@@ -12,7 +12,8 @@
     }
 
     RelaterView.prototype.events = {
-      "click": "loadMessages"
+      "click": "loadMessages",
+      "click .video_call_icon": "start_video_call"
     };
 
     RelaterView.prototype.tagName = "a";
@@ -33,9 +34,14 @@
     RelaterView.prototype.loadMessages = function(event) {
       this.$el.siblings().removeClass("active");
       this.$el.addClass("active");
-      $("#video_call_relater_name").html(this.model.get("name"));
       window.peer_js_selected_relater = this.model;
       return window.loadMessagesofRelater(this.model.id);
+    };
+
+    RelaterView.prototype.start_video_call = function(event) {
+      if (event.target && event.target.nodeName === "SPAN") {
+        return window.launchVideoCall(event);
+      }
     };
 
     return RelaterView;

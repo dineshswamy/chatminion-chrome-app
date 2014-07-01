@@ -328,8 +328,6 @@ a.list-group-item.active:focus {
 }
 
 a.list-group-item:before {
-	font-family: 'FontAwesome';
-	content: '';
 	position: absolute;
 	right: 15px;
 	top: 50%;
