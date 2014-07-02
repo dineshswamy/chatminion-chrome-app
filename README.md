@@ -36,9 +36,9 @@ Proficiency with the above stack is required to build on top of this . Absolute 
 written , you dont need to be a PRO with these technologies(neither was I).
 The code is not heavily commented although i m working on to do that . you can drop me a mail , in case you need them . i m happy to answer . 
 
-The messaging mechanism is described below
+The messaging flow by the application is described below
 
-		[	PICTURE	  ]
+		![alt tag](https://raw.github.com/dineshswamy/chatminion-chrome-app/master/chatminion-arch.png)
 
 Instructions to setup development environment 
 
