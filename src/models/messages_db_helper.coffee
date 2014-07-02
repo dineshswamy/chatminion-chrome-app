@@ -27,7 +27,7 @@ class @Messages
 			console.log "upgrade needed"
 		@request.onsuccess = (event) =>
 			@database=event.target.result
-			#@.fetch()
+			@.fetch()
 			@.getAllMessages(callback)
 			#chrome.runtime.sendMessage({"messages_loaded":true},null)
 		@request.onerror = (event)->

@@ -6,7 +6,7 @@
 
   -'use-strict';
 
-  window.base_url = "http://10.0.0.6:3000";
+  window.base_url = "http://localhost:3000";
 
   window.relater_send_queue = [];
 

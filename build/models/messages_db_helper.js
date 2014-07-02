@@ -35,6 +35,7 @@
       };
       this.request.onsuccess = function(event) {
         _this.database = event.target.result;
+        _this.fetch();
         return _this.getAllMessages(callback);
       };
       return this.request.onerror = function(event) {

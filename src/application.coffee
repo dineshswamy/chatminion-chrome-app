@@ -1,6 +1,7 @@
 -'use-strict';
 #window.base_url = "http://lit-refuge-2289.herokuapp.com"
-window.base_url = "http://10.0.0.6:3000"
+#window.base_url = "http://10.0.0.6:3000"
+window.base_url = "http://localhost:3000"
 #window.base_url = "http://192.168.1.53:3000"
 #window.base_url = "http://192.168.1.25:3000"
 window.relater_send_queue = []
