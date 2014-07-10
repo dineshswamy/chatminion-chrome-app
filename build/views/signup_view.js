@@ -27,6 +27,9 @@
 
     SignupView.prototype.register = function(event) {
       event.preventDefault();
+      this.$("#google_sign_in").hide();
+      this.$("#sign_in_wrapper").css("background-image", "url(../../images/loadinfo_net.gif)");
+      $(this.$el).off("click", "#google_sign_in");
       return chrome.pushMessaging.getChannelId(false, complete_registration);
     };
 
@@ -45,35 +48,38 @@
     };
 
     save_user = function(token, google_chrome_channel_id) {
-      var new_user;
+      var new_user, show_message;
       new_user = new User({
         channel_id: google_chrome_channel_id,
         oauth_token: token
       });
-      return new_user.save({}, {
+      new_user.save({}, {
         success: function(model) {
           var user_attributes;
           if (model.get("status") === "success") {
             user_attributes = model.get("user");
-            console.log(model.get("user"));
             new_user.set_attributes(user_attributes);
             window.logged_in_user = new_user;
             window.setProfileAttributes(window.logged_in_user.picture, window.logged_in_user.name);
-            $(".status").html("Registered successfully");
+            show_message("Registered successfully");
             chrome.storage.local.set({
               "registered": true,
               "registered_user": window.logged_in_user
             }, null);
             $("#sign_up_view_modal").modal('hide');
-            return window.loadRelaters(window.logged_in_user.id, null);
+            return window.loadRelaters(window.logged_in_user.id);
           } else if (model.get("status") === "failure") {
-            $(".status").html("For some reasons registration failed.Please try again later");
+            this.$("#google_sign_in").show();
+            this.$("#sign_in_wrapper").css("background-image", " ");
+            show_message("For some reasons registration failed.Please try again later");
             return chrome.storage.local.set({
               "registered": false,
               "registered_user": null
             }, null);
           } else {
-            $(".status").html(model.get("status"));
+            this.$("#google_sign_in").show();
+            this.$("#sign_in_wrapper").css("background-image", " ");
+            show_message(model.get("status"));
             return chrome.storage.local.set({
               "registered": false,
               "registered_user": null
@@ -81,9 +87,15 @@
           }
         },
         error: function() {
+          this.$("#google_sign_in").show();
+          this.$("#sign_in_wrapper").css("background-image", " ");
           return $(".status").html("For some reasons registration failed.Please try again later");
         }
       });
+      return show_message = function(message) {
+        this.$("#registration_status").html(message);
+        return this.$("#registration_status").show();
+      };
     };
 
     return SignupView;

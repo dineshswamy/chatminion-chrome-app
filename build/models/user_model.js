@@ -24,11 +24,6 @@
       }
     };
 
-    User.prototype.defaults = {
-      email_id: "sample@email.com",
-      channel_id: "channel_id_sample"
-    };
-
     User.prototype.set_attributes = function(attributes) {
       this.channel_id = attributes.channel_id;
       this.email = attributes.email;

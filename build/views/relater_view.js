@@ -20,6 +20,12 @@
 
     RelaterView.prototype.className = "list-group-item";
 
+    RelaterView.prototype.attributes = function() {
+      return {
+        'data-relater-id': this.model.id
+      };
+    };
+
     RelaterView.prototype.initialize = function(attributes) {
       return this.listenTo(Backbone, 'loadMessages', this.loadMessages);
     };
@@ -33,7 +39,10 @@
 
     RelaterView.prototype.loadMessages = function(event) {
       this.$el.siblings().removeClass("active");
+      console.log("I m the one who closed options");
       this.$el.addClass("active");
+      this.$el.siblings().find(".video_call_icon").css("visibility", "hidden");
+      this.$el.find(".video_call_icon").css("visibility", "visible");
       window.peer_js_selected_relater = this.model;
       return window.loadMessagesofRelater(this.model.id);
     };

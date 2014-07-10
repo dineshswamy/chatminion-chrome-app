@@ -6,7 +6,7 @@
 
   -'use-strict';
 
-  window.base_url = "http://localhost:3000";
+  window.base_url = "http://lit-refuge-2289.herokuapp.com";
 
   window.relater_send_queue = [];
 
@@ -36,6 +36,8 @@
 
   window.peer_js_selected_relater = null;
 
+  window.incoming_message = false;
+
   this.InfoView = (function(_super) {
 
     __extends(InfoView, _super);
@@ -56,8 +58,7 @@
   })(Backbone.View);
 
   window.loadViews = function() {
-    var add_relaters_view;
-    peerJSInit();
+    var add_relaters_view, relater_bot;
     chrome.runtime.onMessage.addListener(function(message, sender, sendResponse) {
       return window.dissectRecievedMessage(message);
     });
@@ -77,13 +78,16 @@
     if (window.relater_collection.models.length > 0) {
       $("#relaters_of_the_user").html(window.relater_collection_view.render().el);
     } else {
-      $("#relaters_of_the_user").html(new InfoView().render("You have no contacts!").$el);
+      relater_bot = new User({
+        "id": 90009,
+        "channel_id": window.logged_in_user.channel_id,
+        "name": "Chatminion"
+      });
+      window.relater_collection.models.push(relater_bot);
+      $("#relaters_of_the_user").html(window.relater_collection_view.render().el);
+      $("#relaters_of_the_user").append(new InfoView().render("You have no contacts!").$el);
     }
     $("#relaters_of_the_user").prepend(add_relaters_view.render().$el);
-    window.messages = new Messages();
-    window.messages.init(function() {
-      return window.openMessages(window.messages_with_options, true);
-    });
     $("#video_call_btn").click(launchVideoCall);
     $("#video_call_stop_btn").click(stopVideoCall);
     $("#all_messages_btn").click(function(event) {
@@ -91,6 +95,12 @@
       return flipMessageCards(false);
     });
     $("#relaters_of_the_user").jScrollPane();
+    chrome.runtime.getBackgroundPage(function(page) {
+      if (page.window.background_message_recieved !== null) {
+        window.dissectRecievedMessage(page.window.background_message_recieved);
+        return page.window.background_message_recieved = null;
+      }
+    });
     return initializeValues();
   };
 
@@ -113,10 +123,15 @@
     if (window.call !== null || window.call !== void 0) {
       window.call.close();
     }
-    window.peer.disconnect();
     $(".video_call_container").hide(500);
     $(".transparent-background").show(500);
     return $(".video_call_container").html("");
+  };
+
+  window.getPeerJSId = function(id) {
+    var date;
+    date = new Date();
+    return date.getMonth() + "_" + date.getYear() + "_" + date.getDay() + "_" + id + "_peervendor" + "_" + date.getHours();
   };
 
   window.launchVideoCall = function(event) {
@@ -124,21 +139,20 @@
     event.preventDefault();
     console.log("Trying to launch video");
     navigator.getUserMedia = navigator.getUserMedia || navigator.webkitGetUserMedia || navigator.mozGetUserMedia;
-    relater_peer_js_id = window.peer_js_selected_relater.id + "_peervendor";
+    relater_peer_js_id = window.getPeerJSId(window.peer_js_selected_relater.id);
     console.log(relater_peer_js_id);
     return navigator.getUserMedia({
       video: true,
       audio: true
     }, function(stream) {
-      window.call = window.peer.call(relater_peer_js_id, stream);
-      return window.call.on('stream', success_stream);
-    }, function(err) {
+      return window.call = window.peer.call(relater_peer_js_id, stream);
+    }, window.call.on('stream', success_stream), function(err) {
       return console.log('Failed to get local stream', err);
     });
   };
 
   window.peerJSInit = function() {
-    window.peer_js_id = logged_in_user.id + "_peervendor";
+    window.peer_js_id = window.getPeerJSId(window.logged_in_user.id);
     window.peer = new Peer(window.peer_js_id, {
       key: '2n9conp4vga2a9k9'
     });
@@ -174,7 +188,7 @@
   };
 
   window.dissectRecievedMessage = function(message) {
-    var payload, recieved_message;
+    var messages_collection, options_for_message, payload, recieved_message;
     recieved_message = message.recieved_message;
     if (window.relater_collection !== null) {
       payload = JSON.parse(recieved_message.payload);
@@ -182,37 +196,48 @@
       sender = window.relater_collection.findWhere({
         "id": Number(payload.user_id)
       });
-      $("div[data-relater-id='" + sender.id + "']").trigger("click");
+      window.peer_js_selected_relater = sender;
+      window.incoming_message = true;
+      $("a[data-relater-id='" + sender.id + "']").trigger("click");
       if (payload.is_custom_message === "false") {
-        return window.messages.getMessageInfo(Number(payload.message_id), function(payload_message) {
+        window.messages.getMessageInfo(Number(payload.message_id), function(payload_message) {
           return window.messages.loadOptionsforMessage(Number(payload.message_id), function(options_for_message) {
             var messages_collection;
             messages_collection = new MessageCollection(options_for_message);
-            if (payload.expect_reply) {
+            if (payload.expect_reply === "true") {
               window.openMessages(messages_collection, true);
             }
             return window.getTransformedMessage(sender, window.logged_in_user.name, payload_message.user_message, payload_message.transform_pattern, payload.message_id, payload.time, payload.read_out);
           });
         });
       } else {
-        return window.getTransformedMessage(sender, window.logged_in_user.name, payload.custom_message, payload.custom_message, null, payload.time, payload.read_out);
+        options_for_message = [];
+        messages_collection = new MessageCollection(options_for_message);
+        if (payload.expect_reply === "true") {
+          window.openMessages(messages_collection, true);
+        }
       }
+      return window.getTransformedMessage(sender, window.logged_in_user.name, payload.custom_message, payload.custom_message, null, payload.time, payload.read_out);
     }
   };
 
-  window.loadRelaters = function(user_id, call_back) {
-    window.relater_collection = new RelaterCollection({
-      "user_id": user_id
-    });
-    return window.relater_collection.fetch({
-      success: function() {
-        window.loadViews();
-        return console.log("relaters retrieved");
-      },
-      error: function() {
-        window.loadViews();
-        return console.log("relaters retrieval error");
-      }
+  window.loadRelaters = function(user_id) {
+    var key;
+    key = "fetched_relaters_key";
+    return chrome.storage.local.get(key, function(result) {
+      window.relater_collection = new RelaterCollection({
+        "user_id": window.logged_in_user.id
+      });
+      return window.relater_collection.fetch({
+        success: function() {
+          window.loadViews();
+          window.cacheRelaterCollection();
+          return console.log("relaters retrieved");
+        },
+        error: function() {
+          return console.log("relaters retrieval error");
+        }
+      });
     });
   };
 
@@ -227,9 +252,16 @@
 
   window.initialize_extension = function(call_back) {
     $("#option_messages").hide();
+    window.messages = new Messages();
+    window.messages.init(function() {
+      return chrome.runtime.getBackgroundPage(function(page) {
+        if (page.window.background_message_recieved === null) {
+          return window.openMessages(window.messages_with_options, true);
+        }
+      });
+    });
     return chrome.storage.local.get(["registered", "registered_user"], function(result) {
       var sign_up_view;
-      console.log(result);
       if (result.registered === void 0 || result.registered_user === void 0 || result.registered === false || result.registered_user === null) {
         sign_up_view = new SignupView(window.loadRelaters);
         $("#sign_up_view").html(sign_up_view.render().$el);
@@ -249,7 +281,7 @@
     var helper_transformed_message, message_transform_helper, thread_params;
     message_transform_helper = new MessageTransformation();
     message_transform_helper.init(transform_pattern, sender.name, reciever_name);
-    if (message_id !== null || message_id !== void 0) {
+    if (message_id !== null) {
       message_transform_helper.applyTransformation();
       helper_transformed_message = message_transform_helper.getMessage();
       thread_params = {
@@ -264,6 +296,7 @@
       message_transform_helper.pattern = null;
       message_transform_helper.setCustomMessage(transform_pattern);
       message_transform_helper.applyTransformation();
+      helper_transformed_message = message_transform_helper.getMessage();
       thread_params = {
         "relater": sender,
         "is_custom_message": true,
@@ -273,7 +306,7 @@
         "msg_time": time
       };
     }
-    if (read_out) {
+    if (read_out === "true") {
       window.speakMessage(helper_transformed_message);
     }
     return window.putMessageinThread(thread_params);
@@ -327,6 +360,9 @@
       "read_out": read_out,
       "time": time
     };
+    if (relater_to_send.id === 90009) {
+      data["bot_message"] = true;
+    }
     if (!is_custom_message) {
       data["message_id"] = message.get("id");
       thread_params = {
@@ -351,7 +387,7 @@
     window.putMessageinThread(thread_params);
     window.animateMessagesForSending(true);
     return $.post(base_url + "/calltheteam/sendmessage", data, function() {
-      return window.animateMessagesForSending(false);
+      return console.log("complete");
     });
   };
 
@@ -360,7 +396,7 @@
     new_thread = new Thread(thread_params);
     relater_thread_key = String("thread_" + String(thread_params["relater"].id));
     return chrome.storage.local.get(relater_thread_key, function(result) {
-      var thread, thread_message_view;
+      var thread, thread_message_view, transformed_message;
       thread = result[relater_thread_key];
       if (thread === null || thread === void 0 || thread.length > 2) {
         thread = [];
@@ -382,7 +418,12 @@
         });
         $("#thread_messages").html(thread_message_view.render().$el);
         $("abbr.timeago").timeago();
-        $("#transformed_message").html(new_thread.transformed_message);
+        if (new_thread.is_custom_message) {
+          transformed_message = new_thread.relater.name + " says " + new_thread.transformed_message;
+        } else {
+          transformed_message = new_thread.transformed_message;
+        }
+        $("#transformed_message").html(transformed_message);
         thread.push(new_thread);
         result[relater_thread_key] = thread;
       }
@@ -414,18 +455,22 @@
       var thread_message_view;
       thread = result[relater_thread_key];
       if (thread !== null && thread !== void 0) {
+        console.log;
         thread_message_view = new ThreadMessageView({
           collection: thread
         });
         $("#thread_messages").html(thread_message_view.render().$el);
         $("abbr.timeago").timeago();
-        return setMessageOptionsFromThread(thread[thread.length - 1]);
+        if (!window.incoming_message) {
+          setMessageOptionsFromThread(thread[thread.length - 1]);
+        }
+        return window.incoming_message = false;
       }
     });
   };
 
   window.logOutUser = function() {
-    var sign_up_view;
+    var key, sign_up_view;
     window.removeProfileAttributes();
     sign_up_view = new SignupView(window.loadRelaters);
     chrome.identity.getAuthToken({
@@ -438,6 +483,10 @@
     chrome.storage.local.set({
       "registered": false,
       "registered_user": null
+    }, null);
+    key = "fetched_relaters_key";
+    chrome.storage.local.set({
+      key: null
     }, null);
     $("#sign_up_view").html(sign_up_view.render().$el);
     $("#sign_up_view_modal").modal({
@@ -538,7 +587,18 @@
   };
 
   window.addRelaterToCollection = function(relater) {
-    return window.relater_collection.add(relater);
+    window.relater_collection.add(relater);
+    return window.cacheRelaterCollection();
+  };
+
+  window.cacheRelaterCollection = function() {
+    var key;
+    key = "fetched_relaters_key";
+    return chrome.storage.local.set({
+      "fetched_relaters_key": window.relater_collection
+    }, function() {
+      return console.log("relaters cached");
+    });
   };
 
   window.getRelaterThread = function(sender_id) {

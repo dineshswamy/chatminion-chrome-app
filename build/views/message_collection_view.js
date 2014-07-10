@@ -21,13 +21,15 @@
 
     MessageCollectionView.prototype.render = function() {
       var custom_message, message_models, relater, _i, _len, _ref;
-      _ref = this.collection.models;
-      for (_i = 0, _len = _ref.length; _i < _len; _i++) {
-        message_models = _ref[_i];
-        relater = new MessageView({
-          "model": message_models
-        });
-        this.$el.append(relater.render().$el);
+      if (this.collection.models !== null && this.collection.models !== void 0) {
+        _ref = this.collection.models;
+        for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+          message_models = _ref[_i];
+          relater = new MessageView({
+            "model": message_models
+          });
+          this.$el.append(relater.render().$el);
+        }
       }
       custom_message = new CustomMessageView();
       this.$el.append(custom_message.render().$el);

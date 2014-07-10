@@ -31,7 +31,7 @@ window.messages_with_options   = []
 window.options_for_message = []
 window.popup_params = {}
 
-
+window.background_message_recieved = null
 
 # chrome.browserAction.onClicked.addListener((tab)->
 #     chrome.windows.create(
@@ -45,8 +45,13 @@ window.popup_params = {}
 
 
 
-window.openWindow = (callback)->
-  window.is_window_opened = true
+window.openWindow = (attributes)->
+  if attributes != null
+    window.background_message_recieved = {"recieved_message":attributes}
+  console.log "recieved_message"
+  console.log attributes
+  chrome.runtime.sendMessage({"recieved_message":attributes},null)
+  #if !window.is_window_opened 
   chrome.app.window.create('../popup.html', {
     id: 'app-window',
     bounds: {
@@ -57,20 +62,17 @@ window.openWindow = (callback)->
     },
     minWidth: 800,
     minHeight: 600
-  },callback)
+  },null)
+
 
 chrome.app.runtime.onLaunched.addListener(()->window.openWindow(null))
 
-chrome.app.window.onClosed.addListener = ()-> window.is_window_opened = false
+chrome.app.window.onClosed.addListener( ()->
+     console.log "reset the values"
+     window.is_window_opened = false)
   
 
-
-chrome.pushMessaging.getChannelId(false,(google_chrome_channel_id)-> console.log google_chrome_channel_id.channelId)
-
-chrome.pushMessaging.onMessage.addListener((recieved_message)-> 
-                                                            window.openWindow(()->chrome.runtime.sendMessage({"recieved_message":recieved_message}))
-                                                            
-                                                            )
+chrome.pushMessaging.onMessage.addListener((recieved_message)-> window.openWindow(recieved_message))
 
 # (message)->
 #                                         chrome.app.window.create('../popup.html', {

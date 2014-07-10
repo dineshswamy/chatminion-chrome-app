@@ -1,7 +1,7 @@
 -'use-strict';
-#window.base_url = "http://lit-refuge-2289.herokuapp.com"
-#window.base_url = "http://10.0.0.6:3000"
-window.base_url = "http://localhost:3000"
+window.base_url = "http://lit-refuge-2289.herokuapp.com"
+#window.base_url = "http://localhost:3000"
+#window.base_url = "http://localhost:3000"
 #window.base_url = "http://192.168.1.53:3000"
 #window.base_url = "http://192.168.1.25:3000"
 window.relater_send_queue = []
@@ -19,7 +19,7 @@ window.messages_with_options = null
 window.bool = true
 #peer js relater selected
 window.peer_js_selected_relater = null
-
+window.incoming_message = false
 
 class @InfoView extends Backbone.View
     render:(message)->
@@ -28,14 +28,16 @@ class @InfoView extends Backbone.View
 
 # window.loadRelaters = (user_id) ->
 
+
 window.loadViews = ()->
         #initialize scroll
 
           
-        #initialize peer js
-        peerJSInit()
+        # #initialize peer js
+        # #peerJSInit()
 
         chrome.runtime.onMessage.addListener((message,sender,sendResponse)->window.dissectRecievedMessage(message))
+
         $("#start_call").click((event)->
             event.preventDefault()
             window.launchVideoCall(relater)
@@ -51,14 +53,12 @@ window.loadViews = ()->
         if window.relater_collection.models.length > 0
             $("#relaters_of_the_user").html window.relater_collection_view.render().el
         else
-            $("#relaters_of_the_user").html new InfoView().render("You have no contacts!").$el
-        
+            relater_bot = new User({"id":90009,"channel_id":window.logged_in_user.channel_id,"name":"Chatminion"})
+            window.relater_collection.models.push(relater_bot)
+            $("#relaters_of_the_user").html window.relater_collection_view.render().el
+            $("#relaters_of_the_user").append new InfoView().render("You have no contacts!").$el
+
         $("#relaters_of_the_user").prepend add_relaters_view.render().$el
-        
-        window.messages = new Messages()
-        window.messages.init(()->
-                  window.openMessages(window.messages_with_options,true)
-                  )
 
         $("#video_call_btn").click(launchVideoCall)
         $("#video_call_stop_btn").click(stopVideoCall)
@@ -68,6 +68,13 @@ window.loadViews = ()->
           )
         #$("#submit_custom_message").click(sendMessage)            
         $("#relaters_of_the_user").jScrollPane();
+
+        chrome.runtime.getBackgroundPage((page)->
+          if page.window.background_message_recieved!=null 
+            window.dissectRecievedMessage(page.window.background_message_recieved)
+            page.window.background_message_recieved = null
+          )
+
         initializeValues()
 
 
@@ -90,26 +97,28 @@ window.stopVideoCall = ()->
   event.preventDefault()
   if window.call!=null or window.call!=undefined 
      window.call.close()
-  window.peer.disconnect()
   $(".video_call_container").hide(500)
   $(".transparent-background").show(500)
   $(".video_call_container").html("")
+
+window.getPeerJSId = (id)->
+  date = new Date()
+  return date.getMonth()+"_"+date.getYear()+"_"+date.getDay()+"_"+id+"_peervendor"+"_"+date.getHours()
 
 window.launchVideoCall = (event)->
   event.preventDefault()
   console.log "Trying to launch video"
   navigator.getUserMedia = navigator.getUserMedia || navigator.webkitGetUserMedia || navigator.mozGetUserMedia
-  relater_peer_js_id = window.peer_js_selected_relater.id+"_peervendor"
+  relater_peer_js_id = window.getPeerJSId(window.peer_js_selected_relater.id)
   console.log relater_peer_js_id
   navigator.getUserMedia(video: true,audio: true,(stream)->
-                            window.call = window.peer.call(relater_peer_js_id,stream)
+                              window.call = window.peer.call(relater_peer_js_id,stream)
                             window.call.on('stream',success_stream)
                         ,(err)->console.log('Failed to get local stream' ,err))
 
-
 window.peerJSInit = () ->
   #peer-js id
-  window.peer_js_id = logged_in_user.id+"_peervendor"
+  window.peer_js_id = window.getPeerJSId(window.logged_in_user.id)
   window.peer =  new Peer(window.peer_js_id,key:'2n9conp4vga2a9k9')
   window.peer.on('call', (call)->
                     console.log "You have a video call"
@@ -146,31 +155,45 @@ window.dissectRecievedMessage = (message)->
     payload = JSON.parse(recieved_message.payload)
     console.log payload
     sender = window.relater_collection.findWhere({"id":Number(payload.user_id)})
-    $("div[data-relater-id='#{sender.id}']").trigger("click")
+    window.peer_js_selected_relater = sender
+    window.incoming_message = true 
+    $("a[data-relater-id='#{sender.id}']").trigger("click")
     #Nested call backs
     if payload.is_custom_message == "false"
       window.messages.getMessageInfo(Number(payload.message_id),(payload_message)->
         window.messages.loadOptionsforMessage(Number(payload.message_id),
         (options_for_message)->
           messages_collection = new MessageCollection(options_for_message)
-          if payload.expect_reply
+          if payload.expect_reply == "true"
             window.openMessages(messages_collection,true)
           window.getTransformedMessage(sender,window.logged_in_user.name,payload_message.user_message,payload_message.transform_pattern,payload.message_id,payload.time,payload.read_out)
         ))
     else
+        options_for_message = []
+        messages_collection = new MessageCollection(options_for_message)
+        if payload.expect_reply == "true"
+            window.openMessages(messages_collection,true)
        window.getTransformedMessage(sender,window.logged_in_user.name,payload.custom_message,payload.custom_message,null,payload.time,payload.read_out)
 
-window.loadRelaters = (user_id,call_back) ->
-    window.relater_collection = new RelaterCollection({"user_id":user_id})
+window.loadRelaters = (user_id) ->
+  key = "fetched_relaters_key"
+  chrome.storage.local.get(key,(result)->
+    #if result["fetched_relaters_key"] is null
+    window.relater_collection = new RelaterCollection({"user_id":window.logged_in_user.id})
     window.relater_collection.fetch
-                  success : ->  
-                        # if call_back != null and call_back != undefined
-                        #   call_back()
-                        window.loadViews()  
-                        console.log "relaters retrieved"
-                  error : ->
-                        window.loadViews()
-                        console.log "relaters retrieval error"
+            success : ->  
+                  window.loadViews()
+                  window.cacheRelaterCollection()
+                  console.log "relaters retrieved"
+            error : ->
+    #              window.loadViews()
+                  console.log "relaters retrieval error"
+    # else
+    #     window.relater_collection = new RelaterCollection(result["fetched_relaters_key"].models)
+    #     window.loadViews()
+    )
+
+
 
 sendVideoStreampermission = (data_to_send)->
   relater_peer_js_id = "video_call_124"
@@ -183,8 +206,13 @@ sendVideoStreampermission = (data_to_send)->
 
 window.initialize_extension = (call_back)->
     $("#option_messages").hide()
+    window.messages = new Messages()
+    window.messages.init(()->
+      chrome.runtime.getBackgroundPage((page)-> 
+        if page.window.background_message_recieved == null
+          window.openMessages(window.messages_with_options,true)))
+
     chrome.storage.local.get ["registered","registered_user"],(result)->
-        console.log result
         if result.registered is undefined or result.registered_user is undefined or result.registered is false or result.registered_user is null
           sign_up_view = new SignupView(window.loadRelaters)
           $("#sign_up_view").html(sign_up_view.render().$el)
@@ -195,12 +223,11 @@ window.initialize_extension = (call_back)->
             window.setProfileAttributes(window.logged_in_user.picture,window.logged_in_user.name)
             window.loadRelaters(window.logged_in_user.id)
             
-                
 window.getTransformedMessage = (sender,reciever_name,user_message,transform_pattern,message_id,time,read_out)->
   message_transform_helper = new MessageTransformation()
   message_transform_helper.init(transform_pattern,sender.name,reciever_name)
   
-  if message_id != null or message_id != undefined
+  if message_id != null 
     message_transform_helper.applyTransformation()
     helper_transformed_message = message_transform_helper.getMessage()
     thread_params =
@@ -214,6 +241,7 @@ window.getTransformedMessage = (sender,reciever_name,user_message,transform_patt
     message_transform_helper.pattern = null
     message_transform_helper.setCustomMessage(transform_pattern)
     message_transform_helper.applyTransformation()
+    helper_transformed_message = message_transform_helper.getMessage()
     thread_params =
         "relater":sender
         "is_custom_message":true
@@ -221,7 +249,9 @@ window.getTransformedMessage = (sender,reciever_name,user_message,transform_patt
         "message_id":message_id
         "sent_by_relater":true
         "msg_time":time
-  window.speakMessage(helper_transformed_message) if read_out
+
+  if read_out=="true"
+    window.speakMessage(helper_transformed_message) 
   window.putMessageinThread(thread_params)
 
 window.initializeValues = ()->
@@ -259,7 +289,6 @@ window.sendMessage = ()->
     expect_reply = $("#expect_reply").prop("checked")
     read_out = $("#read_out").prop("checked")
 
-
     data =
       "sender_id":window.logged_in_user.id
       "channel_id":relater_to_send.channel_id
@@ -268,6 +297,13 @@ window.sendMessage = ()->
       "expect_reply":expect_reply
       "read_out":read_out
       "time": time
+    
+    if relater_to_send.id == 90009
+      data["bot_message"] = true
+      # ...
+    
+      
+    
 
 
     if !is_custom_message 
@@ -291,7 +327,7 @@ window.sendMessage = ()->
 
     window.putMessageinThread(thread_params)
     window.animateMessagesForSending(true)
-    $.post(base_url+"/calltheteam/sendmessage",data,()-> window.animateMessagesForSending(false))
+    $.post(base_url+"/calltheteam/sendmessage",data,()-> console.log "complete")
 
 window.putMessageinThread = (thread_params)->  
   new_thread = new Thread(thread_params)
@@ -314,7 +350,13 @@ window.putMessageinThread = (thread_params)->
       thread_message_view = new ThreadMessageView({collection:thread})
       $("#thread_messages").html thread_message_view.render().$el
       $("abbr.timeago").timeago()
-      $("#transformed_message").html(new_thread.transformed_message)
+      
+      if new_thread.is_custom_message
+        transformed_message = new_thread.relater.name + " says "+new_thread.transformed_message
+      else
+        transformed_message = new_thread.transformed_message
+
+      $("#transformed_message").html(transformed_message)
       thread.push(new_thread)
       result[relater_thread_key] = thread
     chrome.storage.local.set(result,()->console.log "thread message saved")
@@ -338,16 +380,23 @@ window.loadMessagesofRelater = (relater_id)->
   chrome.storage.local.get(relater_thread_key,(result)->
       thread = result[relater_thread_key]
       if thread != null and thread != undefined 
+        console.log 
         thread_message_view = new ThreadMessageView({collection:thread})
         $("#thread_messages").html thread_message_view.render().$el
         $("abbr.timeago").timeago()
-        setMessageOptionsFromThread(thread[thread.length-1]);        
+        
+        if !window.incoming_message 
+          setMessageOptionsFromThread(thread[thread.length-1]);        
+        # checks w  
+        window.incoming_message = false  
     )
 window.logOutUser = ()->
         window.removeProfileAttributes()
         sign_up_view = new SignupView(window.loadRelaters)
         chrome.identity.getAuthToken({ 'interactive': true },(token)-> chrome.identity.removeCachedAuthToken({"token":token},()->))
         chrome.storage.local.set({"registered":false,"registered_user":null},null)
+        key = "fetched_relaters_key"
+        chrome.storage.local.set({key:null},null)
         $("#sign_up_view").html(sign_up_view.render().$el)
         $("#sign_up_view_modal").modal({keyboard:false})
         $("#sign_up_view_modal").modal('show')
@@ -411,8 +460,12 @@ window.animateMessages = ()->
 
 window.addRelaterToCollection = (relater)->
   window.relater_collection.add(relater)
+  window.cacheRelaterCollection()
   # if call_back != null and call_back != undefined
   #   call_back(relater)
+window.cacheRelaterCollection = ()->
+  key = "fetched_relaters_key"
+  chrome.storage.local.set({"fetched_relaters_key":window.relater_collection},()->console.log "relaters cached")
 
 window.getRelaterThread = (sender_id)->
   window.relater_threads[sender_id]

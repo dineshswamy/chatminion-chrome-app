@@ -16,8 +16,7 @@ class @MessageView extends Backbone.View
                 $("#custom_message").prop("disabled",false)
                 window.message_to_send = null
             else
-                @$el.addClass("message_selected")
-                
+                @$el.addClass("message_selected")                
                 window.message_to_send = @model
                 $("#custom_message").prop("disabled",true)
 

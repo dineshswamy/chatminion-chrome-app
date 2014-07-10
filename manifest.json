@@ -16,10 +16,10 @@
    },
 
    "oauth2": {
-    "client_id": "445760815141-8tok6gnlb5k34dgcm4r9bc8q9gdv9p2r.apps.googleusercontent.com",
+    "client_id": "445760815141-g3dfjppbtpff1feu5mj0i5jr4v0c99dq.apps.googleusercontent.com",
     "scopes": [ "https://www.googleapis.com/auth/userinfo.email","https://www.googleapis.com/auth/userinfo.profile"]
   },
-   "key": "MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAinyqoCSVQRcA28WvjVA4EjnM99ImmkY99g6otpilLikR/lFlj6kb9dbYMeQ07Cotmm+HI3jn9FdD3dDuznjyVASTlEXSJVWVb64gKS5nokP2FJ5hphXdJzQE+jNwh5PoyBzcs2iJ/ZSILmpQwmSPYtkUJdtJKEoJKuOMxl1sjYnd5IOSt+/X5gL8MLjETeMIZLQxysklHuZaKwIyYVuuOVTlxECUVuw1bAAek4WD3KGsX604SXK0vdRYCnFaOh7hzwPLX2Wd7e+Le5P8R8YZ0p1ZJKNgTOEXarl4u9E3eN6FGYQDJtw5zAHlCFjczi0o4pr6uMrZuCKoSgBuv/PO0QIDAQAB",
+    "key": "MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAinyqoCSVQRcA28WvjVA4EjnM99ImmkY99g6otpilLikR/lFlj6kb9dbYMeQ07Cotmm+HI3jn9FdD3dDuznjyVASTlEXSJVWVb64gKS5nokP2FJ5hphXdJzQE+jNwh5PoyBzcs2iJ/ZSILmpQwmSPYtkUJdtJKEoJKuOMxl1sjYnd5IOSt+/X5gL8MLjETeMIZLQxysklHuZaKwIyYVuuOVTlxECUVuw1bAAek4WD3KGsX604SXK0vdRYCnFaOh7hzwPLX2Wd7e+Le5P8R8YZ0p1ZJKNgTOEXarl4u9E3eN6FGYQDJtw5zAHlCFjczi0o4pr6uMrZuCKoSgBuv/PO0QIDAQAB",
    "manifest_version": 2,
    "minimum_chrome_version": "23",
    "name": "Chat minion",

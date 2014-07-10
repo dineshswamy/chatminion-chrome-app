@@ -7,6 +7,7 @@ class @CustomMessageView extends Backbone.View
         @
     send_message:(event)->
         event.preventDefault()
+        
         window.sendMessage(event);
 
     open_message_properties:(event)->

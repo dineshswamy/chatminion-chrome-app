@@ -170,6 +170,21 @@
     window.HAML = {};
   }
 
+  window.HAML['progress'] = function(context) {
+    return (function() {
+      var $o;
+      $o = [];
+      $o.push("<div class='progress'>\n  <div class='progress-bar progress-bar-danger' aria-valuemax='100' aria-valuemin='0' aria-valuenow='80' role='progressbar' style='width: 80%'>\n    <span class='sr-only'>80% Complete</span>\n  </div>\n</div>");
+      return $o.join("\n").replace(/\s(?:id|class)=(['"])(\1)/mg, "");
+    }).call(context);
+  };
+
+}).call(this);
+(function() {
+  if (window.HAML == null) {
+    window.HAML = {};
+  }
+
   window.HAML['relater'] = function(context) {
     return (function() {
       var $c, $e, $o;
@@ -189,7 +204,15 @@
         }
       };
       $o = [];
-      $o.push("<h4 class='list-group-item-heading'>" + ($e($c(this.user_model.get("name")))) + "\n  <span class='glyphicon glyphicon-facetime-video video_call_icon'></span>\n</h4>\n<p class='list-group-item-text'>Status</p>");
+      if (this.user_model.get("id") !== 90009) {
+        $o.push("<h4 class='list-group-item-heading'>");
+        $o.push("  " + $e($c(this.user_model.get("name"))));
+        $o.push("  <span class='glyphicon glyphicon-facetime-video video_call_icon'></span>\n</h4>");
+      } else {
+        $o.push("<h4 class='list-group-item-heading'>");
+        $o.push("  " + $e($c(this.user_model.get("name") + "(sample)")));
+        $o.push("</h4>");
+      }
       return $o.join("\n").replace(/\s([\w-]+)='true'/mg, ' $1').replace(/\s([\w-]+)='false'/mg, '').replace(/\s(?:id|class)=(['"])(\1)/mg, "");
     }).call(context);
   };
@@ -204,7 +227,7 @@
     return (function() {
       var $o;
       $o = [];
-      $o.push("<div class='intro_screen'>\n  <h1 >Hi ! You need to sign in with your google account.</h1>\n  <div id='google_sign_in'></div>\n</div>");
+      $o.push("<div class='intro_screen'>\n  <h1 >Hi ! You need to sign in with your google account.</h1>\n  <div id='sign_in_wrapper'>\n    <div id='google_sign_in'></div>\n  </div>\n  <div id='registration_status'></div>\n</div>");
       return $o.join("\n").replace(/\s(?:id|class)=(['"])(\1)/mg, "");
     }).call(context);
   };
@@ -240,11 +263,11 @@
         if (thread_message.sent_by_relater) {
           $o.push("<div class='right thread'>\n  <div class='glyphicon glyphicon-arrow-left'></div>");
           $o.push("  " + $e($c(thread_message.transformed_message)));
-          $o.push("  <abbr class='timeago' title='" + ($c(thread_message.msg_time)) + "'></abbr>\n</div>");
+          $o.push("  <abbr class='timeago time_stamp' title='" + ($c(thread_message.msg_time)) + "'></abbr>\n</div>");
         } else {
-          $o.push("<div class='left thread'>\n  <div class='glyphicon glyphicon-arrow-left'></div>");
+          $o.push("<div class='left thread'>\n  <div class='glyphicon glyphicon-arrow-right'></div>");
           $o.push("  " + $e($c(thread_message.transformed_message)));
-          $o.push("  <abbr class='timeago' title='" + ($c(thread_message.msg_time)) + "'>				</abbr>\n</div>");
+          $o.push("  <abbr class='timeago time_stamp' title='" + ($c(thread_message.msg_time)) + "'>				</abbr>\n</div>");
         }
       }
       $o.push("<h2 class='current_message' id='transformed_message'></h2>");

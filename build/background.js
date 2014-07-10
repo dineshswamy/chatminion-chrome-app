@@ -34,8 +34,19 @@
 
   window.popup_params = {};
 
-  window.openWindow = function(callback) {
-    window.is_window_opened = true;
+  window.background_message_recieved = null;
+
+  window.openWindow = function(attributes) {
+    if (attributes !== null) {
+      window.background_message_recieved = {
+        "recieved_message": attributes
+      };
+    }
+    console.log("recieved_message");
+    console.log(attributes);
+    chrome.runtime.sendMessage({
+      "recieved_message": attributes
+    }, null);
     return chrome.app.window.create('../popup.html', {
       id: 'app-window',
       bounds: {
@@ -46,27 +57,20 @@
       },
       minWidth: 800,
       minHeight: 600
-    }, callback);
+    }, null);
   };
 
   chrome.app.runtime.onLaunched.addListener(function() {
     return window.openWindow(null);
   });
 
-  chrome.app.window.onClosed.addListener = function() {
+  chrome.app.window.onClosed.addListener(function() {
+    console.log("reset the values");
     return window.is_window_opened = false;
-  };
-
-  chrome.pushMessaging.getChannelId(false, function(google_chrome_channel_id) {
-    return console.log(google_chrome_channel_id.channelId);
   });
 
   chrome.pushMessaging.onMessage.addListener(function(recieved_message) {
-    return window.openWindow(function() {
-      return chrome.runtime.sendMessage({
-        "recieved_message": recieved_message
-      });
-    });
+    return window.openWindow(recieved_message);
   });
 
   window.addSenderToQueue = function(relater) {

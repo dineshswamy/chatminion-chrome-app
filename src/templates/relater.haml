@@ -1,3 +1,7 @@
-%h4.list-group-item-heading =@user_model.get("name")
-	%span{:class=>"glyphicon glyphicon-facetime-video video_call_icon"}
-%p.list-group-item-text Status
+- if @user_model.get("id") != 90009	
+	%h4.list-group-item-heading
+		=@user_model.get("name")	
+		%span{:class=>"glyphicon glyphicon-facetime-video video_call_icon"}
+- else
+	%h4.list-group-item-heading
+		=@user_model.get("name")+"(sample)"

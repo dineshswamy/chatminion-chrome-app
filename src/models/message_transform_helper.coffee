@@ -14,7 +14,9 @@ class @MessageTransformation
 				str_to_search = new RegExp("@@#{index}",'g')
 				@pattern=@pattern.replace str_to_search,option
 		else
+			console.log "went inside this"
 			@pattern = @options[0]+" says "+@custom_message
+			console.log @pattern
 
 	getMessage : ()->
 		@pattern

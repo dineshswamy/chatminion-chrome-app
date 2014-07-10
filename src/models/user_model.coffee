@@ -7,10 +7,6 @@ class @User extends Backbone.Model
 			@name=attributes.name
 		if attributes.id
 			@id = attributes.id
-
-	defaults :
-			email_id : "sample@email.com"
-			channel_id :"channel_id_sample"
 	# parse :(response)->
 	# 	return response
 

@@ -30,7 +30,9 @@
         }
         return _results;
       } else {
-        return this.pattern = this.options[0] + " says " + this.custom_message;
+        console.log("went inside this");
+        this.pattern = this.options[0] + " says " + this.custom_message;
+        return console.log(this.pattern);
       }
     };
 
