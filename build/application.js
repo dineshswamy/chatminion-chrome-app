@@ -200,7 +200,7 @@
       window.incoming_message = true;
       $("a[data-relater-id='" + sender.id + "']").trigger("click");
       if (payload.is_custom_message === "false") {
-        window.messages.getMessageInfo(Number(payload.message_id), function(payload_message) {
+        return window.messages.getMessageInfo(Number(payload.message_id), function(payload_message) {
           return window.messages.loadOptionsforMessage(Number(payload.message_id), function(options_for_message) {
             var messages_collection;
             messages_collection = new MessageCollection(options_for_message);
@@ -213,11 +213,11 @@
       } else {
         options_for_message = [];
         messages_collection = new MessageCollection(options_for_message);
+        window.getTransformedMessage(sender, window.logged_in_user.name, payload.custom_message, payload.custom_message, null, payload.time, payload.read_out);
         if (payload.expect_reply === "true") {
-          window.openMessages(messages_collection, true);
+          return window.openMessages(messages_collection, true);
         }
       }
-      return window.getTransformedMessage(sender, window.logged_in_user.name, payload.custom_message, payload.custom_message, null, payload.time, payload.read_out);
     }
   };
 
@@ -368,7 +368,7 @@
       thread_params = {
         "relater": relater_to_send,
         "transformed_message": message.get("user_message"),
-        "message_id": message.msg_id,
+        "message_id": message.get("id"),
         "sent_by_relater": false,
         "is_custom_message": false,
         "msg_time": time
@@ -457,7 +457,7 @@
       var thread_message_view;
       thread = result[relater_thread_key];
       if (thread !== null && thread !== void 0) {
-        console.log;
+        console.log(thread);
         thread_message_view = new ThreadMessageView({
           collection: thread
         });

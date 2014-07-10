@@ -261,11 +261,11 @@
       for (_i = 0, _len = _ref.length; _i < _len; _i++) {
         thread_message = _ref[_i];
         if (thread_message.sent_by_relater) {
-          $o.push("<div class='right thread'>\n  <div class='glyphicon glyphicon-arrow-left'></div>");
+          $o.push("<div class='right thread'>\n  <div class='glyphicon glyphicon-arrow-right'></div>");
           $o.push("  " + $e($c(thread_message.transformed_message)));
           $o.push("  <abbr class='timeago time_stamp' title='" + ($c(thread_message.msg_time)) + "'></abbr>\n</div>");
         } else {
-          $o.push("<div class='left thread'>\n  <div class='glyphicon glyphicon-arrow-right'></div>");
+          $o.push("<div class='left thread'>\n  <div class='glyphicon glyphicon-arrow-left'></div>");
           $o.push("  " + $e($c(thread_message.transformed_message)));
           $o.push("  <abbr class='timeago time_stamp' title='" + ($c(thread_message.msg_time)) + "'>				</abbr>\n</div>");
         }

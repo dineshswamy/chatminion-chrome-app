@@ -1,12 +1,12 @@
 -	for thread_message in @thread_messages
 -		if thread_message.sent_by_relater
 				.thread.right
-								%div{class: "glyphicon glyphicon-arrow-left"} 
+								%div{class: "glyphicon glyphicon-arrow-right"} 
 								= thread_message.transformed_message
 								%abbr{class: "timeago time_stamp",title: "#{thread_message.msg_time}" }
 -		else
 				.thread.left
-								%div{class: "glyphicon glyphicon-arrow-right"} 
+								%div{class: "glyphicon glyphicon-arrow-left"} 
 								= thread_message.transformed_message
 								%abbr{class: "timeago time_stamp",title: "#{thread_message.msg_time}" }				
 

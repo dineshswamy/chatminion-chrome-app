@@ -171,9 +171,10 @@ window.dissectRecievedMessage = (message)->
     else
         options_for_message = []
         messages_collection = new MessageCollection(options_for_message)
+        window.getTransformedMessage(sender,window.logged_in_user.name,payload.custom_message,payload.custom_message,null,payload.time,payload.read_out)
         if payload.expect_reply == "true"
             window.openMessages(messages_collection,true)
-       window.getTransformedMessage(sender,window.logged_in_user.name,payload.custom_message,payload.custom_message,null,payload.time,payload.read_out)
+          
 
 window.loadRelaters = (user_id) ->
   key = "fetched_relaters_key"
@@ -307,7 +308,7 @@ window.sendMessage = ()->
       thread_params =
         "relater":relater_to_send
         "transformed_message":message.get("user_message")
-        "message_id":message.msg_id
+        "message_id":message.get("id")
         "sent_by_relater":false
         "is_custom_message":false
         "msg_time":time      
@@ -379,7 +380,7 @@ window.loadMessagesofRelater = (relater_id)->
   chrome.storage.local.get(relater_thread_key,(result)->
       thread = result[relater_thread_key]
       if thread != null and thread != undefined 
-        console.log 
+        console.log thread
         thread_message_view = new ThreadMessageView({collection:thread})
         $("#thread_messages").html thread_message_view.render().$el
         $("abbr.timeago").timeago()
