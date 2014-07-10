@@ -367,7 +367,7 @@
       data["message_id"] = message.get("id");
       thread_params = {
         "relater": relater_to_send,
-        "transformed_message": message.user_message,
+        "transformed_message": message.get("user_message"),
         "message_id": message.msg_id,
         "sent_by_relater": false,
         "is_custom_message": false,
@@ -384,6 +384,8 @@
       };
       data["message_id"] = " ";
     }
+    console.log("threads");
+    console.log(thread_params);
     window.putMessageinThread(thread_params);
     window.animateMessagesForSending(true);
     return $.post(base_url + "/calltheteam/sendmessage", data, function() {

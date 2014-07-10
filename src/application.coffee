@@ -301,16 +301,12 @@ window.sendMessage = ()->
     if relater_to_send.id == 90009
       data["bot_message"] = true
       # ...
-    
-      
-    
-
 
     if !is_custom_message 
       data["message_id"] = message.get("id")
       thread_params =
         "relater":relater_to_send
-        "transformed_message":message.user_message
+        "transformed_message":message.get("user_message")
         "message_id":message.msg_id
         "sent_by_relater":false
         "is_custom_message":false
@@ -325,6 +321,9 @@ window.sendMessage = ()->
         "msg_time":time
       data["message_id"] = " "
 
+    console.log "threads"
+    console.log thread_params
+    
     window.putMessageinThread(thread_params)
     window.animateMessagesForSending(true)
     $.post(base_url+"/calltheteam/sendmessage",data,()-> console.log "complete")
