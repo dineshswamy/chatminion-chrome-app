@@ -14,8 +14,7 @@
     RelaterCollection.prototype.model = User;
 
     RelaterCollection.prototype.initialize = function(attributes) {
-      this.url = window.base_url + "/user/" + attributes.user_id + "/contacts";
-      return console.log(this.url);
+      return this.url = window.base_url + "/user/" + attributes.user_id + "/contacts";
     };
 
     return RelaterCollection;

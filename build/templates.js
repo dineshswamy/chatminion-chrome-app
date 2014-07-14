@@ -3,6 +3,38 @@
     window.HAML = {};
   }
 
+  window.HAML['alert_view'] = function(context) {
+    return (function() {
+      var $c, $e, $o;
+      $e = function(text, escape) {
+        return ("" + text).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/'/g, '&#39;').replace(/\//g, '&#47;').replace(/"/g, '&quot;');
+      };
+      $c = function(text) {
+        switch (text) {
+          case null:
+          case void 0:
+            return '';
+          case true:
+          case false:
+            return '' + text;
+          default:
+            return text;
+        }
+      };
+      $o = [];
+      $o.push("<div class='alert_container'>\n  <div class='alert_message'>");
+      $o.push("    " + $e($c(this.alert_message)));
+      $o.push("  </div>\n</div>");
+      return $o.join("\n").replace(/\s([\w-]+)='true'/mg, ' $1').replace(/\s([\w-]+)='false'/mg, '').replace(/\s(?:id|class)=(['"])(\1)/mg, "");
+    }).call(context);
+  };
+
+}).call(this);
+(function() {
+  if (window.HAML == null) {
+    window.HAML = {};
+  }
+
   window.HAML['contacts'] = function(context) {
     return (function() {
       var $o;
@@ -99,7 +131,7 @@
       $o = [];
       $o.push("<div class='text-primary'>\n  <h3>");
       $o.push("    " + $e($c(this.info)));
-      $o.push("  </h3>\n</div>");
+      $o.push("  </h3>\n</div>\n<div class='button red'>Okay	</div>");
       return $o.join("\n").replace(/\s([\w-]+)='true'/mg, ' $1').replace(/\s([\w-]+)='false'/mg, '').replace(/\s(?:id|class)=(['"])(\1)/mg, "");
     }).call(context);
   };

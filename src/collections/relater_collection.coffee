@@ -3,6 +3,5 @@ class @RelaterCollection extends Backbone.Collection
 
 	initialize :(attributes) ->
 		@url = window.base_url+"/user/"+attributes.user_id+"/contacts"
-		console.log @url
 
 

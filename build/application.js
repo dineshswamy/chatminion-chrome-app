@@ -57,6 +57,34 @@
 
   })(Backbone.View);
 
+  this.AlertView = (function(_super) {
+
+    __extends(AlertView, _super);
+
+    function AlertView() {
+      return AlertView.__super__.constructor.apply(this, arguments);
+    }
+
+    AlertView.prototype["events"] = {
+      "click .okay_btn": "close_modal"
+    };
+
+    AlertView.prototype.close_modal = function(event) {
+      event.preventDefault();
+      return $("#sign_up_view_modal").modal('hide');
+    };
+
+    AlertView.prototype.render = function(message) {
+      this.$el.html(HAML["alert_view"]({
+        "alert_message": message
+      }));
+      return this;
+    };
+
+    return AlertView;
+
+  })(Backbone.View);
+
   window.loadViews = function() {
     var add_relaters_view, relater_bot;
     chrome.runtime.onMessage.addListener(function(message, sender, sendResponse) {
@@ -177,6 +205,16 @@
     });
   };
 
+  window.showAlert = function(message) {
+    var alert_view;
+    alert_view = new AlertView();
+    $("#sign_up_view").html(alert_view.render(message).$el);
+    $("#sign_up_view_modal").modal({
+      keyboard: false
+    });
+    return $("#sign_up_view_modal").modal('show');
+  };
+
   show_or_hide_video_stream = function(data) {
     console.log("data");
     console.log(data);
@@ -225,19 +263,25 @@
     var key;
     key = "fetched_relaters_key";
     return chrome.storage.local.get(key, function(result) {
-      window.relater_collection = new RelaterCollection({
-        "user_id": window.logged_in_user.id
-      });
-      return window.relater_collection.fetch({
-        success: function() {
-          window.loadViews();
-          window.cacheRelaterCollection();
-          return console.log("relaters retrieved");
-        },
-        error: function() {
-          return console.log("relaters retrieval error");
-        }
-      });
+      if (result["fetched_relaters_key"] === null) {
+        window.relater_collection = new RelaterCollection({
+          "user_id": window.logged_in_user.id
+        });
+        return window.relater_collection.fetch({
+          success: function() {
+            window.loadViews();
+            window.cacheRelaterCollection();
+            return console.log("relaters retrieved");
+          },
+          error: function() {
+            window.loadViews();
+            return console.log("relaters retrieval error");
+          }
+        });
+      } else {
+        window.relater_collection = new RelaterCollection(result["fetched_relaters_key"].models);
+        return window.loadViews();
+      }
     });
   };
 
@@ -256,7 +300,7 @@
     window.messages.init(function() {
       return chrome.runtime.getBackgroundPage(function(page) {
         if (page.window.background_message_recieved === null) {
-          return window.openMessages(window.messages_with_options, true);
+          return window.openMessages(window.messages_with_options, false);
         }
       });
     });
@@ -270,7 +314,8 @@
         });
         return $("#sign_up_view_modal").modal('show');
       } else {
-        window.logged_in_user = result.registered_user;
+        console.log(result);
+        window.logged_in_user = result["registered_user"];
         window.setProfileAttributes(window.logged_in_user.picture, window.logged_in_user.name);
         return window.loadRelaters(window.logged_in_user.id);
       }
@@ -348,6 +393,17 @@
     custom_message = $("#custom_message").val();
     relater_to_send = window.peer_js_selected_relater;
     message = window.message_to_send;
+    console.log(window.message_to_send);
+    if (relater_to_send === null) {
+      showAlert("Pick a contact");
+      return;
+    }
+    console.log("custom_message" + custom_message === " ");
+    console.log("message " + message === null);
+    if (message === null && custom_message === " ") {
+      showAlert("Choose a message");
+      return;
+    }
     time = String(new Date());
     expect_reply = $("#expect_reply").prop("checked");
     read_out = $("#read_out").prop("checked");
@@ -384,12 +440,10 @@
       };
       data["message_id"] = " ";
     }
-    console.log("threads");
-    console.log(thread_params);
     window.putMessageinThread(thread_params);
     window.animateMessagesForSending(true);
     return $.post(base_url + "/calltheteam/sendmessage", data, function() {
-      return console.log("complete");
+      return window.animateMessagesForSending(false);
     });
   };
 

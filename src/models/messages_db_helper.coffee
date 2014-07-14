@@ -24,14 +24,36 @@ class @Messages
 				db.deleteObjectStore("message_options")
 			object_store_messages = db.createObjectStore("messages",{keyPath:"id"})
 			object_store_message_options = db.createObjectStore("message_options",{keyPath:"id"})
-			console.log "upgrade needed"
 		@request.onsuccess = (event) =>
 			@database=event.target.result
-			#@.fetch()
-			@.getAllMessages(callback)
+			chrome.storage.local.get("last_updated",(result)=>@.fetchMessages(callback,result))
 			#chrome.runtime.sendMessage({"messages_loaded":true},null)
 		@request.onerror = (event)->
 			console.log "database_logging_error" +event.value
+
+	fetchMessages : (callback,result)=>
+		now = new Date()
+		console.log "Inside fetch messages"
+		
+		current_date = new Date(now.getYear(),now.getMonth(),now.getDate())
+		current_date_string = now.getYear()+"/"+now.getMonth()+"/"+now.getDate()
+
+		result_last_updated = result["last_updated"]
+		console.log result_last_updated
+		if result_last_updated.split("/") == null 
+			@.fetch(current_date_string)
+			@.getAllMessages(callback)
+
+		else
+			console.log "fetchMessages"
+			last_updated = result_last_updated.split("/")
+			last_updated_date = new Date(last_updated[0],last_updated[1],last_updated[2])
+			if last_updated_date < current_date
+				@.fetch(current_date_string) # date is updated inside fetch method
+				@.getAllMessages(callback)
+			else
+				@.getAllMessages(callback)
+
 
 	addMessage : (object_to_store)->
 		if @database != null 
@@ -52,16 +74,18 @@ class @Messages
 				console.log "message options successfully written"
 			request.onerror = (event)->
 				console.log "insertion error"
-	fetch:() ->
+	fetch:(current_date) ->
 		$.get(@messages_url,
         (data) =>
-        	console.log data
 	        for messages in data
 	        	@.addMessage {"id":messages.msg_id,"user_message":messages.user_message,"transform_pattern":messages.transform_pattern}
 	        $.get(@message_options_url,
 	        (data)	=>
 	        	for message_option in data
 	        	   @.addMessageOptions {"id":message_option.id,"message_id":message_option.message_id,"options_id":message_option.options_id}
+
+	           console.log current_date
+	           chrome.storage.local.set({"last_updated":current_date},()-> console.log "messages_updated")   
 	           @.getAllMessages())
 		)
 

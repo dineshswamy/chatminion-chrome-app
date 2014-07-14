@@ -72,7 +72,13 @@ chrome.app.window.onClosed.addListener( ()->
      window.is_window_opened = false)
   
 
-chrome.pushMessaging.onMessage.addListener((recieved_message)-> window.openWindow(recieved_message))
+chrome.pushMessaging.onMessage.addListener((recieved_message)-> 
+  console.log recieved_message
+  chrome.storage.local.get("registered",(result)->  
+    if(result["registered"] != null and result["registered"] )
+      window.openWindow(recieved_message)
+      )
+  )
 
 # (message)->
 #                                         chrome.app.window.create('../popup.html', {

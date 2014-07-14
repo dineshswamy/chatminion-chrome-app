@@ -32,7 +32,10 @@ class @addRelatersView  extends Backbone.View
             relater_collection_view = new RelatersCollectionView({"collection":window.relater_collection})
             $("#relaters_of_the_user").html relater_collection_view.render().el
             $("#relaters_of_the_user").prepend add_relaters_view.render().$el
-            
+            if relater != null
+                message = "Please ask "+relater.name +", to add you to his contacts"
+                showAlert()
+
 
     openGmailForRequest = (email)->
         $("#relater_request_join").show()

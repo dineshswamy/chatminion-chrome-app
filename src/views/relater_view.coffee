@@ -17,7 +17,7 @@ class @RelaterView extends Backbone.View
 
 	loadMessages:(event) ->
    		@$el.siblings().removeClass("active")
-   		console.log "I m the one who closed options"
+   		window.message_to_send = null
    		@$el.addClass("active")
    		@$el.siblings().find(".video_call_icon").css("visibility","hidden")
    		@$el.find(".video_call_icon").css("visibility","visible")

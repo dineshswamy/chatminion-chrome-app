@@ -30,14 +30,14 @@
       this.$("#google_sign_in").hide();
       this.$("#sign_in_wrapper").css("background-image", "url(../../images/loadinfo_net.gif)");
       $(this.$el).off("click", "#google_sign_in");
-      return chrome.pushMessaging.getChannelId(false, complete_registration);
-    };
-
-    complete_registration = function(google_chrome_channel_id) {
-      console.log("complete_registration");
       return chrome.identity.getAuthToken({
         'interactive': true
-      }, function(token) {
+      }, complete_registration);
+    };
+
+    complete_registration = function(token) {
+      console.log("complete_registration");
+      return chrome.pushMessaging.getChannelId(function(google_chrome_channel_id) {
         return save_user(token, google_chrome_channel_id.channelId);
       });
     };

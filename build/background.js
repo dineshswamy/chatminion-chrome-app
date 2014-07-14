@@ -70,7 +70,12 @@
   });
 
   chrome.pushMessaging.onMessage.addListener(function(recieved_message) {
-    return window.openWindow(recieved_message);
+    console.log(recieved_message);
+    return chrome.storage.local.get("registered", function(result) {
+      if (result["registered"] !== null && result["registered"]) {
+        return window.openWindow(recieved_message);
+      }
+    });
   });
 
   window.addSenderToQueue = function(relater) {

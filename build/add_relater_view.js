@@ -55,14 +55,18 @@
     };
 
     add_new_relater_and_render = function(relater) {
-      var add_relaters_view, relater_collection_view;
+      var add_relaters_view, message, relater_collection_view;
       window.addRelaterToCollection(relater);
       add_relaters_view = new addRelatersView();
       relater_collection_view = new RelatersCollectionView({
         "collection": window.relater_collection
       });
       $("#relaters_of_the_user").html(relater_collection_view.render().el);
-      return $("#relaters_of_the_user").prepend(add_relaters_view.render().$el);
+      $("#relaters_of_the_user").prepend(add_relaters_view.render().$el);
+      if (relater !== null) {
+        message = "Please ask " + relater.name(+", to add you to his contacts");
+        return showAlert();
+      }
     };
 
     openGmailForRequest = function(email) {

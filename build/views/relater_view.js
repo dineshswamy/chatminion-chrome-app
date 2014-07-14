@@ -39,7 +39,7 @@
 
     RelaterView.prototype.loadMessages = function(event) {
       this.$el.siblings().removeClass("active");
-      console.log("I m the one who closed options");
+      window.message_to_send = null;
       this.$el.addClass("active");
       this.$el.siblings().find(".video_call_icon").css("visibility", "hidden");
       this.$el.find(".video_call_icon").css("visibility", "visible");

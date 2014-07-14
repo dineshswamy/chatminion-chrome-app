@@ -1,4 +1,5 @@
 -'use-strict';
+
 window.base_url = "http://lit-refuge-2289.herokuapp.com"
 #window.base_url = "http://localhost:3000"
 #window.base_url = "http://localhost:3000"
@@ -26,8 +27,18 @@ class @InfoView extends Backbone.View
         @$el.html HAML["info_view"]({"info":message})
         @
 
-# window.loadRelaters = (user_id) ->
+class @AlertView extends Backbone.View
+    "events": {
+      "click .okay_btn" : "close_modal"
+    }
 
+    close_modal:(event)->
+      event.preventDefault()
+      $("#sign_up_view_modal").modal('hide')      
+
+    render:(message)->
+      @$el.html HAML["alert_view"]({"alert_message":message})
+      @
 
 window.loadViews = ()->
         #initialize scroll
@@ -138,6 +149,13 @@ window.peerJSInit = () ->
   #                                                             console.log data
   #                                                             show_or_hide_video_stream(data))) 
 
+window.showAlert = (message)->
+  alert_view = new AlertView()
+  $("#sign_up_view").html(alert_view.render(message).$el)
+  $("#sign_up_view_modal").modal({keyboard:false})
+  $("#sign_up_view_modal").modal('show')
+  #$(".alert_container").show(100).delay(1000).hide(100)
+
 
 show_or_hide_video_stream = (data)->
   console.log "data"
@@ -179,19 +197,19 @@ window.dissectRecievedMessage = (message)->
 window.loadRelaters = (user_id) ->
   key = "fetched_relaters_key"
   chrome.storage.local.get(key,(result)->
-    #if result["fetched_relaters_key"] is null
-    window.relater_collection = new RelaterCollection({"user_id":window.logged_in_user.id})
-    window.relater_collection.fetch
-            success : ->  
-                  window.loadViews()
-                  window.cacheRelaterCollection()
-                  console.log "relaters retrieved"
-            error : ->
-    #              window.loadViews()
-                  console.log "relaters retrieval error"
-    # else
-    #     window.relater_collection = new RelaterCollection(result["fetched_relaters_key"].models)
-    #     window.loadViews()
+        if result["fetched_relaters_key"] is null
+          window.relater_collection = new RelaterCollection({"user_id":window.logged_in_user.id})
+          window.relater_collection.fetch
+                  success : ->  
+                        window.loadViews()
+                        window.cacheRelaterCollection()
+                        console.log "relaters retrieved"
+                  error : ->
+                        window.loadViews()
+                        console.log "relaters retrieval error"
+        else
+            window.relater_collection = new RelaterCollection(result["fetched_relaters_key"].models)
+            window.loadViews()
     )
 
 
@@ -211,8 +229,8 @@ window.initialize_extension = (call_back)->
     window.messages.init(()->
       chrome.runtime.getBackgroundPage((page)-> 
         if page.window.background_message_recieved == null
-          window.openMessages(window.messages_with_options,true)))
-
+          window.openMessages(window.messages_with_options,false)))
+    
     chrome.storage.local.get ["registered","registered_user"],(result)->
         if result.registered is undefined or result.registered_user is undefined or result.registered is false or result.registered_user is null
           sign_up_view = new SignupView(window.loadRelaters)
@@ -220,7 +238,8 @@ window.initialize_extension = (call_back)->
           $("#sign_up_view_modal").modal({keyboard:false})
           $("#sign_up_view_modal").modal('show')
         else
-            window.logged_in_user = result.registered_user
+            console.log result
+            window.logged_in_user = result["registered_user"]
             window.setProfileAttributes(window.logged_in_user.picture,window.logged_in_user.name)
             window.loadRelaters(window.logged_in_user.id)
             
@@ -286,6 +305,21 @@ window.sendMessage = ()->
     custom_message = $("#custom_message").val()
     relater_to_send = window.peer_js_selected_relater
     message = window.message_to_send
+
+    console.log window.message_to_send
+    
+    if relater_to_send == null 
+      showAlert("Pick a contact")
+      return
+
+    console.log "custom_message" + custom_message == " "
+
+    console.log "message " + message == null
+
+    if message == null and custom_message == " "
+      showAlert("Choose a message")
+      return
+      
     time = String(new Date())
     expect_reply = $("#expect_reply").prop("checked")
     read_out = $("#read_out").prop("checked")
@@ -322,12 +356,9 @@ window.sendMessage = ()->
         "msg_time":time
       data["message_id"] = " "
 
-    console.log "threads"
-    console.log thread_params
-    
     window.putMessageinThread(thread_params)
     window.animateMessagesForSending(true)
-    $.post(base_url+"/calltheteam/sendmessage",data,()-> console.log "complete")
+    $.post(base_url+"/calltheteam/sendmessage",data,()-> window.animateMessagesForSending(false))
 
 window.putMessageinThread = (thread_params)->  
   new_thread = new Thread(thread_params)

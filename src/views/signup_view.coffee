@@ -16,12 +16,12 @@ class @SignupView extends Backbone.View
 		@.$("#google_sign_in").hide()
 		@.$("#sign_in_wrapper").css("background-image","url(../../images/loadinfo_net.gif)")
 		$(@$el).off("click","#google_sign_in")
-		chrome.pushMessaging.getChannelId(false,complete_registration)
+		chrome.identity.getAuthToken({ 'interactive': true },complete_registration)
 		#oauth=window.bpageoauth
 		#oauth.authorize(onauthorized)
-	complete_registration = (google_chrome_channel_id) ->
+	complete_registration = (token) ->
 		console.log "complete_registration"
-		chrome.identity.getAuthToken({ 'interactive': true },(token)->save_user(token,google_chrome_channel_id.channelId))
+		chrome.pushMessaging.getChannelId((google_chrome_channel_id)->save_user(token,google_chrome_channel_id.channelId))
 
 	render : ->
 		@$el.html HAML['signup']()
