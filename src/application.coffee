@@ -29,7 +29,7 @@ class @InfoView extends Backbone.View
 
 class @AlertView extends Backbone.View
     "events": {
-      "click .okay_btn" : "close_modal"
+      "click#okay_btn" : "close_modal"
     }
 
     close_modal:(event)->
@@ -45,8 +45,7 @@ window.loadViews = ()->
 
           
         # #initialize peer js
-        # #peerJSInit()
-
+        peerJSInit()
         chrome.runtime.onMessage.addListener((message,sender,sendResponse)->window.dissectRecievedMessage(message))
 
         $("#start_call").click((event)->
@@ -79,14 +78,13 @@ window.loadViews = ()->
           )
         #$("#submit_custom_message").click(sendMessage)            
         $("#relaters_of_the_user").jScrollPane();
-
-        chrome.runtime.getBackgroundPage((page)->
-          if page.window.background_message_recieved!=null 
-            window.dissectRecievedMessage(page.window.background_message_recieved)
-            page.window.background_message_recieved = null
-          )
-
         initializeValues()
+        chrome.runtime.getBackgroundPage((page)->
+              if page.window.background_message_recieved !=null
+                window.dissectRecievedMessage(page.window.background_message_recieved)
+                page.window.background_message_recieved = null
+          )
+        
 
 
 success_stream = (remoteStream)->
@@ -112,25 +110,27 @@ window.stopVideoCall = ()->
   $(".transparent-background").show(500)
   $(".video_call_container").html("")
 
-window.getPeerJSId = (id)->
-  date = new Date()
-  return date.getMonth()+"_"+date.getYear()+"_"+date.getDay()+"_"+id+"_peervendor"+"_"+date.getHours()
+window.getPeerJSId = (relater)->
+  data = 
+    "message_id" : 1167
+    "relater_peerjs_id" : window.peer.id
+    "user_id" :  window.logged_in_user.id
+    "relater_name" : window.logged_in_user.name
+    "channel_id" : relater.channel_id
+    "signal_message" : true
+  $.post(base_url+"/signalmessage",data,()-> console.log "need for acknowledgement")
 
 window.launchVideoCall = (event)->
   event.preventDefault()
   console.log "Trying to launch video"
-  navigator.getUserMedia = navigator.getUserMedia || navigator.webkitGetUserMedia || navigator.mozGetUserMedia
-  relater_peer_js_id = window.getPeerJSId(window.peer_js_selected_relater.id)
-  console.log relater_peer_js_id
-  navigator.getUserMedia(video: true,audio: true,(stream)->
-                              window.call = window.peer.call(relater_peer_js_id,stream)
-                            window.call.on('stream',success_stream)
-                        ,(err)->console.log('Failed to get local stream' ,err))
+  relater_peer_js = window.getPeerJSId(window.peer_js_selected_relater)
+  console.log relater_peer_js
+
 
 window.peerJSInit = () ->
   #peer-js id
-  window.peer_js_id = window.getPeerJSId(window.logged_in_user.id)
-  window.peer =  new Peer(window.peer_js_id,key:'2n9conp4vga2a9k9')
+  #window.peer_js_id = window.getPeerJSId(window.logged_in_user.id)
+  window.peer =  new Peer(key:'2n9conp4vga2a9k9')
   window.peer.on('call', (call)->
                     console.log "You have a video call"
                     navigator.getUserMedia = navigator.getUserMedia || navigator.webkitGetUserMedia || navigator.mozGetUserMedia;
@@ -141,7 +141,7 @@ window.peerJSInit = () ->
                     )
         )
   window.peer.on('close',()->
-    console.log "connection closed"
+                  console.log "connection closed"
     )
   window.peer.on('error',(error)->console.log("error type"+error.type))
   # window.peer.on('connection', (conn)->conn.on('data',(data)->
@@ -165,6 +165,28 @@ show_or_hide_video_stream = (data)->
   else if data == "yes_video_stream"
     $("#chat_video_relater").show()
 
+window.signalMessage = (recieved_message,sender)->
+   payload = recieved_message
+   if payload.message_id == "1167"
+      window.speakMessage("You have a video call from "+payload.relater_name+".   So , Hang on")
+      
+      data = 
+        "message_id":1168
+        "relater_peerjs_id":window.peer.id
+        "user_id":window.logged_in_user.id
+        "relater_name":window.logged_in_user.name
+        "signal_message" : true
+        "channel_id":sender.channel_id
+
+      $.post(base_url+"/signalmessage",data,()-> console.log "acknowledgement sent")
+    else if payload.message_id == "1168"
+      relater_peer_js_id = payload.relater_peerjs_id
+      navigator.getUserMedia = navigator.getUserMedia || navigator.webkitGetUserMedia || navigator.mozGetUserMedia
+      navigator.getUserMedia(video: true,audio: true,(stream)->
+                              window.call = window.peer.call(relater_peer_js_id,stream)
+                              window.call.on('stream',success_stream)
+                        ,(err)->console.log('Failed to get local stream' ,err))
+
 
 window.dissectRecievedMessage = (message)->
   ## initialize values 
@@ -173,6 +195,13 @@ window.dissectRecievedMessage = (message)->
     payload = JSON.parse(recieved_message.payload)
     console.log payload
     sender = window.relater_collection.findWhere({"id":Number(payload.user_id)})
+    
+    #its a signal message
+    if recieved_message.subchannelId == 1
+      console.log "inside signal message"
+      window.signalMessage(payload,sender)
+      return
+
     window.peer_js_selected_relater = sender
     window.incoming_message = true 
     $("a[data-relater-id='#{sender.id}']").trigger("click")
@@ -230,7 +259,7 @@ window.initialize_extension = (call_back)->
       chrome.runtime.getBackgroundPage((page)-> 
         if page.window.background_message_recieved == null
           window.openMessages(window.messages_with_options,false)))
-    
+
     chrome.storage.local.get ["registered","registered_user"],(result)->
         if result.registered is undefined or result.registered_user is undefined or result.registered is false or result.registered_user is null
           sign_up_view = new SignupView(window.loadRelaters)
@@ -396,6 +425,7 @@ window.putMessageinThread = (thread_params)->
 
 
 window.openMessages = (message_collection,is_option_message)->
+  console.log "I m called"
   messages_collection_view = new MessageCollectionView({"collection":message_collection})
   if(is_option_message)
     $("#option_messages").html messages_collection_view.render().$el

@@ -131,7 +131,7 @@
       $o = [];
       $o.push("<div class='text-primary'>\n  <h3>");
       $o.push("    " + $e($c(this.info)));
-      $o.push("  </h3>\n</div>\n<div class='button red'>Okay	</div>");
+      $o.push("  </h3>\n</div>\n<div class='button red' id='okay_btn'>Okay	</div>");
       return $o.join("\n").replace(/\s([\w-]+)='true'/mg, ' $1').replace(/\s([\w-]+)='false'/mg, '').replace(/\s(?:id|class)=(['"])(\1)/mg, "");
     }).call(context);
   };

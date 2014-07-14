@@ -6,13 +6,14 @@
 
     function Messages() {
       var _this = this;
-      this.fetchMessages = function(callback, result) {
+      this.fetchMessages = function(result) {
         return Messages.prototype.fetchMessages.apply(_this, arguments);
       };
       this.version = 3;
       this.database = null;
       this.transaction = null;
       this.base_url = window.base_url;
+      this.messages_local_storage_key = "messages_last_synced";
       this.messages_url = this.base_url + "/messages.json";
       this.message_options_url = this.base_url + "/message_options.json";
       this.db_name = "calltheteam";
@@ -21,6 +22,7 @@
     Messages.prototype.init = function(callback) {
       var _this = this;
       this.request = indexedDB.open(this.db_name, this.version);
+      this.callback = callback;
       this.request.onupgradeneeded = function(event) {
         var db, object_store_message_options, object_store_messages;
         db = event.target.result;
@@ -39,8 +41,8 @@
       };
       this.request.onsuccess = function(event) {
         _this.database = event.target.result;
-        return chrome.storage.local.get("last_updated", function(result) {
-          return _this.fetchMessages(callback, result);
+        return chrome.storage.local.get(_this.messages_local_storage_key, function(result) {
+          return _this.fetchMessages(result);
         });
       };
       return this.request.onerror = function(event) {
@@ -48,26 +50,23 @@
       };
     };
 
-    Messages.prototype.fetchMessages = function(callback, result) {
+    Messages.prototype.fetchMessages = function(result) {
       var current_date, current_date_string, last_updated, last_updated_date, now, result_last_updated;
       now = new Date();
-      console.log("Inside fetch messages");
       current_date = new Date(now.getYear(), now.getMonth(), now.getDate());
       current_date_string = now.getYear() + "/" + now.getMonth() + "/" + now.getDate();
-      result_last_updated = result["last_updated"];
+      result_last_updated = result[this.messages_local_storage_key];
       console.log(result_last_updated);
-      if (result_last_updated.split("/") === null) {
+      if (result_last_updated === void 0 || result_last_updated.split("/") === null) {
         this.fetch(current_date_string);
-        return this.getAllMessages(callback);
+        return console.log("Inside fetch messages");
       } else {
-        console.log("fetchMessages");
         last_updated = result_last_updated.split("/");
         last_updated_date = new Date(last_updated[0], last_updated[1], last_updated[2]);
         if (last_updated_date < current_date) {
-          this.fetch(current_date_string);
-          return this.getAllMessages(callback);
+          return this.fetch(current_date_string);
         } else {
-          return this.getAllMessages(callback);
+          return this.getAllMessages();
         }
       }
     };
@@ -87,14 +86,19 @@
       }
     };
 
-    Messages.prototype.addMessageOptions = function(object_to_store) {
-      var request;
+    Messages.prototype.addMessageOptions = function(object_to_store, index, data_length) {
+      var request,
+        _this = this;
       if (this.database !== null) {
         this.transaction = this.database.transaction(["messages", "message_options"], "readwrite");
         this.store = this.transaction.objectStore("message_options");
         request = this.store.put(object_to_store);
         request.onsuccess = function(event) {
-          return console.log("message options successfully written");
+          console.log("message options successfully written");
+          if (index === data_length - 1) {
+            console.log("index " + index + " data length" + data_length);
+            return _this.getAllMessages();
+          }
         };
         return request.onerror = function(event) {
           return console.log("insertion error");
@@ -115,28 +119,30 @@
           });
         }
         return $.get(_this.message_options_url, function(data) {
-          var message_option, _j, _len1;
-          for (_j = 0, _len1 = data.length; _j < _len1; _j++) {
-            message_option = data[_j];
+          var index, message_option, _j, _len1, _results;
+          chrome.storage.local.set({
+            "messages_last_synced": current_date
+          }, function() {
+            return console.log("messages_updated");
+          });
+          _results = [];
+          for (index = _j = 0, _len1 = data.length; _j < _len1; index = ++_j) {
+            message_option = data[index];
             _this.addMessageOptions({
               "id": message_option.id,
               "message_id": message_option.message_id,
               "options_id": message_option.options_id
-            });
+            }, index, data.length);
+            _results.push(console.log(current_date));
           }
-          console.log(current_date);
-          chrome.storage.local.set({
-            "last_updated": current_date
-          }, function() {
-            return console.log("messages_updated");
-          });
-          return _this.getAllMessages();
+          return _results;
         });
       });
     };
 
-    Messages.prototype.getAllMessages = function(callback) {
-      var arr_messages_with_options, message_transactions, messages_objectstore, objectstore;
+    Messages.prototype.getAllMessages = function() {
+      var arr_messages_with_options, message_transactions, messages_objectstore, objectstore,
+        _this = this;
       arr_messages_with_options = [];
       message_transactions = this.database.transaction(["message_options", "messages"]);
       objectstore = message_transactions.objectStore("message_options");
@@ -153,8 +159,9 @@
           };
         } else {
           window.messages_with_options = new MessageCollection(arr_messages_with_options);
-          if (callback !== null && callback !== void 0) {
-            return callback();
+          if (_this.callback !== null && _this.callback !== void 0) {
+            console.log("i completed getting messages");
+            return _this.callback();
           }
         }
       };

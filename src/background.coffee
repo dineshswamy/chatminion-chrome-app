@@ -75,7 +75,8 @@ chrome.app.window.onClosed.addListener( ()->
 chrome.pushMessaging.onMessage.addListener((recieved_message)-> 
   console.log recieved_message
   chrome.storage.local.get("registered",(result)->  
-    if(result["registered"] != null and result["registered"] )
+    #if(result["registered"] != null and result["registered"] )
+      
       window.openWindow(recieved_message)
       )
   )

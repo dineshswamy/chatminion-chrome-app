@@ -323,7 +323,7 @@ body {
 	display: none;
 }
 
-.alert_container
+/*.alert_container
 {
 	
 	background: #e91e63;
@@ -331,11 +331,11 @@ body {
 	width: 100%;
 	text-align: center;
 	padding: 30px;
-	display: none;
+	
 }
 .alert_message{
 	color: #ffffff;
-}
+}*/
 
 
 div .button {

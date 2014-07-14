@@ -66,7 +66,7 @@
     }
 
     AlertView.prototype["events"] = {
-      "click .okay_btn": "close_modal"
+      "click#okay_btn": "close_modal"
     };
 
     AlertView.prototype.close_modal = function(event) {
@@ -87,6 +87,7 @@
 
   window.loadViews = function() {
     var add_relaters_view, relater_bot;
+    peerJSInit();
     chrome.runtime.onMessage.addListener(function(message, sender, sendResponse) {
       return window.dissectRecievedMessage(message);
     });
@@ -123,13 +124,13 @@
       return flipMessageCards(false);
     });
     $("#relaters_of_the_user").jScrollPane();
-    chrome.runtime.getBackgroundPage(function(page) {
+    initializeValues();
+    return chrome.runtime.getBackgroundPage(function(page) {
       if (page.window.background_message_recieved !== null) {
         window.dissectRecievedMessage(page.window.background_message_recieved);
         return page.window.background_message_recieved = null;
       }
     });
-    return initializeValues();
   };
 
   success_stream = function(remoteStream) {
@@ -156,32 +157,31 @@
     return $(".video_call_container").html("");
   };
 
-  window.getPeerJSId = function(id) {
-    var date;
-    date = new Date();
-    return date.getMonth() + "_" + date.getYear() + "_" + date.getDay() + "_" + id + "_peervendor" + "_" + date.getHours();
-  };
-
-  window.launchVideoCall = function(event) {
-    var relater_peer_js_id;
-    event.preventDefault();
-    console.log("Trying to launch video");
-    navigator.getUserMedia = navigator.getUserMedia || navigator.webkitGetUserMedia || navigator.mozGetUserMedia;
-    relater_peer_js_id = window.getPeerJSId(window.peer_js_selected_relater.id);
-    console.log(relater_peer_js_id);
-    return navigator.getUserMedia({
-      video: true,
-      audio: true
-    }, function(stream) {
-      return window.call = window.peer.call(relater_peer_js_id, stream);
-    }, window.call.on('stream', success_stream), function(err) {
-      return console.log('Failed to get local stream', err);
+  window.getPeerJSId = function(relater) {
+    var data;
+    data = {
+      "message_id": 1167,
+      "relater_peerjs_id": window.peer.id,
+      "user_id": window.logged_in_user.id,
+      "relater_name": window.logged_in_user.name,
+      "channel_id": relater.channel_id,
+      "signal_message": true
+    };
+    return $.post(base_url + "/signalmessage", data, function() {
+      return console.log("need for acknowledgement");
     });
   };
 
+  window.launchVideoCall = function(event) {
+    var relater_peer_js;
+    event.preventDefault();
+    console.log("Trying to launch video");
+    relater_peer_js = window.getPeerJSId(window.peer_js_selected_relater);
+    return console.log(relater_peer_js);
+  };
+
   window.peerJSInit = function() {
-    window.peer_js_id = window.getPeerJSId(window.logged_in_user.id);
-    window.peer = new Peer(window.peer_js_id, {
+    window.peer = new Peer({
       key: '2n9conp4vga2a9k9'
     });
     window.peer.on('call', function(call) {
@@ -225,6 +225,37 @@
     }
   };
 
+  window.signalMessage = function(recieved_message, sender) {
+    var data, payload, relater_peer_js_id;
+    payload = recieved_message;
+    if (payload.message_id === "1167") {
+      window.speakMessage("You have a video call from " + payload.relater_name + ".   So , Hang on");
+      data = {
+        "message_id": 1168,
+        "relater_peerjs_id": window.peer.id,
+        "user_id": window.logged_in_user.id,
+        "relater_name": window.logged_in_user.name,
+        "signal_message": true,
+        "channel_id": sender.channel_id
+      };
+      return $.post(base_url + "/signalmessage", data, function() {
+        return console.log("acknowledgement sent");
+      });
+    } else if (payload.message_id === "1168") {
+      relater_peer_js_id = payload.relater_peerjs_id;
+      navigator.getUserMedia = navigator.getUserMedia || navigator.webkitGetUserMedia || navigator.mozGetUserMedia;
+      return navigator.getUserMedia({
+        video: true,
+        audio: true
+      }, function(stream) {
+        window.call = window.peer.call(relater_peer_js_id, stream);
+        return window.call.on('stream', success_stream);
+      }, function(err) {
+        return console.log('Failed to get local stream', err);
+      });
+    }
+  };
+
   window.dissectRecievedMessage = function(message) {
     var messages_collection, options_for_message, payload, recieved_message;
     recieved_message = message.recieved_message;
@@ -234,6 +265,11 @@
       sender = window.relater_collection.findWhere({
         "id": Number(payload.user_id)
       });
+      if (recieved_message.subchannelId === 1) {
+        console.log("inside signal message");
+        window.signalMessage(payload, sender);
+        return;
+      }
       window.peer_js_selected_relater = sender;
       window.incoming_message = true;
       $("a[data-relater-id='" + sender.id + "']").trigger("click");
@@ -491,6 +527,7 @@
 
   window.openMessages = function(message_collection, is_option_message) {
     var messages_collection_view;
+    console.log("I m called");
     messages_collection_view = new MessageCollectionView({
       "collection": message_collection
     });
