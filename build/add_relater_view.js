@@ -39,15 +39,12 @@
     };
 
     callback_check_and_addRelator = function(response_json) {
-      var new_relater;
-      console.log(response_json.status);
-      new_relater = {
-        "id": response_json.new_relater.id,
-        "name": response_json.new_relater.name,
-        "channel_id": response_json.new_relater.channel_id
-      };
       switch (response_json.status) {
         case "success":
+          new_relater["id"] = response_json.new_relater.id;
+          new_relater["name"] = response_json.new_relater.name;
+          new_relater["channel_id"] = response_json.new_relater.channel_id;
+          new_relater["gender"] = response_json.new_relater.gender;
           return add_new_relater_and_render(new_relater);
         case "user_not_registered":
           return openGmailForRequest($("#new_contact_email").val());
@@ -55,18 +52,14 @@
     };
 
     add_new_relater_and_render = function(relater) {
-      var add_relaters_view, message, relater_collection_view;
+      var add_relaters_view, relater_collection_view;
       window.addRelaterToCollection(relater);
       add_relaters_view = new addRelatersView();
       relater_collection_view = new RelatersCollectionView({
         "collection": window.relater_collection
       });
       $("#relaters_of_the_user").html(relater_collection_view.render().el);
-      $("#relaters_of_the_user").prepend(add_relaters_view.render().$el);
-      if (relater !== null) {
-        message = "Please ask " + relater.name(+", to add you to his contacts");
-        return showAlert();
-      }
+      return $("#relaters_of_the_user").prepend(add_relaters_view.render().$el);
     };
 
     openGmailForRequest = function(email) {

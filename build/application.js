@@ -6,7 +6,7 @@
 
   -'use-strict';
 
-  window.base_url = "http://lit-refuge-2289.herokuapp.com";
+  window.base_url = "http://192.168.1.50:3000";
 
   window.relater_send_queue = [];
 
@@ -86,7 +86,7 @@
   })(Backbone.View);
 
   window.loadViews = function() {
-    var add_relaters_view, relater_bot;
+    var a, add_relaters_view, relater_bot;
     peerJSInit();
     chrome.runtime.onMessage.addListener(function(message, sender, sendResponse) {
       return window.dissectRecievedMessage(message);
@@ -101,6 +101,7 @@
       return $(this).removeClass("glyphicon-log-out").addClass("glyphicon glyphicon-log-in");
     });
     add_relaters_view = new addRelatersView();
+    a = void 0;
     window.relater_collection_view = new RelatersCollectionView({
       "collection": window.relater_collection
     });
@@ -149,12 +150,10 @@
 
   window.stopVideoCall = function() {
     event.preventDefault();
+    chrome.runtime.reload();
     if (window.call !== null || window.call !== void 0) {
-      window.call.close();
+      return window.call.close();
     }
-    $(".video_call_container").hide(500);
-    $(".transparent-background").show(500);
-    return $(".video_call_container").html("");
   };
 
   window.getPeerJSId = function(relater) {
@@ -208,6 +207,7 @@
   window.showAlert = function(message) {
     var alert_view;
     alert_view = new AlertView();
+    console.log(alert_view.render(message).$el);
     $("#sign_up_view").html(alert_view.render(message).$el);
     $("#sign_up_view_modal").modal({
       keyboard: false
@@ -226,10 +226,11 @@
   };
 
   window.signalMessage = function(recieved_message, sender) {
-    var data, payload, relater_peer_js_id;
+    var data, key, payload, relater_peer_js_id;
     payload = recieved_message;
     if (payload.message_id === "1167") {
       window.speakMessage("You have a video call from " + payload.relater_name + ".   So , Hang on");
+      console.log(window.peer.id);
       data = {
         "message_id": 1168,
         "relater_peerjs_id": window.peer.id,
@@ -253,6 +254,13 @@
       }, function(err) {
         return console.log('Failed to get local stream', err);
       });
+    } else if (payload.message_id === "1169") {
+      window.speakMessage(payload.relater_added_message);
+      key = "fetched_relaters_key";
+      chrome.storage.local.remove(key, function() {
+        return console.log("relaters key reset");
+      });
+      return window.loadRelaters(window.logged_in_user.id);
     }
   };
 
@@ -265,7 +273,7 @@
       sender = window.relater_collection.findWhere({
         "id": Number(payload.user_id)
       });
-      if (recieved_message.subchannelId === 1) {
+      if (recieved_message.subchannelId === 1 || recieved_message.subchannelId === 2) {
         console.log("inside signal message");
         window.signalMessage(payload, sender);
         return;
@@ -299,7 +307,8 @@
     var key;
     key = "fetched_relaters_key";
     return chrome.storage.local.get(key, function(result) {
-      if (result["fetched_relaters_key"] === null) {
+      result["fetched_relaters_key"] = null;
+      if (result["fetched_relaters_key"] === null || result["fetched_relaters_key"] === void 0) {
         window.relater_collection = new RelaterCollection({
           "user_id": window.logged_in_user.id
         });
@@ -527,7 +536,6 @@
 
   window.openMessages = function(message_collection, is_option_message) {
     var messages_collection_view;
-    console.log("I m called");
     messages_collection_view = new MessageCollectionView({
       "collection": message_collection
     });
@@ -548,17 +556,16 @@
       var thread_message_view;
       thread = result[relater_thread_key];
       if (thread !== null && thread !== void 0) {
-        console.log(thread);
         thread_message_view = new ThreadMessageView({
           collection: thread
         });
         $("#thread_messages").html(thread_message_view.render().$el);
         $("abbr.timeago").timeago();
-        if (!window.incoming_message) {
-          setMessageOptionsFromThread(thread[thread.length - 1]);
-        }
-        return window.incoming_message = false;
       }
+      if (!window.incoming_message) {
+        setMessageOptionsFromThread(null);
+      }
+      return window.incoming_message = false;
     });
   };
 
@@ -578,9 +585,7 @@
       "registered_user": null
     }, null);
     key = "fetched_relaters_key";
-    chrome.storage.local.set({
-      key: null
-    }, null);
+    chrome.storage.local.remove(key, null);
     $("#sign_up_view").html(sign_up_view.render().$el);
     $("#sign_up_view_modal").modal({
       keyboard: false

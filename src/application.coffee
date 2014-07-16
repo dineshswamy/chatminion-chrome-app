@@ -1,9 +1,9 @@
 -'use-strict';
 
-window.base_url = "http://lit-refuge-2289.herokuapp.com"
+#window.base_url = "http://lit-refuge-2289.herokuapp.com"
 #window.base_url = "http://localhost:3000"
 #window.base_url = "http://localhost:3000"
-#window.base_url = "http://192.168.1.53:3000"
+window.base_url = "http://192.168.1.50:3000"
 #window.base_url = "http://192.168.1.25:3000"
 window.relater_send_queue = []
 window.message_to_send = null
@@ -58,7 +58,8 @@ window.loadViews = ()->
             $(this).removeClass("glyphicon-log-out").addClass("glyphicon glyphicon-log-in")
             )
         add_relaters_view = new addRelatersView()    
-        
+        a = undefined
+
         window.relater_collection_view = new RelatersCollectionView({"collection":window.relater_collection})
         if window.relater_collection.models.length > 0
             $("#relaters_of_the_user").html window.relater_collection_view.render().el
@@ -104,11 +105,12 @@ success_relater_stream = (remoteStream)->
 
 window.stopVideoCall = ()->
   event.preventDefault()
+  chrome.runtime.reload()
   if window.call!=null or window.call!=undefined 
      window.call.close()
-  $(".video_call_container").hide(500)
-  $(".transparent-background").show(500)
-  $(".video_call_container").html("")
+  #$(".video_call_container").hide(500)
+  #$(".transparent-background").show(500)
+  #$(".video_call_container").html("")
 
 window.getPeerJSId = (relater)->
   data = 
@@ -151,7 +153,10 @@ window.peerJSInit = () ->
 
 window.showAlert = (message)->
   alert_view = new AlertView()
+  
+  console.log alert_view.render(message).$el
   $("#sign_up_view").html(alert_view.render(message).$el)
+
   $("#sign_up_view_modal").modal({keyboard:false})
   $("#sign_up_view_modal").modal('show')
   #$(".alert_container").show(100).delay(1000).hide(100)
@@ -169,7 +174,8 @@ window.signalMessage = (recieved_message,sender)->
    payload = recieved_message
    if payload.message_id == "1167"
       window.speakMessage("You have a video call from "+payload.relater_name+".   So , Hang on")
-      
+      console.log window.peer.id
+      #window.peerJSInit()
       data = 
         "message_id":1168
         "relater_peerjs_id":window.peer.id
@@ -186,6 +192,13 @@ window.signalMessage = (recieved_message,sender)->
                               window.call = window.peer.call(relater_peer_js_id,stream)
                               window.call.on('stream',success_stream)
                         ,(err)->console.log('Failed to get local stream' ,err))
+    else if payload.message_id == "1169"
+      window.speakMessage(payload.relater_added_message)
+      key = "fetched_relaters_key"
+      chrome.storage.local.remove(key,()->console.log "relaters key reset")
+      window.loadRelaters(window.logged_in_user.id)
+
+
 
 
 window.dissectRecievedMessage = (message)->
@@ -197,7 +210,7 @@ window.dissectRecievedMessage = (message)->
     sender = window.relater_collection.findWhere({"id":Number(payload.user_id)})
     
     #its a signal message
-    if recieved_message.subchannelId == 1
+    if recieved_message.subchannelId == 1 or recieved_message.subchannelId == 2
       console.log "inside signal message"
       window.signalMessage(payload,sender)
       return
@@ -226,7 +239,8 @@ window.dissectRecievedMessage = (message)->
 window.loadRelaters = (user_id) ->
   key = "fetched_relaters_key"
   chrome.storage.local.get(key,(result)->
-        if result["fetched_relaters_key"] is null
+        result["fetched_relaters_key"] = null
+        if result["fetched_relaters_key"] is null or result["fetched_relaters_key"] is undefined
           window.relater_collection = new RelaterCollection({"user_id":window.logged_in_user.id})
           window.relater_collection.fetch
                   success : ->  
@@ -425,7 +439,6 @@ window.putMessageinThread = (thread_params)->
 
 
 window.openMessages = (message_collection,is_option_message)->
-  console.log "I m called"
   messages_collection_view = new MessageCollectionView({"collection":message_collection})
   if(is_option_message)
     $("#option_messages").html messages_collection_view.render().$el
@@ -441,15 +454,16 @@ window.loadMessagesofRelater = (relater_id)->
   chrome.storage.local.get(relater_thread_key,(result)->
       thread = result[relater_thread_key]
       if thread != null and thread != undefined 
-        console.log thread
         thread_message_view = new ThreadMessageView({collection:thread})
         $("#thread_messages").html thread_message_view.render().$el
         $("abbr.timeago").timeago()
         
-        if !window.incoming_message 
-          setMessageOptionsFromThread(thread[thread.length-1]);        
-        # checks w  
-        window.incoming_message = false  
+        #if !window.incoming_message 
+        #  setMessageOptionsFromThread(thread[thread.length-1]);        
+        # checks w
+      if !window.incoming_message
+        setMessageOptionsFromThread(null);
+      window.incoming_message = false  
     )
 window.logOutUser = ()->
         window.removeProfileAttributes()
@@ -457,7 +471,7 @@ window.logOutUser = ()->
         chrome.identity.getAuthToken({ 'interactive': true },(token)-> chrome.identity.removeCachedAuthToken({"token":token},()->))
         chrome.storage.local.set({"registered":false,"registered_user":null},null)
         key = "fetched_relaters_key"
-        chrome.storage.local.set({key:null},null)
+        chrome.storage.local.remove(key,null)
         $("#sign_up_view").html(sign_up_view.render().$el)
         $("#sign_up_view_modal").modal({keyboard:false})
         $("#sign_up_view_modal").modal('show')

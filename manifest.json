@@ -19,7 +19,7 @@
     "client_id": "445760815141-g3dfjppbtpff1feu5mj0i5jr4v0c99dq.apps.googleusercontent.com",
     "scopes": [ "https://www.googleapis.com/auth/userinfo.email","https://www.googleapis.com/auth/userinfo.profile"]
   },
-    "key": "MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAinyqoCSVQRcA28WvjVA4EjnM99ImmkY99g6otpilLikR/lFlj6kb9dbYMeQ07Cotmm+HI3jn9FdD3dDuznjyVASTlEXSJVWVb64gKS5nokP2FJ5hphXdJzQE+jNwh5PoyBzcs2iJ/ZSILmpQwmSPYtkUJdtJKEoJKuOMxl1sjYnd5IOSt+/X5gL8MLjETeMIZLQxysklHuZaKwIyYVuuOVTlxECUVuw1bAAek4WD3KGsX604SXK0vdRYCnFaOh7hzwPLX2Wd7e+Le5P8R8YZ0p1ZJKNgTOEXarl4u9E3eN6FGYQDJtw5zAHlCFjczi0o4pr6uMrZuCKoSgBuv/PO0QIDAQAB",
+    "key": "MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAjDO+REGIJ5X54kZCvfDT6Ld+9D8MxxHC29LsnIPASOsCFc0qsdoiN7sppH7vvbfIlu+RwDW/oDRi+SE9la1eAqfnhmohjXFxs1lRlUG/MK5Bo03Jck7pKlJRIkEZRvwOWMfcdtqKPQvl2WZoAzqnWzniD001uqL41rofroVIi41i86BWYXhm68NdruvonZ2FaZoNxsZ9hWddryVvqPSRbgg0Gbs2mr+jKQ5bK8dsy5UGbaXuHU+B9doW3ZYKNRtVSM9YIIG5creflL2/ydUbby7UvRzaij5R1l6bSK+QlCEl6wEJT1Y13V1vgcsEE+PNFwrqFno60+joAh0StM+V3QIDAQAB",
    "manifest_version": 2,
    "minimum_chrome_version": "23",
    "name": "Chat minion",

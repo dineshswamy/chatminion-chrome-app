@@ -24,7 +24,7 @@
       $o = [];
       $o.push("<div class='alert_container'>\n  <div class='alert_message'>");
       $o.push("    " + $e($c(this.alert_message)));
-      $o.push("  </div>\n</div>");
+      $o.push("  </div>\n  <div class='button'>\n    <div class='red'>\n      Okay\n    </div>\n  </div>\n</div>");
       return $o.join("\n").replace(/\s([\w-]+)='true'/mg, ' $1').replace(/\s([\w-]+)='false'/mg, '').replace(/\s(?:id|class)=(['"])(\1)/mg, "");
     }).call(context);
   };

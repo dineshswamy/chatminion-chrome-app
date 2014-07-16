@@ -323,19 +323,18 @@ body {
 	display: none;
 }
 
-/*.alert_container
+.alert_container
 {
 	
 	background: #e91e63;
 	border-bottom: 1px solid #880e4f;
-	width: 100%;
 	text-align: center;
 	padding: 30px;
 	
 }
 .alert_message{
 	color: #ffffff;
-}*/
+}
 
 
 div .button {
@@ -358,7 +357,7 @@ div .button {
 	border-radius: 2px;
 	
 	cursor: default;
-	font-size: 11px;
+	font-size: 15px;
 	font-weight: bold;
 	text-align: center;
 	height: 27px;
