@@ -1,10 +1,21 @@
 Chatminion - an Office chat assistant
 =====================================
 
-*The following instructions  are to people who want to hack the chatminion .The production version is available here*
+*The following instructions  are to people who want to know the underhood of chatminion.The app is available here [chatminion](https://chrome.google.com/webstore/detail/chat-minion/ggppffbhjobdepilfllgmpojejkeemca)*
 
+##How Messages are sent and recieved ?
 
-I m sure , Your are here to hackaway this chatminion project . I m glad and happy .
+The messaging flow by the application is described below
+
+![alt tag](https://raw.github.com/dineshswamy/chatminion-chrome-app/master/chatminion-arch.png)
+
+The above flow diagram explains everything .
+
+* Client is the work-horse , server does nothing except message from client and passing it google-cloud . Thats how server over head is reduced.
+
+* Server side does storing account details , performing authentication etc . 
+
+* All the application logic , signal messages are all from client.
 
 The development stack of chatminion is the following
 
@@ -20,7 +31,7 @@ The development stack of chatminion is the following
 
 * HTML + CSS
 
-* Web RTC for video calls support
+* Web RTC for video calls support(powered by peerjs)
 
 * PostgreSQL
 >postgresql is used , because heroku primarily supports postgres.You are free to use any database
@@ -36,9 +47,6 @@ Proficiency with the above stack is required to build on top of this . Absolute 
 written , you dont need to be a PRO with these technologies(neither was I).
 The code is not heavily commented although i m working on to do that . you can drop me a mail , in case you need them . i m happy to answer . 
 
-The messaging flow by the application is described below
-
-		![alt tag](https://raw.github.com/dineshswamy/chatminion-chrome-app/master/chatminion-arch.png)
 
 Instructions to setup development environment 
 
@@ -54,6 +62,8 @@ Instructions to setup development environment
 
 
 [chatminion-heroku-app](https://github.com/dineshswamy/chatminion-heroku-app)
+
+The above repo is made obsolete for security purposes.
 
 
 [chatminion-chrome-app](https://github.com/dineshswamy/chatminion-chrome-app)
