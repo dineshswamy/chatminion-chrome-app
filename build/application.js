@@ -6,7 +6,7 @@
 
   -'use-strict';
 
-  window.base_url = "http://192.168.1.50:3000";
+  window.base_url = "http://lit-refuge-2289.herokuapp.com";
 
   window.relater_send_queue = [];
 
@@ -66,12 +66,16 @@
     }
 
     AlertView.prototype["events"] = {
-      "click#okay_btn": "close_modal"
+      "click #okay_btn": "close_modal"
     };
 
     AlertView.prototype.close_modal = function(event) {
       event.preventDefault();
       return $("#sign_up_view_modal").modal('hide');
+    };
+
+    AlertView.prototype.hide_okay_button = function() {
+      return $("#okay_btn").hide();
     };
 
     AlertView.prototype.render = function(message) {
@@ -86,7 +90,7 @@
   })(Backbone.View);
 
   window.loadViews = function() {
-    var a, add_relaters_view, relater_bot;
+    var add_relaters_view, relater_bot;
     peerJSInit();
     chrome.runtime.onMessage.addListener(function(message, sender, sendResponse) {
       return window.dissectRecievedMessage(message);
@@ -101,7 +105,6 @@
       return $(this).removeClass("glyphicon-log-out").addClass("glyphicon glyphicon-log-in");
     });
     add_relaters_view = new addRelatersView();
-    a = void 0;
     window.relater_collection_view = new RelatersCollectionView({
       "collection": window.relater_collection
     });
@@ -207,7 +210,6 @@
   window.showAlert = function(message) {
     var alert_view;
     alert_view = new AlertView();
-    console.log(alert_view.render(message).$el);
     $("#sign_up_view").html(alert_view.render(message).$el);
     $("#sign_up_view_modal").modal({
       keyboard: false
@@ -268,7 +270,11 @@
     var messages_collection, options_for_message, payload, recieved_message;
     recieved_message = message.recieved_message;
     if (window.relater_collection !== null) {
-      payload = JSON.parse(recieved_message.payload);
+      try {
+        payload = JSON.parse(recieved_message.payload);
+      } catch (exception) {
+        return;
+      }
       console.log(payload);
       sender = window.relater_collection.findWhere({
         "id": Number(payload.user_id)
@@ -307,7 +313,6 @@
     var key;
     key = "fetched_relaters_key";
     return chrome.storage.local.get(key, function(result) {
-      result["fetched_relaters_key"] = null;
       if (result["fetched_relaters_key"] === null || result["fetched_relaters_key"] === void 0) {
         window.relater_collection = new RelaterCollection({
           "user_id": window.logged_in_user.id
@@ -349,7 +354,7 @@
         }
       });
     });
-    return chrome.storage.local.get(["registered", "registered_user"], function(result) {
+    chrome.storage.local.get(["registered", "registered_user"], function(result) {
       var sign_up_view;
       if (result.registered === void 0 || result.registered_user === void 0 || result.registered === false || result.registered_user === null) {
         sign_up_view = new SignupView(window.loadRelaters);
@@ -365,6 +370,14 @@
         return window.loadRelaters(window.logged_in_user.id);
       }
     });
+    $(document).keydown(function(event) {
+      if (event.keyCode === 13 && event.ctrlKey) {
+        return window.sendMessage(event);
+      }
+    });
+    window.service = analytics.getService("Chatminion");
+    window.tracker = service.getTracker('UA-52908702-1');
+    return window.tracker.sendEvent('app-view', 'opened', 'yes');
   };
 
   window.getTransformedMessage = function(sender, reciever_name, user_message, transform_pattern, message_id, time, read_out) {
@@ -438,15 +451,17 @@
     custom_message = $("#custom_message").val();
     relater_to_send = window.peer_js_selected_relater;
     message = window.message_to_send;
-    console.log(window.message_to_send);
+    custom_message = custom_message.trim();
+    if (relater_to_send === null && message === null && custom_message === "") {
+      showAlert("Pick a contact and choose/type a message");
+      return;
+    }
     if (relater_to_send === null) {
       showAlert("Pick a contact");
       return;
     }
-    console.log("custom_message" + custom_message === " ");
-    console.log("message " + message === null);
-    if (message === null && custom_message === " ") {
-      showAlert("Choose a message");
+    if (message === null && custom_message === "") {
+      showAlert("Choose/type a message");
       return;
     }
     time = String(new Date());
@@ -511,14 +526,14 @@
           collection: thread
         });
         $("#thread_messages").html(thread_message_view.render().$el);
-        $("abbr.timeago").timeago();
+        window.setTimeAgo();
         $("#thread_messages").fadeIn(500);
       } else {
         thread_message_view = new ThreadMessageView({
           collection: thread
         });
         $("#thread_messages").html(thread_message_view.render().$el);
-        $("abbr.timeago").timeago();
+        window.setTimeAgo();
         if (new_thread.is_custom_message) {
           transformed_message = new_thread.relater.name + " says " + new_thread.transformed_message;
         } else {
@@ -526,6 +541,7 @@
         }
         $("#transformed_message").html(transformed_message);
         thread.push(new_thread);
+        console.log(thread);
         result[relater_thread_key] = thread;
       }
       return chrome.storage.local.set(result, function() {
@@ -560,7 +576,7 @@
           collection: thread
         });
         $("#thread_messages").html(thread_message_view.render().$el);
-        $("abbr.timeago").timeago();
+        window.setTimeAgo();
       }
       if (!window.incoming_message) {
         setMessageOptionsFromThread(null);
@@ -586,11 +602,14 @@
     }, null);
     key = "fetched_relaters_key";
     chrome.storage.local.remove(key, null);
+    chrome.storage.local.remove("messages_last_synced", null);
     $("#sign_up_view").html(sign_up_view.render().$el);
     $("#sign_up_view_modal").modal({
       keyboard: false
     });
-    return $("#sign_up_view_modal").modal('show');
+    $("#sign_up_view_modal").modal('show');
+    window.messages = new Messages();
+    return window.messages.init();
   };
 
   window.setMessageOptionsFromThread = function(last_thread_message) {
@@ -599,7 +618,7 @@
 
   window.setProfileAttributes = function(profile_picture, profile_name) {
     var xhr;
-    $("#profile_name").html("<h2>" + profile_name + "</h2>");
+    $("#profile_name").html("<h2>" + profile_name + "<span class='profile_email glyphicon-envelope'>" + window.logged_in_user.email + "</span></h2>");
     xhr = new XMLHttpRequest();
     xhr.onreadystatechange = function() {
       var img, url;
@@ -701,6 +720,15 @@
 
   window.getRelaterThread = function(sender_id) {
     return window.relater_threads[sender_id];
+  };
+
+  window.setTimeAgo = function() {
+    return $("abbr.timeago").each(function(index) {
+      var date, time;
+      time = $(this).prop("title");
+      date = new Date(time);
+      return $(this).html($.timeago(date));
+    });
   };
 
   window.speakMessage = function(transformed_message) {

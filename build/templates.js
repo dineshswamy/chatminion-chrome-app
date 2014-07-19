@@ -22,9 +22,7 @@
         }
       };
       $o = [];
-      $o.push("<div class='alert_container'>\n  <div class='alert_message'>");
-      $o.push("    " + $e($c(this.alert_message)));
-      $o.push("  </div>\n  <div class='button'>\n    <div class='red'>\n      Okay\n    </div>\n  </div>\n</div>");
+      $o.push("<div class='alert_container'>\n  <h1 class='alert_message'>" + ($e($c(this.alert_message))) + "</h1>\n  <button class='btn-square btn-success' id='okay_btn'>Okay</button>\n</div>");
       return $o.join("\n").replace(/\s([\w-]+)='true'/mg, ' $1').replace(/\s([\w-]+)='false'/mg, '').replace(/\s(?:id|class)=(['"])(\1)/mg, "");
     }).call(context);
   };
@@ -69,7 +67,7 @@
     return (function() {
       var $o;
       $o = [];
-      $o.push("<div class='panel-body'>\n  <div class='search-form'>\n    <div class='row'>\n      <div class='col-sm-9'>\n        <div class='form-group'>\n          <input class='form-control' id='new_contact_email' placeholder='Add your relater ...' type='email'>\n        </div>\n      </div>\n      <div class='col-sm-3'>\n        <a class='btn btn-block btn-primary' id='submit_new_contact'>\n          <i class='fa fa-plus'></i>\n          <span>Add</span>\n        </a>\n      </div>\n    </div>\n    <div class='row' id='relater_request_join' style='display:none'>\n      <div class='col-sm-9'>\n        <p class='text-primary'>It seems , your friend is not using Chatminion</p>\n      </div>\n      <div class='col-sm-3'>\n        <button class='btn-square btn-success' id='send_relater_request' type='submit'>ask him</button>\n      </div>\n    </div>\n  </div>\n</div>");
+      $o.push("<div class='panel-body'>\n  <div class='search-form'>\n    <div class='row'>\n      <div class='col-sm-9'>\n        <div class='form-group'>\n          <input class='form-control' id='new_contact_email' placeholder=\"Add your friend's email\" type='email'>\n        </div>\n      </div>\n      <div class='col-sm-3'>\n        <a class='btn btn-block btn-primary' id='submit_new_contact'>\n          <i class='fa fa-plus'></i>\n          <span>Add</span>\n        </a>\n      </div>\n    </div>\n    <div class='row' id='relater_request_join' style='display:none'>\n      <div class='col-sm-9'>\n        <p class='text-primary'>It seems , your friend is not using Chatminion</p>\n      </div>\n      <div class='col-sm-3'>\n        <button class='btn-square btn-success' id='send_relater_request' type='submit'>ask him</button>\n      </div>\n    </div>\n  </div>\n</div>");
       return $o.join("\n").replace(/\s(?:id|class)=(['"])(\1)/mg, "");
     }).call(context);
   };
@@ -84,7 +82,7 @@
     return (function() {
       var $o;
       $o = [];
-      $o.push("<div class='custom_message_container'>\n  <form class='form-horiz' role='form'>\n    <textarea class='form-group form-control' id='custom_message' placeholder='Your message ....' type='text' rows='2'></textarea>\n    <div class='message_properties'>\n      <input id='expect_reply' type='checkbox' checked='checked'>\n      <label for='expect_reply'>expect a reply</label>\n      <input id='read_out' type='checkbox' checked='checked'>\n      <label for='read_out'>read out</label>\n    </div>\n  </form>\n</div>\n<div class='row'>\n  <button class='btn btn-default' id='submit_custom_message'>Send</button>\n  <div class='glyphicon glyphicon-asterisk' id='reveal_message_properties'></div>\n</div>");
+      $o.push("<div class='custom_message_container'>\n  <form class='form-horiz' role='form'>\n    <textarea class='form-group form-control' id='custom_message' placeholder='Your message ....' type='text' rows='2'></textarea>\n    <div class='message_properties'>\n      <input id='expect_reply' type='checkbox' checked='checked'>\n      <label for='expect_reply'>expect a reply</label>\n      <input id='read_out' type='checkbox' checked='checked'>\n      <label for='read_out'>read out</label>\n    </div>\n  </form>\n</div>\n<div class='row'>\n  <button class='btn btn-default' id='submit_custom_message'>Send</button>\n  <div class='glyphicon glyphicon-asterisk' id='reveal_message_properties'></div>\n</div>\n<div class='row'>\n  <small>ctrl + enter</small>\n</div>");
       return $o.join("\n").replace(/\s(?:id|class)=(['"])(\1)/mg, "");
     }).call(context);
   };
@@ -131,7 +129,7 @@
       $o = [];
       $o.push("<div class='text-primary'>\n  <h3>");
       $o.push("    " + $e($c(this.info)));
-      $o.push("  </h3>\n</div>\n<div class='button red' id='okay_btn'>Okay	</div>");
+      $o.push("  </h3>\n</div>");
       return $o.join("\n").replace(/\s([\w-]+)='true'/mg, ' $1').replace(/\s([\w-]+)='false'/mg, '').replace(/\s(?:id|class)=(['"])(\1)/mg, "");
     }).call(context);
   };
@@ -242,7 +240,7 @@
         $o.push("  <span class='glyphicon glyphicon-facetime-video video_call_icon'></span>\n</h4>");
       } else {
         $o.push("<h4 class='list-group-item-heading'>");
-        $o.push("  " + $e($c(this.user_model.get("name") + "(sample)")));
+        $o.push("  " + $e($c(this.user_model.get("name") + "(sample friend)")));
         $o.push("</h4>");
       }
       return $o.join("\n").replace(/\s([\w-]+)='true'/mg, ' $1').replace(/\s([\w-]+)='false'/mg, '').replace(/\s(?:id|class)=(['"])(\1)/mg, "");

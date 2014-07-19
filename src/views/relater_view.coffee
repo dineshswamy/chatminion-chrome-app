@@ -26,6 +26,12 @@ class @RelaterView extends Backbone.View
 
    	start_video_call:(event)->
    		if event.target and event.target.nodeName == "SPAN"
+   			alert_view = new AlertView()
+   			message = "Connecting ..."
+   			$("#sign_up_view").html(alert_view.render(message).$el)
+   			alert_view.hide_okay_button()
+   			$("#sign_up_view_modal").modal({keyboard:false})
+   			$("#sign_up_view_modal").modal('show')
    			window.launchVideoCall(event)
 		
 

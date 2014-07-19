@@ -6,8 +6,7 @@ class @CustomMessageView extends Backbone.View
         @$el.html HAML["custom_message"]() 
         @
     send_message:(event)->
-        event.preventDefault()
-        
+        event.preventDefault()        
         window.sendMessage(event);
 
     open_message_properties:(event)->

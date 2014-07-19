@@ -8,22 +8,23 @@
    }
    ,
    "default_locale": "en",
-   "description": "call your team members with the help of Minion",
+   "description": "a Comprehensive chat application exclusively designed to be used for communication within an office or a team.",
    "icons": {
-      "128": "images/jarviz_background-120.png",
-      "16": "images/jarviz_background-16.png",
-      "48": "images/jarviz_background-48.png"
+      "128": "images/chatminion_logo_128.png",
+      "16": "images/chatminion_logo_16.png",
+      "48": "images/chatminion_logo_48.png"
    },
 
    "oauth2": {
     "client_id": "445760815141-g3dfjppbtpff1feu5mj0i5jr4v0c99dq.apps.googleusercontent.com",
     "scopes": [ "https://www.googleapis.com/auth/userinfo.email","https://www.googleapis.com/auth/userinfo.profile"]
   },
-    "key": "MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAjDO+REGIJ5X54kZCvfDT6Ld+9D8MxxHC29LsnIPASOsCFc0qsdoiN7sppH7vvbfIlu+RwDW/oDRi+SE9la1eAqfnhmohjXFxs1lRlUG/MK5Bo03Jck7pKlJRIkEZRvwOWMfcdtqKPQvl2WZoAzqnWzniD001uqL41rofroVIi41i86BWYXhm68NdruvonZ2FaZoNxsZ9hWddryVvqPSRbgg0Gbs2mr+jKQ5bK8dsy5UGbaXuHU+B9doW3ZYKNRtVSM9YIIG5creflL2/ydUbby7UvRzaij5R1l6bSK+QlCEl6wEJT1Y13V1vgcsEE+PNFwrqFno60+joAh0StM+V3QIDAQAB",
    "manifest_version": 2,
+   "offline_enabled":false,
    "minimum_chrome_version": "23",
+   "key": "MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAg+iVt8e9T1XT21x6pjnsGqlChS+bymnLdkB1y+TjUjn2cEDC8QwQk3K59n0tMajL2l/UaRiLbrry/xhk89b7Ygukn5yOCHZQs6EB9gXdg4vAKeXRIlWrOvQ1mAEv2Q4BCk4O7ZjdEbfU8NHtUUyRMpwcWxl2DUkh449qaEBJbIabQs+rHpaxDcnVa0H1GiheMhpHm0CREbDsljsYzzJCjOXitt0ut5dBJA+XHd5kyYBZeLyZn+f6digTmU64nY58CbsNw+6tUoJWV8V3ZR074NYB6rr7m7S6wqsPXCNAfPmCNCxTv7ZJkq4Id0pjjOYTQh0PXY/ittOnPNVudDN/4QIDAQAB",
    "name": "Chat minion",
    "permissions": [ "storage","audioCapture","videoCapture","pushMessaging", "notifications", "tts", "http://*/*", "http://localhost:3000/*","https://accounts.google.com/*", "https://www.googleapis.com/*","unlimitedStorage","identity","background"],
    "update_url": "https://clients2.google.com/service/update2/crx",
-   "version": "0.0.3"
+   "version": "2.0.4"
 }

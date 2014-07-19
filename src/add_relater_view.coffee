@@ -7,18 +7,24 @@ class @addRelatersView  extends Backbone.View
     addcontact:(event)->
         event.preventDefault()
         new_contact_email = $("#new_contact_email").val()
-        check_and_addRelator(new_contact_email)
+        if new_contact_email != ""
+            check_and_addRelator(new_contact_email)
 
     check_and_addRelator = (add_relater) ->
                     data =
                         relater_email:add_relater
                         user_id: window.logged_in_user.id
                     url = window.base_url+"/calltheteam/addcontact"
+                    $("#submit_new_contact").addClass("loader-logo-background")
+                    $("#submit_new_contact").off()
                     $.post(url,data,callback_check_and_addRelator);
 
     callback_check_and_addRelator = (response_json)->
+        $("#submit_new_contact").removeClass("loader-logo-background")
+        $("#submit_new_contact").on("click",@addcontact)
         switch response_json.status
             when "success"
+                    new_relater = {}
                     new_relater["id"] = response_json.new_relater.id
                     new_relater["name"] = response_json.new_relater.name
                     new_relater["channel_id"] = response_json.new_relater.channel_id
@@ -42,8 +48,15 @@ class @addRelatersView  extends Backbone.View
     openGmailForRequest = (email)->
         $("#relater_request_join").show()
         mail_to = email
-        mail_subject = "Try this chrome extension . it is really cool"
-        mail_body = "Hi ! try this chrome extension , its totally cool to chat inside the office.Try this and add me as your contact.Please dont forget . bye"
+        mail_subject = "Try this chrome app . its totally cool"
+        mail_body = "Hi ! try this chrome app called Chatminion . Using this , its totally cool to chat inside an office. 
+
+Installation details are here   http://goo.gl/YPZy73  .Install this and add me as your contact. 
+
+My EMAIL-ID is #{window.logged_in_user.email} . Dont forget , bye.
+
+Chatminion -  http://goo.gl/YPZy73"
+
         $("#send_relater_request").click((event)->
             event.preventDefault()
             #new_tab_options = 

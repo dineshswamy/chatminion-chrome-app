@@ -48,7 +48,16 @@
     };
 
     RelaterView.prototype.start_video_call = function(event) {
+      var alert_view, message;
       if (event.target && event.target.nodeName === "SPAN") {
+        alert_view = new AlertView();
+        message = "Connecting ...";
+        $("#sign_up_view").html(alert_view.render(message).$el);
+        alert_view.hide_okay_button();
+        $("#sign_up_view_modal").modal({
+          keyboard: false
+        });
+        $("#sign_up_view_modal").modal('show');
         return window.launchVideoCall(event);
       }
     };

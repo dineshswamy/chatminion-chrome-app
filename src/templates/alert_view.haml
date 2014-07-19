@@ -1,6 +1,4 @@
 .alert_container
-	.alert_message
-		=@alert_message
-	.button 
-		.red
-			Okay
+	%h1{:class => "alert_message"}=@alert_message
+	%button{:class=>"btn-square btn-success" , :id=>"okay_btn" }Okay
+		

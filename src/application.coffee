@@ -1,9 +1,9 @@
 -'use-strict';
 
-#window.base_url = "http://lit-refuge-2289.herokuapp.com"
+window.base_url = "http://lit-refuge-2289.herokuapp.com"
 #window.base_url = "http://localhost:3000"
 #window.base_url = "http://localhost:3000"
-window.base_url = "http://192.168.1.50:3000"
+#window.base_url = "http://10.0.0.3:3000"
 #window.base_url = "http://192.168.1.25:3000"
 window.relater_send_queue = []
 window.message_to_send = null
@@ -29,12 +29,15 @@ class @InfoView extends Backbone.View
 
 class @AlertView extends Backbone.View
     "events": {
-      "click#okay_btn" : "close_modal"
+      "click #okay_btn" : "close_modal"
     }
 
     close_modal:(event)->
       event.preventDefault()
       $("#sign_up_view_modal").modal('hide')      
+
+    hide_okay_button: ()->
+      $("#okay_btn").hide()
 
     render:(message)->
       @$el.html HAML["alert_view"]({"alert_message":message})
@@ -42,8 +45,6 @@ class @AlertView extends Backbone.View
 
 window.loadViews = ()->
         #initialize scroll
-
-          
         # #initialize peer js
         peerJSInit()
         chrome.runtime.onMessage.addListener((message,sender,sendResponse)->window.dissectRecievedMessage(message))
@@ -58,7 +59,6 @@ window.loadViews = ()->
             $(this).removeClass("glyphicon-log-out").addClass("glyphicon glyphicon-log-in")
             )
         add_relaters_view = new addRelatersView()    
-        a = undefined
 
         window.relater_collection_view = new RelatersCollectionView({"collection":window.relater_collection})
         if window.relater_collection.models.length > 0
@@ -153,12 +153,10 @@ window.peerJSInit = () ->
 
 window.showAlert = (message)->
   alert_view = new AlertView()
-  
-  console.log alert_view.render(message).$el
   $("#sign_up_view").html(alert_view.render(message).$el)
-
   $("#sign_up_view_modal").modal({keyboard:false})
   $("#sign_up_view_modal").modal('show')
+
   #$(".alert_container").show(100).delay(1000).hide(100)
 
 
@@ -205,7 +203,10 @@ window.dissectRecievedMessage = (message)->
   ## initialize values 
   recieved_message = message.recieved_message
   if window.relater_collection != null
-    payload = JSON.parse(recieved_message.payload)
+    try
+        payload = JSON.parse(recieved_message.payload)  
+    catch exception
+      return
     console.log payload
     sender = window.relater_collection.findWhere({"id":Number(payload.user_id)})
     
@@ -239,7 +240,6 @@ window.dissectRecievedMessage = (message)->
 window.loadRelaters = (user_id) ->
   key = "fetched_relaters_key"
   chrome.storage.local.get(key,(result)->
-        result["fetched_relaters_key"] = null
         if result["fetched_relaters_key"] is null or result["fetched_relaters_key"] is undefined
           window.relater_collection = new RelaterCollection({"user_id":window.logged_in_user.id})
           window.relater_collection.fetch
@@ -285,6 +285,15 @@ window.initialize_extension = (call_back)->
             window.logged_in_user = result["registered_user"]
             window.setProfileAttributes(window.logged_in_user.picture,window.logged_in_user.name)
             window.loadRelaters(window.logged_in_user.id)
+    $(document).keydown((event)->
+      if event.keyCode == 13 and event.ctrlKey then window.sendMessage(event) #enter key + ctrl key
+      )
+    #Google analytics
+    window.service =  analytics.getService("Chatminion")
+    window.tracker = service.getTracker('UA-52908702-1');
+    window.tracker.sendEvent('app-view', 'opened', 'yes');
+
+
             
 window.getTransformedMessage = (sender,reciever_name,user_message,transform_pattern,message_id,time,read_out)->
   message_transform_helper = new MessageTransformation()
@@ -349,18 +358,19 @@ window.sendMessage = ()->
     relater_to_send = window.peer_js_selected_relater
     message = window.message_to_send
 
-    console.log window.message_to_send
+    custom_message = custom_message.trim()
+
+    if relater_to_send == null  and message == null and custom_message == "" 
+      showAlert("Pick a contact and choose/type a message")
+      return
+
     
     if relater_to_send == null 
       showAlert("Pick a contact")
       return
 
-    console.log "custom_message" + custom_message == " "
-
-    console.log "message " + message == null
-
-    if message == null and custom_message == " "
-      showAlert("Choose a message")
+    if message == null and custom_message == ""
+      showAlert("Choose/type a message")
       return
       
     time = String(new Date())
@@ -418,13 +428,12 @@ window.putMessageinThread = (thread_params)->
       result[relater_thread_key] = thread
       thread_message_view = new ThreadMessageView({collection:thread})
       $("#thread_messages").html thread_message_view.render().$el
-      $("abbr.timeago").timeago()
+      window.setTimeAgo()              
       $("#thread_messages").fadeIn(500)    
     else
       thread_message_view = new ThreadMessageView({collection:thread})
       $("#thread_messages").html thread_message_view.render().$el
-      $("abbr.timeago").timeago()
-      
+      window.setTimeAgo()
       if new_thread.is_custom_message
         transformed_message = new_thread.relater.name + " says "+new_thread.transformed_message
       else
@@ -432,6 +441,7 @@ window.putMessageinThread = (thread_params)->
 
       $("#transformed_message").html(transformed_message)
       thread.push(new_thread)
+      console.log thread
       result[relater_thread_key] = thread
     chrome.storage.local.set(result,()->console.log "thread message saved")
     )
@@ -456,8 +466,7 @@ window.loadMessagesofRelater = (relater_id)->
       if thread != null and thread != undefined 
         thread_message_view = new ThreadMessageView({collection:thread})
         $("#thread_messages").html thread_message_view.render().$el
-        $("abbr.timeago").timeago()
-        
+        window.setTimeAgo()        
         #if !window.incoming_message 
         #  setMessageOptionsFromThread(thread[thread.length-1]);        
         # checks w
@@ -472,9 +481,12 @@ window.logOutUser = ()->
         chrome.storage.local.set({"registered":false,"registered_user":null},null)
         key = "fetched_relaters_key"
         chrome.storage.local.remove(key,null)
+        chrome.storage.local.remove("messages_last_synced",null)
         $("#sign_up_view").html(sign_up_view.render().$el)
         $("#sign_up_view_modal").modal({keyboard:false})
         $("#sign_up_view_modal").modal('show')
+        window.messages = new Messages()
+        window.messages.init()
 
 window.setMessageOptionsFromThread = (last_thread_message)->
   openMessages(window.messages_with_options,false)
@@ -491,7 +503,8 @@ window.setMessageOptionsFromThread = (last_thread_message)->
 
 window.setProfileAttributes = (profile_picture,profile_name)->
       #set profile name
-       $("#profile_name").html("<h2>#{profile_name}</h2>")
+       $("#profile_name").html("<h2>#{profile_name}<span class='profile_email glyphicon-envelope'>#{window.logged_in_user.email}</span></h2>")
+
        #set profile image
        xhr = new XMLHttpRequest()
        xhr.onreadystatechange = ()->
@@ -544,6 +557,12 @@ window.cacheRelaterCollection = ()->
 
 window.getRelaterThread = (sender_id)->
   window.relater_threads[sender_id]
+
+window.setTimeAgo = ()->
+  $("abbr.timeago").each((index)->
+    time = $(this).prop("title")
+    date = new Date(time)
+    $(this).html $.timeago(date))
 
 
 window.speakMessage = (transformed_message)->
