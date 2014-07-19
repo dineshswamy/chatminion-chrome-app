@@ -7,7 +7,7 @@ Chatminion - an Office chat assistant
 
 The messaging flow by the application is described below
 
-![alt tag](https://raw.github.com/dineshswamy/chatminion-chrome-app/master/chatminion-arch.png)
+![alt tag](https://raw.github.com/dineshswamy/chatminion-chrome-app/chrome_app_packaged/chatminion-arch.png)
 
 The above flow diagram explains everything .
 
