@@ -80,6 +80,9 @@ window.loadViews = ()->
         #$("#submit_custom_message").click(sendMessage)            
         $("#relaters_of_the_user").jScrollPane();
         initializeValues()
+        $("#text_messages").keydown((event)->
+            if event.keyCode == 13 then window.sendMessage(event) #enter key
+        )
         chrome.runtime.getBackgroundPage((page)->
               if page.window.background_message_recieved !=null
                 window.dissectRecievedMessage(page.window.background_message_recieved)
@@ -285,9 +288,6 @@ window.initialize_extension = (call_back)->
             window.logged_in_user = result["registered_user"]
             window.setProfileAttributes(window.logged_in_user.picture,window.logged_in_user.name)
             window.loadRelaters(window.logged_in_user.id)
-    $(document).keydown((event)->
-      if event.keyCode == 13 and event.ctrlKey then window.sendMessage(event) #enter key + ctrl key
-      )
     #Google analytics
     window.service =  analytics.getService("Chatminion")
     window.tracker = service.getTracker('UA-52908702-1');
@@ -466,7 +466,9 @@ window.loadMessagesofRelater = (relater_id)->
       if thread != null and thread != undefined 
         thread_message_view = new ThreadMessageView({collection:thread})
         $("#thread_messages").html thread_message_view.render().$el
-        window.setTimeAgo()        
+        window.setTimeAgo()
+      else
+        $("#thread_messages").empty() 
         #if !window.incoming_message 
         #  setMessageOptionsFromThread(thread[thread.length-1]);        
         # checks w

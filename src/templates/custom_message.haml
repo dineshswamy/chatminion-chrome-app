@@ -1,6 +1,6 @@
 %div{:class=>"custom_message_container"}
   %form{:class=>"form-horiz" , :role=>"form"}
-    %textarea{:id=>"custom_message", :placeholder=>"Your message ....",:type=>"text",:rows=>"2",:class=>"form-group form-control"}
+    %textarea{:id=>"custom_message", :placeholder=>"Your message ....",:type=>"text",:rows=>"4",:cols=>"8",:class=>"form-group form-control"}
     %div{class:"message_properties"}
       %input{:id=>"expect_reply",:type=>"checkbox",:checked =>"checked"}
       %label{for:"expect_reply"}expect a reply
@@ -11,4 +11,4 @@
   %button{:id=>"submit_custom_message" , :class=>"btn btn-default"}Send
   %div{class:"glyphicon glyphicon-asterisk" ,id:"reveal_message_properties"}
 %div{class:"row"}
-  %small ctrl + enter
+  %small press enter 

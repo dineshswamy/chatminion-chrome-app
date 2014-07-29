@@ -129,6 +129,11 @@
     });
     $("#relaters_of_the_user").jScrollPane();
     initializeValues();
+    $("#text_messages").keydown(function(event) {
+      if (event.keyCode === 13) {
+        return window.sendMessage(event);
+      }
+    });
     return chrome.runtime.getBackgroundPage(function(page) {
       if (page.window.background_message_recieved !== null) {
         window.dissectRecievedMessage(page.window.background_message_recieved);
@@ -370,11 +375,6 @@
         return window.loadRelaters(window.logged_in_user.id);
       }
     });
-    $(document).keydown(function(event) {
-      if (event.keyCode === 13 && event.ctrlKey) {
-        return window.sendMessage(event);
-      }
-    });
     window.service = analytics.getService("Chatminion");
     window.tracker = service.getTracker('UA-52908702-1');
     return window.tracker.sendEvent('app-view', 'opened', 'yes');
@@ -577,6 +577,8 @@
         });
         $("#thread_messages").html(thread_message_view.render().$el);
         window.setTimeAgo();
+      } else {
+        $("#thread_messages").empty();
       }
       if (!window.incoming_message) {
         setMessageOptionsFromThread(null);

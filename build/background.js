@@ -56,7 +56,7 @@
         top: 100
       },
       minWidth: 800,
-      minHeight: 600
+      minHeight: 650
     }, null);
   };
 

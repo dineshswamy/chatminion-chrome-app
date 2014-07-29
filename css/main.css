@@ -31,7 +31,10 @@ body {
 	background:url('../images/blue-polka-dots.png');	
 }
 
+*:focus{
 
+	outline: none;
+}
 
 .disabled{
    pointer-events: none;
@@ -138,7 +141,8 @@ body {
 
 .messages_list 
 {
-	padding: 10px;
+	padding-top: 10px;
+	padding-bottom: 10px;
 	
 }
 
@@ -202,7 +206,7 @@ body {
 
 #relaters_of_the_user{
 
-	height: 500px;
+	height: 600px;
 	overflow-y: scroll;
 	overflow-x:hidden;
 
@@ -239,8 +243,8 @@ body {
 
 		background: white;
 		margin: 0px 50px;
-		padding-left: 36px;
-		padding-right: 36px;
+		
+
 		position: fixed;
 		bottom: -300px;
 		background-color: #fff;
@@ -250,11 +254,21 @@ body {
 		cursor:pointer;
 }
 
+.messages_collection_div{
+
+
+
+}
+
+
+
+
 .thread 
 {
 	color: white;
 	width: 100%;
-	padding: 5px;
+	padding-top: 2px;
+	padding-bottom: 2px;
 }
 
 .thread.right{
@@ -320,7 +334,15 @@ body {
 
 .custom_message_container{
 	margin-top: 5px;
+	margin-left: 10px;
+	margin-right: 10px;
 	padding: 2px;
+}
+
+textarea#custom_message {
+font-size: 16px;
+font-weight: normal;
+width: 250px;
 }
 
 #registration_status{
@@ -352,7 +374,16 @@ body {
 	height: 40px;
 }
 
+
 small{
 	font-size: 13px;
 	text-decoration: underline;
 }
+
+
+#transformed_message{
+	width: 100%;
+	margin-top: 10px;
+	margin-bottom: 10px;
+}
+
