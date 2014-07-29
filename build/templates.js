@@ -22,7 +22,7 @@
         }
       };
       $o = [];
-      $o.push("<div class='alert_container'>\n  <h1 class='alert_message'>" + ($e($c(this.alert_message))) + "</h1>\n  <button class='btn-square btn-success' id='okay_btn'>Okay</button>\n</div>");
+      $o.push("<div class='alert_container'>\n  <h1 class='alert_message'>" + ($e($c(this.alert_message))) + "</h1>\n  <button class='btn-square btn-success' id='okay_btn' tab_index='0'>Okay</button>\n</div>");
       return $o.join("\n").replace(/\s([\w-]+)='true'/mg, ' $1').replace(/\s([\w-]+)='false'/mg, '').replace(/\s(?:id|class)=(['"])(\1)/mg, "");
     }).call(context);
   };
