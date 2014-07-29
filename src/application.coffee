@@ -456,6 +456,8 @@ window.openMessages = (message_collection,is_option_message)->
     $("#messages").html messages_collection_view.render().$el
   flipMessageCards(is_option_message)
   animateMessages()
+  #Set focus for custom message
+  
   
 
 window.loadMessagesofRelater = (relater_id)->

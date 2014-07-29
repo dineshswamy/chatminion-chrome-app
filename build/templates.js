@@ -82,7 +82,7 @@
     return (function() {
       var $o;
       $o = [];
-      $o.push("<div class='custom_message_container'>\n  <form class='form-horiz' role='form'>\n    <textarea class='form-group form-control' id='custom_message' placeholder='Your message ....' type='text' rows='4' cols='8'></textarea>\n    <div class='message_properties'>\n      <input id='expect_reply' type='checkbox' checked='checked'>\n      <label for='expect_reply'>expect a reply</label>\n      <input id='read_out' type='checkbox' checked='checked'>\n      <label for='read_out'>read out</label>\n    </div>\n  </form>\n</div>\n<div class='row'>\n  <button class='btn btn-default' id='submit_custom_message'>Send</button>\n  <div class='glyphicon glyphicon-asterisk' id='reveal_message_properties'></div>\n</div>\n<div class='row'>\n  <small>press enter </small>\n</div>");
+      $o.push("<div class='custom_message_container'>\n  <form class='form-horiz' role='form'>\n    <textarea class='form-group form-control' id='custom_message' placeholder='Your message ....' type='text' rows='4' cols='4'></textarea>\n    <div class='message_properties'>\n      <input id='expect_reply' type='checkbox' checked='checked'>\n      <label for='expect_reply'>expect a reply</label>\n      <input id='read_out' type='checkbox' checked='checked'>\n      <label for='read_out'>read out</label>\n    </div>\n  </form>\n</div>\n<div class='row'>\n  <button class='btn btn-default' id='submit_custom_message'>Send</button>\n  <div class='glyphicon glyphicon-asterisk' id='reveal_message_properties'></div>\n</div>\n<div class='row'>\n  <small>press enter </small>\n</div>");
       return $o.join("\n").replace(/\s(?:id|class)=(['"])(\1)/mg, "");
     }).call(context);
   };
